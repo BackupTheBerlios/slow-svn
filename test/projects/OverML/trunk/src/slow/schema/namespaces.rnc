@@ -1,0 +1,8 @@
+namespace overml = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML"
+namespace nala   = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala"
+namespace slosl  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl"
+namespace himdel = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"
+namespace edsm   = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsm"
+
+namespace xsd    = "http://www.w3.org/2001/XMLSchema-datatypes"
+namespace math   = "http://www.w3.org/1998/Math/MathML"

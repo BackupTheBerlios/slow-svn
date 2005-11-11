@@ -1,0 +1,14 @@
+identifier_string =
+   xsd:Name
+
+type_string =
+   xsd:QName
+
+identifier_attribute =
+   attribute access_name { identifier_string }
+
+name_attribute =
+   attribute name        { identifier_string }
+
+type_attribute =
+   attribute type_name   { type_string }

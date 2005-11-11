@@ -1,0 +1,65 @@
+slosl_statements =
+   element slosl:statements {
+      slosl_statement*
+   }
+
+slosl_statement =
+   element slosl:statement {
+      name_attribute,
+      attribute selected { xsd:boolean }?,
+
+      (  slosl_select +
+       & slosl_ranked ?
+       & slosl_parent +
+       & slosl_with   *
+       & slosl_where  ?
+       & ( slosl_inherit_buckets | (slosl_having? & slosl_buckets) )?
+      )
+   }
+
+slosl_select =
+   element slosl:select {
+      name_attribute,
+      ( text | math_expression )?
+   }
+
+slosl_parent =
+   element slosl:parent { identifier_string }
+
+slosl_ranked =
+   element slosl:ranked {
+      f_parameter, f_parameter,
+      (  attribute function { "lowest" | "highest" }
+       | (attribute function { "closest" | "furthest" },
+          f_parameter)
+      )
+   }
+
+f_parameter =
+   element slosl:parameter { math_expression }
+
+slosl_with =
+   element slosl:with {
+      name_attribute,
+      math_expression?
+   }
+
+slosl_where =
+   element slosl:where  { math_expression }
+
+slosl_having =
+   element slosl:having { math_expression }
+
+slosl_inherit_buckets =
+   element slosl:buckets {
+      attribute inherit { "true" }
+   }
+
+slosl_buckets =
+   element slosl:buckets {
+      attribute inherit { "false" }?,
+      element slosl:foreach {
+         name_attribute,
+         ( math_list | math_interval )
+      }+
+   }

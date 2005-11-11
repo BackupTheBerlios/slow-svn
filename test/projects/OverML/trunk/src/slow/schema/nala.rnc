@@ -1,0 +1,15 @@
+nala_attributes =
+   element nala:attributes {
+      nala_attribute*
+   }
+
+nala_attribute =
+   element nala:attribute {
+      attribute name      { identifier_string },
+      attribute type_name { type_string },
+      attribute selected  { xsd:boolean }?,
+      (  element nala:static       { empty }?
+       & element nala:transferable { empty }?
+       & element nala:identifier   { empty }?
+      )
+   }*

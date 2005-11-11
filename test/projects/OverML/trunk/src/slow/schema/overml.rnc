@@ -1,0 +1,20 @@
+start = overml_file
+
+overml_file =
+   element overml:file {
+      types?,
+      (nala_attribute | nala_attributes),
+      (slosl_statement | slosl_statements),
+      message_hierarchy
+#      edsm_description
+   }
+
+types =
+   element overml:types { anyOtherElement* }
+
+anyOtherElement =
+   element * - (overml:* | nala:* | slosl:* | himdel:* | edsm:*) {
+      (attribute * { text }
+       | text
+       | anyOtherElement)*
+   }
