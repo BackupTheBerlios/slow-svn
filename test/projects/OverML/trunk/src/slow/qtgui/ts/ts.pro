@@ -1,9 +1,8 @@
 FORMS	= gui.ui \
 	aboutdialog.ui \
-	transitiondialog.ui \
 	timerdialog.ui \
-	statedialog.ui \
-	pref_dialog.ui
+	edsmdialog.ui \
+	prefdialog.ui
 
 SOURCES	= gui.py \
 	attribute_editor.py \
@@ -16,9 +15,9 @@ SOURCES	= gui.py \
 	\
 	gengui.py \
 	genaboutdialog.py \
-	gentransitiondialog.py \
 	gentimerdialog.py \
-	genstatedialog.py
+	genedsmdialog.py \
+        genprefdialog.py
 	
 
 TRANSLATIONS =	ts/gui_de.ts \

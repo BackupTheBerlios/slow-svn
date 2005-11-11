@@ -30,10 +30,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add %1 Protocol</source>
-        <translation type="obsolete"></translation>
-    </message>
-    <message>
         <source>inherit context</source>
         <translation type="unfinished"></translation>
     </message>
@@ -43,16 +39,6 @@
     <message>
         <source>About ...</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p align=&quot;center&quot;&gt;&lt;font size=&quot;+3&quot;&gt;&lt;b&gt;Overlay Designer V[VT]&lt;/b&gt;&lt;/font&gt;
-&lt;br /&gt;
-&lt;br /&gt;
-&lt;b&gt;by Stefan Behnel&lt;/b&gt;
-&lt;br /&gt;
-&lt;br /&gt;
-Designing overlays in no-time!&lt;/p&gt;</source>
-        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>&amp;OK</source>
@@ -78,16 +64,13 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     </message>
 </context>
 <context>
-    <name>EDSMIconViewIcon</name>
+    <name>EDSMDialog</name>
     <message>
-        <source>Please select a transition type.</source>
+        <source>EDSM Dialog</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>EDSMStateDialog</name>
     <message>
-        <source>EDSM State</source>
+        <source>Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -107,18 +90,6 @@ Designing overlays in no-time!&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Class:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add simple code like global import statements here.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Init code:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -128,6 +99,21 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     </message>
     <message>
         <source>Python</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Class:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Message Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>EDSMIconViewIcon</name>
+    <message>
+        <source>Please select a transition type.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -175,57 +161,6 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     </message>
 </context>
 <context>
-    <name>EDSMTransitionDialog</name>
-    <message>
-        <source>EDSM Transition</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Class:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>F1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Filter code:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fill in the body of a method &apos;accepts(data)&apos; that returns a boolean value.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Python</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Language:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Message Type:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>HighlightedFirstColumnListItem</name>
     <message>
         <source>Missing type name</source>
@@ -244,19 +179,8 @@ Designing overlays in no-time!&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>items</source>
-        <translation type="obsolete"></translation>
-    </message>
-    <message>
         <source>Invalid type selected: %1</source>
         <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>IconViewStateIcon</name>
-    <message>
-        <source>Please select a transition type.</source>
-        <translation type="obsolete"></translation>
     </message>
 </context>
 <context>
@@ -330,18 +254,7 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     </message>
 </context>
 <context>
-    <name>MessageEditor</name>
-    <message>
-        <source>Add Header</source>
-        <translation type="obsolete"></translation>
-    </message>
-</context>
-<context>
     <name>OverlayDesignerMainWindow</name>
-    <message>
-        <source>Names</source>
-        <translation type="obsolete"></translation>
-    </message>
     <message>
         <source>Attribute Name</source>
         <translation type="unfinished"></translation>
@@ -361,10 +274,6 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     <message>
         <source>Value list</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Overlay Designer</source>
-        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>Node Attribute</source>
@@ -595,10 +504,6 @@ Designing overlays in no-time!&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;4 Rules</source>
-        <translation type="obsolete"></translation>
-    </message>
-    <message>
         <source>&amp;New</source>
         <translation type="unfinished"></translation>
     </message>
@@ -791,16 +696,8 @@ Designing overlays in no-time!&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Edit Preferences</source>
-        <translation type="obsolete"></translation>
-    </message>
-    <message>
         <source>Edit Preferences ...</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Precision:</source>
-        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>Length:</source>
@@ -817,10 +714,6 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     <message>
         <source>Protocols</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Identifier</source>
-        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>SLosl Overlay Workbench</source>
@@ -852,6 +745,58 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     </message>
 </context>
 <context>
+    <name>PrefDialog</name>
+    <message>
+        <source>Preferences</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optimize XML output for size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>XML</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically update EDSM graph</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UDP
+TCP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Protocols</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ProtocolSet</name>
     <message>
         <source>Show XML</source>
@@ -861,10 +806,6 @@ Designing overlays in no-time!&lt;/p&gt;</source>
 <context>
     <name>ShowMessagePopupAction</name>
     <message>
-        <source>Message %1</source>
-        <translation type="obsolete"></translation>
-    </message>
-    <message>
         <source>Message &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -872,27 +813,12 @@ Designing overlays in no-time!&lt;/p&gt;</source>
 <context>
     <name>SpecialStateIcon</name>
     <message>
-        <source>state</source>
-        <translation type="obsolete"></translation>
-    </message>
-    <message>
         <source>Item</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>ViewDataItem</name>
-    <message>
-        <source>structured</source>
-        <translation type="obsolete"></translation>
-    </message>
-</context>
-<context>
     <name>editor</name>
-    <message>
-        <source>structured</source>
-        <translation type="obsolete"></translation>
-    </message>
     <message>
         <source>single bucket</source>
         <translation type="unfinished"></translation>
