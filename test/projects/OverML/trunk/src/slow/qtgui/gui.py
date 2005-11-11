@@ -32,7 +32,7 @@ from slow.model.preference_model import buildPreferences
 from lxml import etree
 
 from mathml.termbuilder import tree_converters
-from mathml.mathdom     import MathDOM
+from mathml.lmathdom    import MathDOM
 
 VERSION = '1.0'
 
