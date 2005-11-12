@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns:overml="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <define name="identifier_string">
+    <data type="Name"/>
+  </define>
+  <define name="type_string">
+    <data type="QName"/>
+  </define>
+  <define name="identifier_attribute">
+    <attribute name="access_name">
+      <ref name="identifier_string"/>
+    </attribute>
+  </define>
+  <define name="name_attribute">
+    <attribute name="name">
+      <ref name="identifier_string"/>
+    </attribute>
+  </define>
+  <define name="type_attribute">
+    <attribute name="type_name">
+      <ref name="type_string"/>
+    </attribute>
+  </define>
+  <define name="math_expression">
+    <choice>
+      <ref name="math_apply"/>
+      <ref name="math_number"/>
+      <ref name="math_constant"/>
+    </choice>
+  </define>
+  <define name="math_interval">
+    <element name="math:interval">
+      <attribute name="closure">
+        <choice>
+          <value>open</value>
+          <value>closed</value>
+          <value>open-closed</value>
+          <value>closed-open</value>
+        </choice>
+      </attribute>
+      <ref name="math_expression"/>
+      <ref name="math_expression"/>
+    </element>
+  </define>
+  <define name="math_list">
+    <element name="math:list">
+      <zeroOrMore>
+        <attribute>
+          <anyName/>
+        </attribute>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="math_expression"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="math_apply">
+    <element name="math:apply">
+      <ref name="anyMathML"/>
+      <oneOrMore>
+        <ref name="anyMathML"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="math_number">
+    <element name="math:cn">
+      <zeroOrMore>
+        <attribute>
+          <anyName/>
+        </attribute>
+      </zeroOrMore>
+      <text/>
+    </element>
+  </define>
+  <define name="math_constant">
+    <element name="math:ci">
+      <zeroOrMore>
+        <attribute>
+          <anyName/>
+        </attribute>
+      </zeroOrMore>
+      <text/>
+    </element>
+  </define>
+  <define name="anyMathML">
+    <choice>
+      <element>
+        <nsName ns="http://www.w3.org/1998/Math/MathML"/>
+        <empty/>
+      </element>
+      <ref name="math_list"/>
+      <ref name="math_interval"/>
+      <ref name="math_apply"/>
+      <ref name="math_number"/>
+      <ref name="math_constant"/>
+    </choice>
+  </define>
+  <start>
+    <ref name="overml_file"/>
+  </start>
+  <define name="overml_file">
+    <element name="overml:file">
+      <group>
+        <optional>
+          <ref name="types"/>
+        </optional>
+        <choice>
+          <ref name="nala_attribute"/>
+          <ref name="nala_attributes"/>
+        </choice>
+        <choice>
+          <ref name="slosl_statement"/>
+          <ref name="slosl_statements"/>
+        </choice>
+        <ref name="message_hierarchy"/>
+      </group>
+      <!--      edsm_description -->
+    </element>
+  </define>
+  <define name="types">
+    <element name="overml:types">
+      <zeroOrMore>
+        <ref name="anyOtherElement"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="anyOtherElement">
+    <element>
+      <anyName>
+        <except>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsm"/>
+        </except>
+      </anyName>
+      <zeroOrMore>
+        <choice>
+          <attribute>
+            <anyName/>
+          </attribute>
+          <text/>
+          <ref name="anyOtherElement"/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+</grammar>
