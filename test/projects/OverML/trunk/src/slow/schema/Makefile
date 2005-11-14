@@ -5,21 +5,24 @@ RNC_COMMON_IMPORTS=namespaces common mathml
 RNC_OVERML_IMPORTS=nala himdel slosl
 # edsm
 
+NO_INPUT=datatypes.rnc
+
 ############
 
 COMMON_IMPORTS=$(addsuffix .rnc,$(RNC_COMMON_IMPORTS))
 OVERML_IMPORTS=$(addsuffix .rnc,$(RNC_OVERML_IMPORTS))
 
-RNC=$(filter-out $(COMMON_IMPORTS),$(filter-out %.m.rnc,$(wildcard *.rnc)))
+RNC=$(filter-out $(NO_INPUT), $(filter-out $(COMMON_IMPORTS),$(filter-out %.m.rnc,$(wildcard *.rnc))))
 RNG=$(addsuffix .rng,$(basename $(RNC)))
 RNG_MODULES=$(addsuffix .m.rng,$(filter-out overml,$(basename $(RNC))))
+RNC_MODULES=$(addsuffix .m.rnc,$(filter-out overml,$(basename $(RNC))))
 TESTS=$(wildcard $(addsuffix .xml,$(basename $(RNC))))
 
 .INTERMEDIATE: %.m.rnc
 
 .PHONY: all test clean
 
-all: rng modules
+all: rng
 
 rng: $(RNG)
 modules: $(RNG_MODULES)
@@ -32,11 +35,11 @@ test: $(addsuffix .rng,$(basename $(TESTS)))
 	done
 
 clean:
-	rm -f $(RNG) $(RNG_MODULES) *~
+	rm -f $(RNG) $(RNG_MODULES) $(RNC_MODULES) *~
 
-overml.rng: overml.m.rnc $(COMMON_IMPORTS) $(OVERML_IMPORTS)
+overml.rng: overml.m.rnc $(OVERML_IMPORTS)
 	@echo "Building overml.rng ..."
-	@$(TRANG) -I rnc -O rng $< "$@"
+	@cat $^ | $(TRANG) -I rnc -O rng /dev/fd/0 "$@"
 
 %.m.rnc: %.rnc $(COMMON_IMPORTS)
 	@echo "Merging components of $< ..."
@@ -50,7 +53,7 @@ overml.rng: overml.m.rnc $(COMMON_IMPORTS) $(OVERML_IMPORTS)
 
 %.rng: %.m.rnc
 	@echo "Running $(TRANG) to build $@ from $< ..."
-	@$(TRANG) -I rnc -O rng $< $@
+	@$(TRANG) -I rnc -O rng $< "$@"
 
 %.m.rng: %.m.rnc
 	@echo "Running $(TRANG) to build $@ from $< ..."
