@@ -1,14 +1,27 @@
 math_expression =
-   math_apply | math_number | math_constant
+   element math:math { math_expression_content }
+ | math_expression_content
+
+math_expression_content =
+ math_apply | math_number | math_constant
 
 math_interval =
+   element math:math { math_interval_content }
+ | math_interval_content
+
+math_interval_content =
    element math:interval {
       attribute closure { "open" | "closed" | "open-closed" | "closed-open" },
-      math_expression, math_expression
+      math_expression_content, math_expression_content
    }
 
 math_list =
-   element math:list { attribute * { text }*, math_expression* }
+   element math:math { math_list_content }
+ | math_list_content
+
+math_list_content =
+   element math:list { attribute * { text }*, math_expression_content* }
+
 
 math_apply =
    element math:apply {
