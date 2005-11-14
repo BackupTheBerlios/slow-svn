@@ -281,6 +281,7 @@ class EDSMIconView(SelectiveCustomWidget, QIconView):
         self.connections = set()
         self.static_items = {}
         QIconView.__init__(self, *args)
+        self.setAutoArrange(False)
 
         self.__max_dist       = 30
         self.__max_close_dist = 4

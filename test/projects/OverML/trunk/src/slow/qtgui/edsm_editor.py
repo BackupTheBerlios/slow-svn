@@ -213,7 +213,7 @@ class EDSMIconViewIcon(EDSMEditorItem, QIconViewItem):
         if not self.dropEnabled():
             return
 
-        active_mode = self._edsm_editor.active_mode()
+        active_mode = self._edsm_editor.active_edsm_mode()
         if active_mode not in EDSMTransition.TYPES_BY_NAME:
             self._edsm_editor.setStatus(self.tr("Please select a transition type."))
             return
@@ -227,6 +227,8 @@ class EDSMIconViewIcon(EDSMEditorItem, QIconViewItem):
             while model is not None and model.type_name != 'edsm':
                 model = model.getparent()
                 parents.append(model)
+            if parents and model is None:
+                parents.pop()
             return parents
 
         source_parents = find_ancestors(source_model)
@@ -556,7 +558,7 @@ class EDSMEditor(EDSMEditorItem):
         else:
             static_states = self.STATIC_STATES
 
-        child_iconview = EDSMIconView(self.edsm_tabs, name)
+        child_iconview = EDSMIconView(self.edsm_tabs, model.id)
         self.connect(child_iconview, SIGNAL("contextMenuRequested(QIconViewItem*,const QPoint&)"),
                      self.edsm_iconview_contextMenuRequested)
         self.connect(child_iconview,SIGNAL("doubleClicked(QIconViewItem*)"),
@@ -565,6 +567,9 @@ class EDSMEditor(EDSMEditorItem):
                      child_iconview.updateContents)
         self._build_iconview(model, child_iconview, static_states)
         self.edsm_tabs.addTab(child_iconview, model.readable_name or name)
+
+        active_mode = self.active_edsm_mode()
+        self.__connect_iconview_click(active_mode, active_mode)
 
     def edsm_delete_state(self, state):
         iconview = state.iconView()
@@ -653,7 +658,7 @@ class EDSMEditor(EDSMEditorItem):
         if other_item or button != 1:
             return
 
-        type_name = self.active_mode()
+        type_name = self.active_edsm_mode()
         if type_name == 'state':
             item_class  = self.StateIcon
             build_model = buildState
@@ -667,8 +672,8 @@ class EDSMEditor(EDSMEditorItem):
         if iconview is self._iconview:
             subgraph = self.__edsm_model
         else:
-            iconview_name = iconview.name()
-            subgraph = self.__edsm_model.subgraph(iconview_name)
+            iconview_id = iconview.name()
+            subgraph = self.__edsm_model.getSubgraph(iconview_id)
             if not subgraph:
                 return
 
@@ -689,7 +694,7 @@ class EDSMEditor(EDSMEditorItem):
 
         self.emit_graph_changed()
 
-    def active_mode(self):
+    def active_edsm_mode(self):
         return self._edsm_last_button
 
     def make_name_unique(self, prefix):
@@ -733,26 +738,33 @@ class EDSMEditor(EDSMEditorItem):
         selected = self.edsm_tools_buttongroup.selectedId()
         button = self._edsm_last_button = self.TOOL_BUTTONS[selected]
 
+        self.__connect_iconview_click(last_button, button)
+
+    def __connect_iconview_click(self, old_mode, new_mode):
         click_functions = self.EDSM_CLICK_FUNCTIONS
-        if button != last_button:
-            f = click_functions.get(last_button)
-            def disconnect(iconview):
-                if f:
-                    self.disconnect(iconview, f.signal, f)
-        if button:
-            f = click_functions.get(button)
+        def dummy(iconview):
+            pass
+        try_disconnect = connect = dummy
+        try:
+            f = click_functions[old_mode]
+            def try_disconnect(iconview):
+                try: self.disconnect(iconview, f.signal, f)
+                except RuntimeError: # stupid, stupid PyQt
+                    pass
+        except KeyError:
+            pass
+        try:
+            f = click_functions[new_mode]
             def connect(iconview):
-                if f:
-                    self.connect(iconview, f.signal, f)
+                self.connect(iconview, f.signal, f)
+        except KeyError:
+            pass
 
+        icons_movable = new_mode in ('edit', 'state', 'subgraph')
         for iconview in self.iconviews():
-            iconview.setItemsMovable(button in ('edit', 'state', 'subgraph'))
-            try:
-                disconnect(iconview)
-            except RuntimeError: # stupid, stupid PyQt
-                pass
+            iconview.setItemsMovable(icons_movable)
+            try_disconnect(iconview)
             connect(iconview)
-
 
     def edsm_iconview_contextMenuRequested(self, item, pos):
         popup_items = self.find_items_at(pos, item)

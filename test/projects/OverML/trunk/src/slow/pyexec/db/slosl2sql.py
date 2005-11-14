@@ -1,57 +1,28 @@
-from string    import Template
+import re
 from itertools import *
-
-from specparser import ExpressionConverter, Attribute
-from slow.model import slosl_model
+from string    import Template
 
 from helpers import _TYPE_MAPPING_PYDB, _md5hex
 
+from sqldb import _NODE_ID_COLUMN
+from slow.model import slosl_model
+from mathml.utils.sqlterm import SqlTermBuilder, tree_converters
 
-class SQLExpressionConverter(ExpressionConverter):
-    def __init__(self):
-        super(SQLExpressionConverter, self).__init__()
-        self.functions = []
-        self.symbols   = []
+SLOSL_SQL = 'slosl-sql'
 
-    def __symbol_convert(self, symbol):
-        "Variable Attribute"
-        self.symbols.append(symbol)
-        yield repr(symbol)
+class SQLExpressionBuilder(SqlTermBuilder):
+    _INTERVAL_NOTATION = {
+        u'closed'      : u'BETWEEN (%s)     AND (%s)    '.replace(u'  ', u''),
+        u'closed-open' : u'BETWEEN (%s)     AND ((%s)-1)'.replace(u'  ', u''),
+        u'open-closed' : u'BETWEEN ((%s)+1) AND (%s)    '.replace(u'  ', u''),
+        u'open'        : u'BETWEEN ((%s)+1) AND ((%s)-1)'.replace(u'  ', u''),
+        }
 
-    def __list_convert(self, any_list):
-        "IntList AnyList XRange"
-        return imap(str, chain(*map(self.convert, any_list)))
+    def _handle_interval(self, operator, operands, status):
+        assert operator[:9] == u'interval:'
+        return [ self._INTERVAL_NOTATION[ operator[9:] ] % tuple(operands) ]
 
-    def __case_convert(self, case_expression):
-        "CaseExpression"
-        if case_expression.else_expr:
-            else_expr = chain(
-                ('ELSE',), self.convert(case_expression.else_expr) )
-        else:
-            else_expr = ()
-
-        return chain(
-            ('CASE', 'WHEN'), self.convert(case_expression.if_expr),
-            ('THEN',),        self.convert(case_expression.then_expr),
-            else_expr,
-            ('END',)
-            )
-
-    def __function_convert(self, function):
-        "Function"
-        self.functions.append(function)
-        self.symbols.append(function)
-        yield function.name
-        yield '('
-        comma = False
-        for param in imap(self.convert, function.parameters):
-            if comma:
-                yield ','
-            else:
-                comma = True
-            for elem in param:
-                yield elem
-        yield ')'
+tree_converters.register_converter(SLOSL_SQL, SQLExpressionBuilder())
 
 
 class SQLViewBuilder(object):
@@ -269,12 +240,10 @@ class SQLViewBuilder(object):
                                             ','.join(imap(str, values))) )
         return ';'.join(selects)
 
-    _SQL_CONVERTER = SQLExpressionConverter()
     def _expr_to_sql(self, expression):
-        if expression:
-            converter = self._SQL_CONVERTER
+        if hasattr(expression, 'serialize'):
             # FIXME: collect dependencies somewhere!!
-            return converter.to_string(expression.parsed_expression)
+            return expression.serialize(SLOSL_SQL)
         else:
             return ''
 
