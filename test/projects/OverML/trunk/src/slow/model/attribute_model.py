@@ -55,9 +55,7 @@ class Attribute(AttributeClass):
     _get_identifier,   _set_identifier   = _bool_element(u"identifier")
 
 
-etree.register_namespace_classes(DB_NAMESPACE_URI, {
-    None          : AttributeClass,
-    u'attributes' : AttributeRoot,
-    u'attribute'  : Attribute,
-    }
-)
+ns = etree.Namespace(DB_NAMESPACE_URI)
+ns[None]          = AttributeClass
+ns[u'attributes'] = AttributeRoot
+ns[u'attribute']  = Attribute

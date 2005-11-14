@@ -75,8 +75,6 @@ class TypeModel(XPathModel):
     _get_type_names =u"./*/@type_name"
 
 
-etree.register_namespace_classes(SLOW_FILE_NAMESPACE_URI, {
-    u'file'  : FileModel,
-    u'types' : TypeModel,
-    }
-)
+ns = etree.Namespace(SLOW_FILE_NAMESPACE_URI)
+ns[u'file']  = FileModel
+ns[u'types'] = TypeModel

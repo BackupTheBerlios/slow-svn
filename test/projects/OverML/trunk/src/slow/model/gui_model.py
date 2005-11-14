@@ -32,7 +32,6 @@ class IconPositionModel(XPathModel):
         self.set(u'y', str(pos_tuple[1]))
 
 
-etree.register_namespace_classes(GUI_NAMESPACE_URI, {
-    u'gui' : GuiDataModel,
-    u'pos' : IconPositionModel
-    })
+ns = etree.Namespace(GUI_NAMESPACE_URI)
+ns[u'gui'] = GuiDataModel
+ns[u'pos'] = IconPositionModel

@@ -221,7 +221,8 @@ class AugmenterMetaClass(type):
         def attribute_access(path, validator):
             attr_type = mcls.match_attribute_type(path)
             if attr_type:
-                typecast = __builtins__[attr_type.group(1)]
+                attr_type = attr_type.group(1)
+                typecast = __builtins__[attr_type]
                 path = path.split('#', 1)[1]
             else:
                 typecast = None
@@ -513,8 +514,11 @@ class AugmenterMetaClass(type):
             schema = None
 
         if schema:
-            relaxng_doc = etree.parse( StringIO(schema) )
-            rng_schema  = etree.RelaxNG(relaxng_doc)
+            if hasattr(schema, 'validate'):
+                rng_schema = schema
+            else:
+                relaxng_doc = etree.parse( StringIO(schema) )
+                rng_schema  = etree.RelaxNG(relaxng_doc)
 
             def validate(self):
                 return rng_schema.validate(ElementTree(self))
@@ -528,7 +532,7 @@ class XPathModel(ElementBase):
         """Remove empty or unnecessary or other children/text/etc that may
         hinder validation or bloat the XML output.
         """
-        for child in self[:]: # work around bug in lxml by avoiding an iterator
+        for child in self:
             if hasattr(child, '_strip') and child._strip:
                 child._strip()
         self._strip_text()
@@ -797,10 +801,8 @@ if __name__ == '__main__':
         def _set_t(self, t, value):
             self._update_xpath_attribute(self._compiled_xpath_bla2, u't', unicode(value), t=t)
 
-    etree.register_namespace_classes(None, {
-        'bla1' : Test
-        })
-
+    ns = etree.Namespace(None)
+    ns['bla1'] = Test
 
     tree = ElementTree(file=StringIO(xml_data))
     #print dir(tree)

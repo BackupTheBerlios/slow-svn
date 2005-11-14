@@ -251,12 +251,10 @@ class EDSMTransitionModel(EDSMClass, EDSMTransition, NamedObject):
     discard = disconnect_element
 
 
-etree.register_namespace_classes(EDSM_NAMESPACE_URI, {
-    None          : EDSMClass,
-    u'code'       : EDSMCodeContainer,
-    u'edsm'       : EDSMRootModel,
-    u'subgraph'   : EDSMSubgraphModel,
-    u'state'      : EDSMStateModel,
-    u'transition' : EDSMTransitionModel,
-    }
-)
+ns = etree.Namespace(EDSM_NAMESPACE_URI)
+ns[None]          = EDSMClass
+ns[u'code']       = EDSMCodeContainer
+ns[u'edsm']       = EDSMRootModel
+ns[u'subgraph']   = EDSMSubgraphModel
+ns[u'state']      = EDSMStateModel
+ns[u'transition'] = EDSMTransitionModel

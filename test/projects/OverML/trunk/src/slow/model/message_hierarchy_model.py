@@ -72,11 +72,11 @@ class MessageModel(MessageFieldHierarchy, AccessibleMixin):
     TYPE_NAME = 'message'
 
 
-etree.register_namespace_classes(MSG_NAMESPACE_URI, dict(chain(
+ns = etree.Namespace(MSG_NAMESPACE_URI)
+ns.update( chain(
     ( (cls.TYPE_NAME, cls)
       for cls in globals().itervalues()
       if hasattr(cls, 'TYPE_NAME')
       ),
     [ (None, MessageHierarchyBaseClass) ]
     ))
-)

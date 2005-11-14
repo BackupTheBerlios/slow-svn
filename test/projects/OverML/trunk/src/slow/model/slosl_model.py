@@ -10,7 +10,6 @@ __all__ = ('RankingFunction', 'SloslStatement', 'SLOSL_NAMESPACE_URI')
     
 
 SLOSL_NAMESPACE_URI = u"http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl"
-SLOSL_RNG = os.path.join(os.path.dirname(__file__), "..", "schema", "slosl.m.rng")
 
 SLOSL_NAMESPACE_DICT = {u'slosl' : SLOSL_NAMESPACE_URI}
 
@@ -20,6 +19,7 @@ from lxml.etree      import ElementTree, Element, SubElement
 from xpathmodel      import XPathModel, XPathModelHelper, result_filter, autoconstruct, get_first
 from mathml.lmathdom import MathDOM
 
+from slow.schema import SCHEMAS
 
 __statements_tag = u"{%s}statements" % SLOSL_NAMESPACE_URI
 def buildStatements():
@@ -35,13 +35,7 @@ def buildStatement(statements=None):
 
 EMPTY_MODEL = Element(__statements_tag)
 
-__schema = open(SLOSL_RNG, 'r')
-SLOSL_RNG_SCHEMA = unicode(__schema.read(), 'UTF-8')
-__schema.close()
-del __schema
-
-_RE_GRAMMAR = re.compile(r'(<grammar[^>]*>)')
-_GRAMMAR_START = r'\1<start><ref name="%s"/></start>'
+SLOSL_RNG_SCHEMA = SCHEMAS['slosl']
 
 
 def _build_named_attribute(name, *args):
@@ -57,7 +51,7 @@ class SloslElement(XPathModel):
 
 class SloslStatements(SloslElement):
     DEFAULT_ROOT_NAME=u'statements'
-    DOCUMENT_SCHEMA = _RE_GRAMMAR.sub(_GRAMMAR_START % u"slosl_statements", SLOSL_RNG_SCHEMA, 1)
+    DOCUMENT_SCHEMA = SLOSL_RNG_SCHEMA.copy(start=u"slosl_statements")
 
     _get_names = u"./slosl:statement/@name"
     def _get_statements(self):
@@ -100,10 +94,10 @@ class RankingFunction(SloslElement):
         'furthest': 3
         }
 
-    _get_function = u"string(./@name)"
+    _get_function = u"string(./@function)"
     def _set_function(self, name):
         arg_count = self.FUNCTIONS[name]
-        self.set(u'name', name)
+        self.set(u'function', name)
 
         while len(self) < arg_count:
             SubElement(self, u'{%s}parameter' % SLOSL_NAMESPACE_URI)
@@ -118,14 +112,14 @@ class RankingFunction(SloslElement):
         return _xpath_result
 
     def function_parameter_count(self):
-        return self.FUNCTIONS[ self.get(u'name') ]
+        return self.FUNCTIONS[ self.get(u'function') ]
 
     @get_first
     def _get_parameter(self, i):
         u"./{%(DEFAULT_NAMESPACE)s}parameter[$i+1]/*"
     def _set_parameter(self, _xpath_result, i, value_node):
         u"./{%(DEFAULT_NAMESPACE)s}parameter[$i+1]"
-        arg_count = self.FUNCTIONS[ self.get(u'name') ]
+        arg_count = self.FUNCTIONS[ self.get(u'function') ]
         if _xpath_result:
             parent = _xpath_result[0]
         elif i < arg_count:
@@ -139,7 +133,7 @@ class RankingFunction(SloslElement):
 
 class SloslStatement(SloslElement):
     DEFAULT_ROOT_NAME = u'statement'
-    DOCUMENT_SCHEMA = _RE_GRAMMAR.sub(_GRAMMAR_START % u"slosl_statement", SLOSL_RNG_SCHEMA, 1)
+    DOCUMENT_SCHEMA = SLOSL_RNG_SCHEMA.copy(start=u"slosl_statement")
 
     _get_where,  _set_where,  _del_where  = _build_slosl_tree_node(u'where')
     _get_having, _set_having, _del_having = _build_slosl_tree_node(u'having')
@@ -191,7 +185,7 @@ class SloslStatement(SloslElement):
 
     @result_filter(bool)
     def _get_bucket(self):
-        u"./{%(DEFAULT_NAMESPACE)s}buckets[@bucket = 'true'] or not(./{%(DEFAULT_NAMESPACE)s}buckets)"
+        u"./{%(DEFAULT_NAMESPACE)s}buckets[@inherit = 'true'] or not(./{%(DEFAULT_NAMESPACE)s}buckets)"
     @autoconstruct(u'.', u'{%(DEFAULT_NAMESPACE)s}buckets')
     def _set_bucket(self, _xpath_result, value):
         u"./{%(DEFAULT_NAMESPACE)s}buckets"
@@ -201,16 +195,15 @@ class SloslStatement(SloslElement):
             node.clear()
         else:
             str_val = 'false'
-        node.set(u'bucket', str_val)
+        node.set(u'inherit', str_val)
 
 
-etree.register_namespace_classes(SLOSL_NAMESPACE_URI, {
-    None          : SloslElement,
-    u'statements' : SloslStatements,
-    u'statement'  : SloslStatement,
-    u'ranked'     : RankingFunction
-    }
-)
+ns = etree.Namespace(SLOSL_NAMESPACE_URI)
+ns[None]          = SloslElement
+ns[u'statements'] = SloslStatements
+ns[u'statement']  = SloslStatement
+ns[u'ranked']     = RankingFunction
+
 
 if __name__ == '__main__':
     from mathml import MATHML_NAMESPACE_URI
@@ -264,201 +257,3 @@ if __name__ == '__main__':
 
     print
     print statements.validate() and "Valid" or "Invalid"
-
-"""
-class VariableDeclaration(NamedObject, ParsedValue):
-    PARSER = BaseParser.p_any_list
-    def __init__(self, name=None, values=None):
-        NamedObject.__init__(self, name)
-        ParsedValue.__init__(self)
-        if values is not None:
-            self.setDeclaration(values)
-
-    def validate(self, maybe_none=False):
-        return ParsedValue.validate(self, maybe_none) and \
-               NamedObject.validate(self, maybe_none)
-    def __repr__(self):
-        return "%s: %s" % (self._name, self._declaration)
-
-    def getDeclaration(self):
-        return self._value
-    def setDeclaration(self, declaration):
-        self._parse(declaration)
-    declaration = property(getDeclaration, setDeclaration)
-
-    @property
-    def parsed_declaration(self):
-        return self._parsed
-
-class AssignableName(NamedObject, ParsedValue):
-    PARSER = ArithmeticParser.p_arithmetic_exp
-    def __init__(self, name=None, value=None):
-        NamedObject.__init__(self, name)
-        ParsedValue.__init__(self, value)
-
-    def validate(self, maybe_none=False):
-        return NamedObject.validate(self, maybe_none) and \
-               (self._value is not None or maybe_none)
-    def __repr__(self):
-        if self._value is None:
-            return self._name
-        else:
-            return "%s = %s" % (self._name, self._value)
-
-    def getValue(self):
-        return self._value
-    def setValue(self, value):
-        self._value = value
-    value = property(getValue, setValue)
-
-class AssignableAttribute(AssignableName):
-    pass
-
-class AssignableOption(AssignableName):
-    pass
-
-
-class FunctionParameter(ParsedValue):
-    PARSER = ArithmeticParser.p_arithmetic_exp
-
-class RankingFunction(NamedObject):
-    VALID_FUNCTIONS = ('lowest', 'highest', 'closest', 'furthest')
-    PARAMETER_COUNT = dict(zip(VALID_FUNCTIONS, (2,2,3,3)))
-    def __init__(self, name=None, params=None):
-        self._param_count = 0
-        NamedObject.__init__(self, name)
-        if params is not None:
-            self.setParameters(*params)
-        else:
-            self._params = (None,)*3
-
-    def validate(self, maybe_none=False):
-        return NamedObject.validate(self, maybe_none) and \
-               maybe_none or not [ p for p in self.getParameters() if p is not None ]
-    def __repr__(self):
-        return "%s(%s)" % (self._name, ', '.join(imap(str, self._params)))
-
-    def _acceptsName(self, name):
-        return name in self.VALID_FUNCTIONS
-    def _setName(self, name):
-        self._name, self._param_count = name, self.PARAMETER_COUNT[name]
-
-    def setParameters(self, param1, param2, param3=None):
-        if self._param_count < 3:
-            param3 = None
-        self._params = tuple(imap(FunctionParameter,
-                                  (param1, param2, param3)))
-    def getParameters(self):
-        return tuple(p._value for p in islice(self._params, self._param_count))
-    parameters = property(getParameters, setParameters)
-
-
-class Expression(ParsedValue):
-    def __init__(self, expression=None):
-        ParsedValue.__init__(self, expression)
-        self._expression = expression
-
-    def getExpression(self):
-        return self._expression
-    def setExpression(self, expression):
-        self._parse(expression)
-        self._expression = expression
-    expression = property(getExpression, setExpression)
-
-    @property
-    def parsed_expression(self):
-        return self._parsed
-
-
-class ArithmeticExpression(Expression):
-    PARSER = ArithmeticParser.p_arithmetic_exp
-
-class BooleanExpression(Expression):
-    PARSER = BoolExpressionParser.p_bool_exp
-
-
-class SloslStatement(GenericModel):
-    _TYPE_MAPPING = {
-        'view'        : NamedObject,
-        'select'      : {'name' : AssignableAttribute},
-        'from'        : {'name' : NamedObject},
-        'with'        : {'name' : AssignableAttribute},
-        'ranked'      : RankingFunction,
-        'where'       : BooleanExpression,
-        'having'      : BooleanExpression,
-        'foreach'     : {'name' : VariableDeclaration},
-        'bucket'      : bool,
-        'selected'    : bool,
-        'distinct'    : bool
-        }
-
-    @property
-    def name(self):
-        name = self._view
-        if name:
-            return str(name)
-        else:
-            return ''
-
-    @property
-    def attribute_dependencies(self):
-        return [ a for a in self.dependencies
-                 if isinstance(a, Attribute) ]
-
-    @property
-    def variable_dependencies(self):
-        return [ v for v in self.dependencies
-                 if isinstance(v, Variable) ]
-
-    @property
-    def function_dependencies(self):
-        return [ f for f in self.dependencies
-                 if isinstance(f, Function) ]
-
-    @property
-    def dependencies(self):
-        expressions = (
-            expression.parsed_value
-            for expression in chain(self.iterselect(), self.iterwith(),
-                                    self.iterforeach(),
-                                    (self.where, self.having))
-            if hasattr(expression, 'parsed_value')
-            )
-
-        rank_function = self.ranked
-        if rank_function:
-            rank_params = rank_function.parameters
-        else:
-            rank_params = ()
-
-        return frozenset(chain(*map(self._find_symbols,
-                                    chain(rank_params, expressions))))
-
-    def _find_symbols(self, parsed_expression):
-        if not parsed_expression:
-            return ()
-        symbols = set()
-        for elem in parsed_expression:
-            if isinstance(elem, (tuple, list)):
-                symbols.update(imap(self._find_symbols, elem))
-            elif isinstance(elem, (Variable, Attribute)):
-                symbols.add(elem)
-            elif isinstance(elem, Function):
-                symbols.add(elem)
-                symbols.update(imap(self._find_symbols, elem.function_parameters))
-        return symbols
-
-    def validate(self):
-        for name in self._TYPE_MAPPING.iterkeys():
-            value = getattr(self, name, None)
-            validate = getattr(value, 'validate', None)
-            maybe_none = name not in ('view', 'select', 'from')
-            if validate and not validate(maybe_none):
-                return False
-        return True
-
-    def __repr__(self):
-        return '\n'.join( "%s %r" % (name, getattr(self, name))
-                          for name in self._TYPE_MAPPING.iterkeys() )
-
-"""

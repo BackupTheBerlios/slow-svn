@@ -34,6 +34,5 @@ class PreferenceModel(XPathModel):
             if isinstance(value, property):
                 yield name, getattr(self, name)
 
-etree.register_namespace_classes(PREF_NAMESPACE_URI, {
-    u'prefs' : PreferenceModel,
-})
+ns = etree.Namespace(PREF_NAMESPACE_URI)
+ns[u'prefs'] = PreferenceModel
