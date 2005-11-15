@@ -639,10 +639,6 @@ class EDSMEditor(EDSMEditorItem):
         dialog.show()
 
     def edsm_model_updated(self, model):
-        if model.type_name in ('state', 'subgraph'):
-            item = self.current_iconview().currentItem()
-            if item:
-                item.update_model()
         self.emit_graph_changed()
 
     __GRAPH_CHANGED_SIGNAL = PYSIGNAL('graphChanged()')
