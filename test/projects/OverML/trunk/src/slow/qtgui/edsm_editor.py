@@ -585,9 +585,9 @@ class EDSMEditor(EDSMEditorItem):
             iconview.takeItem(state)
         model = state._model
         if isinstance(state, IconViewSubgraphIcon):
-            name = model.name
+            iconview_name = model.id
             for iconview in self.iconviews(1):
-                if iconview.name() == name:
+                if iconview.name() == iconview_name:
                     iconview.clear()
                     self.edsm_tabs.removePage(iconview)
         model.discard()
