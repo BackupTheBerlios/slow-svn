@@ -477,6 +477,14 @@ class EDSMEditor(EDSMEditorItem):
     def iconviews(self, start=0):
         return map(self.edsm_tabs.page, range(start, self.edsm_tabs.count()))
 
+    def iconviewById(self, view_id):
+        get_page = self.edsm_tabs.page
+        for i in range(self.edsm_tabs.count()):
+            iconview = get_page(i)
+            if iconview.name() == view_id:
+                return iconview
+        return None
+
     def _store_gui_data(self, gui_data):
         for iconview in self.iconviews():
             item = iconview.firstItem()
@@ -639,6 +647,10 @@ class EDSMEditor(EDSMEditorItem):
         dialog.show()
 
     def edsm_model_updated(self, model):
+        if model.type_name == 'subgraph':
+            iconview = self.iconviewById(model.id)
+            if iconview:
+                self.edsm_tabs.setTabLabel(iconview, model.readable_name or model.name)
         self.emit_graph_changed()
 
     __GRAPH_CHANGED_SIGNAL = PYSIGNAL('graphChanged()')
