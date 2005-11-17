@@ -6,7 +6,7 @@ except ImportError:
 
 import sys, os
 
-VERSION  = '0.2.1'
+VERSION  = '0.3'
 PACKAGE_NAME = 'slow'
 PACKAGES = ['slow', 'slow.model', 'slow.qtgui', 'slow.xslt']
 PACKAGE_DIRS = {'slow' : 'src/slow'}
