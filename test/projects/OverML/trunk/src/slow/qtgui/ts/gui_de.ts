@@ -743,6 +743,70 @@ Designing overlays in no-time!&lt;/p&gt;</source>
         <source>Flat export...</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Node init code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Test</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>Must return a list of nodes for initializing the database.&lt;br&gt;
+Available Functions:&lt;br&gt;
+&lt;b&gt;buildNode&lt;/b&gt;(&lt;i&gt;attr1&lt;/i&gt;=value1, ...)</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>&amp;4 Test</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Run test</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Call &lt;font face=&quot;Monospace&quot;&gt;buildNode()&lt;/font&gt; for each node in the database.&lt;br&gt;
+Additional available Functions:&lt;br&gt;
+&lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;buildNode&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;attr1&lt;/i&gt;=&lt;i&gt;value1&lt;/i&gt;, ...)&lt;br&gt;
+&lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;randint&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;min&lt;/i&gt;, &lt;i&gt;max&lt;/i&gt;)</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>GraphViz program to use:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>dotty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>neato</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>fdp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>dot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Python builtins are available, plus:&lt;br&gt;
+&lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;buildNode&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;attr1&lt;/i&gt;=&lt;i&gt;value1&lt;/i&gt;, ...)&lt;br&gt;
+ - build a new node and initialize it with the specified attributes&lt;br&gt;
+&lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;randint&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;min&lt;/i&gt;, &lt;i&gt;max&lt;/i&gt;)&lt;br&gt;
+ - get a random integer value&lt;br&gt;
+Functions to reimplement:&lt;br&gt;
+&lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;make_foreign&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;node&lt;/i&gt;)&lt;br&gt;
+ - transform local to foreign node (add/modify attributes, etc.)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>circo</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PrefDialog</name>

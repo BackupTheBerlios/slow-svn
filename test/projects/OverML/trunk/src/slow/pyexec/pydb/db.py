@@ -4,7 +4,6 @@ except:
     pass
 
 from weakref import WeakValueDictionary
-from utils import cachedmethod
 from observable import Observable, ReflectiveObservable
 
 import logging
@@ -15,19 +14,23 @@ class NodeDB(ReflectiveObservable):
     NOTIFY_REMOVE_NODES = 'remove_nodes'
     NOTIFY_UPDATE_NODES = 'update_nodes'
 
-    def __init__(self, name, attributes=None, attribute_defaults=None,
-                 node_filter=None, node_identifier=None):
+    def __init__(self, name, local_node,
+                 attributes, attribute_defaults=None):
         ReflectiveObservable.__init__(self)
         self.name = name
-        self.setNodeFilter(node_filter)
-        self.setNodeIdentifier(node_identifier)
-        if not attributes:
-            attributes = {}
-            self.__orig_attributes = None
-        else:
-            self.__orig_attributes = attributes
+        self.local_node = local_node
+
+        self.__identifiers = [ attribute.name for attribute in attributes
+                               if attribute.identifier ]
+
+        def node_identifier(node):
+            return tuple(getattr(node, name) for name in self.__identifiers)
+
+        self.node_identifier = node_identifier
+        self.__orig_attributes = attributes
         self.__attributes = attributes
         self.__attribute_defaults = attribute_defaults or {}
+
         self.__nodes = {}
         self.__views = {}
 
@@ -39,33 +42,23 @@ class NodeDB(ReflectiveObservable):
     def __true_predicate(self, node):
         return True
 
-    def setNodeFilter(self, node_filter=None):
-        if not node_filter:
-            node_filter = self.__true_predicate
-        self.node_filter = node_filter
-
-    def setNodeIdentifier(self, node_identifier=None):
-        if not node_identifier:
-            node_identifier = hash
-        self.node_identifier = node_identifier
-
-    def addAttribute(self, name, atype, default_value=None):
-        attributes = self.__attributes
-        if name in attributes:
-            raise ValueError, "Attribute '%s' is already declared." % name
-        if attributes is self.__orig_attributes:
-            self.__attributes = attributes = attributes.copy()
-        attributes[name] = atype
-        self.__attribute_defaults[name] = default_value
+##     def addAttribute(self, name, atype, default_value=None):
+##         attributes = self.__attributes
+##         if name in attributes:
+##             raise ValueError, "Attribute '%s' is already declared." % name
+##         if attributes is self.__orig_attributes:
+##             self.__attributes = attributes = attributes.copy()
+##         attributes[name] = atype
+##         self.__attribute_defaults[name] = default_value
 
     def getAttributeTypes(self):
         return self.__attributes
 
     def getNodeAttributes(self):
-        return self.__attributes.keys()
+        return [ a.name for a in self.__attributes ]
 
     def getAttributeType(self, name):
-        return self.__attributes[name]
+        return self.__attributes.getAttribute(name)
 
     def getAttributeDefault(self, name):
         try:
@@ -86,14 +79,25 @@ class NodeDB(ReflectiveObservable):
         self.addNodes( (node,) )
 
     def addNodes(self, nodes):
-        node_filter = self.node_filter
+        identifier = self.node_identifier
+        identifiers = self.__identifiers
+        local_node  = self.local_node
+
+        def is_local_node(node):
+            for id_attr in identifiers:
+                try:
+                    if getattr(node, id_attr) == getattr(local_node, id_attr):
+                        return True
+                except AttributeError:
+                    pass
+            return False
+
         wrap_node   = self.wrap_node
         current_nodes = self.__nodes
-        identifier    = self.node_identifier
         added   = []
         updated = []
         for node in nodes:
-            if not node_filter(node):
+            if is_local_node(node):
                 continue
             node_id = identifier(node)
             db_node = current_nodes.get( node_id )
@@ -151,7 +155,7 @@ class DBNode(object):
         self._database = database
         self._values   = kwargs
 
-        for attribute_name in self._database.getAttributeTypes():
+        for attribute_name in self._database.getNodeAttributes():
             self.__create_attribute(attribute_name)
 
         self.setChangeObserver(change_observer)
@@ -196,6 +200,16 @@ class DBNode(object):
     def __repr__(self):
         return "node[%s]" % ','.join( "%s=%r" % (name, getattr(self,name))
                                       for name in sorted(self._database.getAttributeTypes()) )
+
+
+class LocalNode(object):
+    def __init__(self, **kwargs):
+        self._attributes = kwargs.keys()
+        self.__dict__.update(kwargs)
+
+    def __repr__(self):
+        return "node[%s]" % ','.join( "%s=%r" % (name, getattr(self,name))
+                                      for name in self._attributes )
 
 
 ################################################################################
@@ -425,7 +439,7 @@ class PropertyTransformer(object):
     def __init__(self, get_transform, set_transform):
         self._get_transform, self._set_transform = get_transform, set_transform
 
-    @cachedmethod
+#    @cachedmethod
     def __build_setter(self, property_object, transform, setter):
         if transform:
             def set_transform(value):
@@ -436,7 +450,7 @@ class PropertyTransformer(object):
 
         return set_transform
 
-    @cachedmethod
+#    @cachedmethod
     def __build_getter(self, property_object, transform, getter):
         if transform:
             def get_transform():

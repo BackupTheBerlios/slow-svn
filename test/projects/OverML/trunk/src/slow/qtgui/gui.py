@@ -18,16 +18,11 @@ from edsm_editor       import EDSMEditor
 from slosl_editor      import SLOSLEditor
 from attribute_editor  import AttributeEditor
 from message_editor    import MessageEditor
+from test_editor       import TestEditor
 
 from slow.xslt import STYLESHEETS
 from slow.model.file_model       import buildFile
 from slow.model.preference_model import buildPreferences
-
-## from serialization.file_serializer import FileSerializer, FileDeserializer
-## from serialization.pref_serializer import PrefSerializer, PrefDeserializer
-
-#from slow.model.preference_model import PreferenceModel
-#from slow.model.sqldata_model    import SqlDataTypes as DataTypes
 
 from lxml import etree
 
@@ -331,7 +326,7 @@ class MenuFunctions(object):
 
 class OverlayDesigner_gui(MenuFunctions,
                           AttributeEditor, MessageEditor,
-                          SLOSLEditor, EDSMEditor,
+                          SLOSLEditor, EDSMEditor, TestEditor,
                           OverlayDesignerMainWindow):
     def __init__(self, parent=None, name=None, fl=0):
         self.__class__.tr = OverlayDesignerMainWindow._OverlayDesignerMainWindow__tr
@@ -353,7 +348,7 @@ class OverlayDesigner_gui(MenuFunctions,
         self.identifier_list_validator = IdentifierValidator(self, allow_list=True)
 
         for supertype in (MenuFunctions, AttributeEditor, MessageEditor,
-                          SLOSLEditor, EDSMEditor):
+                          SLOSLEditor, EDSMEditor, TestEditor):
             supertype.__init__(self)
 
         self.setupModelFromTree(self.current_tree)
@@ -392,9 +387,10 @@ class OverlayDesigner_gui(MenuFunctions,
             statusbar.clear()
 
     def overlay_tab_currentChanged(self, tab_widget):
-        return
-        print tab_widget, tab_widget.name()
-
+        method = getattr(self, 'activate_%s' % tab_widget.name(), None)
+        if method:
+            method()
+        #print tab_widget, tab_widget.name()
 
 if __name__ == '__main__':
     import sys, optparse

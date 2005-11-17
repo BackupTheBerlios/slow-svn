@@ -12,11 +12,9 @@ from string import Template
 from tests import run_testsuites
 
 from specparser import ParseException, StatementParser
-from viewspec   import ViewSpecification, parse_view_spec, Bucket
-from views      import NodeView, ViewRegistry
-from db         import NodeDB, DBNode
-
-from sqldb import SQLNodeView
+from viewspec   import ViewSpecification, parse_view_spec
+from slow.pyexec.pydb.views import NodeView, ViewRegistry
+from slow.pyexec.pydb.db    import NodeDB, DBNode
 
 ################################################################################
 

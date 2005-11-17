@@ -300,3 +300,15 @@ void OverlayDesignerMainWindow::exportFlat()
 {
 
 }
+
+
+void OverlayDesignerMainWindow::test_view_select_comboBox_activated( const QString & )
+{
+
+}
+
+
+void OverlayDesignerMainWindow::test_run_button_clicked()
+{
+
+}

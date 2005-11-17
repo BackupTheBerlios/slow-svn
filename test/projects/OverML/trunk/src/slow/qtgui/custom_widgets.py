@@ -180,6 +180,7 @@ class DotGraphWidget(QWidget):
 
         self.rebuild_running = False
         self.reschedule = False
+        self._editor = None
 
     def set_editor(self, editor):
         self._editor = editor
@@ -188,6 +189,9 @@ class DotGraphWidget(QWidget):
     def rebuild_graph(self):
         if self.rebuild_running:
             self.reschedule = True
+            return
+
+        if not self._editor:
             return
 
         editor = self._editor

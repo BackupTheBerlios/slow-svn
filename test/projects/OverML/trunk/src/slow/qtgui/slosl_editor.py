@@ -74,7 +74,7 @@ class SLOSLEditor(object):
         self.__model = slosl_model.buildStatement(self.__slosl_models)
         self.__current_foreach_entry = None
 
-    def slosl_models(self):
+    def slosl_model(self):
         return self.__slosl_models
 
     def _add_model_to_list(self, model):

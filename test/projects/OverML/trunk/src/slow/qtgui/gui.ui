@@ -1741,6 +1741,161 @@ Python:    }
                     </widget>
                 </vbox>
             </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>test_tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>&amp;4 Test</string>
+                </attribute>
+                <hbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QSplitter">
+                        <property name="name">
+                            <cstring>splitter6</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <widget class="QFrame">
+                            <property name="name">
+                                <cstring>frame13</cstring>
+                            </property>
+                            <property name="frameShape">
+                                <enum>StyledPanel</enum>
+                            </property>
+                            <property name="frameShadow">
+                                <enum>Raised</enum>
+                            </property>
+                            <grid>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <widget class="QComboBox" row="0" column="0" rowspan="1" colspan="2">
+                                    <property name="name">
+                                        <cstring>test_view_select_comboBox</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>7</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                </widget>
+                                <widget class="QPushButton" row="0" column="2">
+                                    <property name="name">
+                                        <cstring>test_run_button</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Run test</string>
+                                    </property>
+                                </widget>
+                                <widget class="QLabel" row="1" column="0">
+                                    <property name="name">
+                                        <cstring>textLabel2_2</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>GraphViz program to use:</string>
+                                    </property>
+                                    <property name="buddy" stdset="0">
+                                        <cstring>test_graphviz_program_comboBox</cstring>
+                                    </property>
+                                </widget>
+                                <widget class="QComboBox" row="1" column="1" rowspan="1" colspan="2">
+                                    <item>
+                                        <property name="text">
+                                            <string>neato</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>circo</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>dotty</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>fdp</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>dot</string>
+                                        </property>
+                                    </item>
+                                    <property name="name">
+                                        <cstring>test_graphviz_program_comboBox</cstring>
+                                    </property>
+                                </widget>
+                                <widget class="QGroupBox" row="2" column="0" rowspan="1" colspan="3">
+                                    <property name="name">
+                                        <cstring>groupBox3_2</cstring>
+                                    </property>
+                                    <property name="title">
+                                        <string>Node init code</string>
+                                    </property>
+                                    <vbox>
+                                        <property name="name">
+                                            <cstring>unnamed</cstring>
+                                        </property>
+                                        <widget class="QLabel">
+                                            <property name="name">
+                                                <cstring>textLabel1_2</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>All Python builtins are available, plus:&lt;br&gt;
+&lt;font face="Monospace"&gt;&lt;b&gt;buildNode&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;attr1&lt;/i&gt;=&lt;i&gt;value1&lt;/i&gt;, ...)&lt;br&gt;
+ - build a new node and initialize it with the specified attributes&lt;br&gt;
+&lt;font face="Monospace"&gt;&lt;b&gt;randint&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;min&lt;/i&gt;, &lt;i&gt;max&lt;/i&gt;)&lt;br&gt;
+ - get a random integer value&lt;br&gt;
+Functions to reimplement:&lt;br&gt;
+&lt;font face="Monospace"&gt;&lt;b&gt;make_foreign&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;node&lt;/i&gt;)&lt;br&gt;
+ - transform local to foreign node (add/modify attributes, etc.)</string>
+                                            </property>
+                                            <property name="textFormat">
+                                                <enum>RichText</enum>
+                                            </property>
+                                        </widget>
+                                        <widget class="QTextEdit">
+                                            <property name="name">
+                                                <cstring>test_init_code</cstring>
+                                            </property>
+                                            <property name="font">
+                                                <font>
+                                                    <family>Monospace</family>
+                                                </font>
+                                            </property>
+                                            <property name="wordWrap">
+                                                <enum>NoWrap</enum>
+                                            </property>
+                                        </widget>
+                                    </vbox>
+                                </widget>
+                            </grid>
+                        </widget>
+                        <widget class="DotGraphWidget">
+                            <property name="name">
+                                <cstring>test_view_graph</cstring>
+                            </property>
+                            <property name="paletteBackgroundColor">
+                                <color>
+                                    <red>255</red>
+                                    <green>255</green>
+                                    <blue>255</blue>
+                                </color>
+                            </property>
+                        </widget>
+                    </widget>
+                </hbox>
+            </widget>
         </widget>
     </hbox>
 </widget>
@@ -2546,6 +2701,18 @@ Python:    }
         <receiver>OverlayDesignerMainWindow</receiver>
         <slot>exportFlat()</slot>
     </connection>
+    <connection>
+        <sender>test_view_select_comboBox</sender>
+        <signal>activated(const QString&amp;)</signal>
+        <receiver>OverlayDesignerMainWindow</receiver>
+        <slot>test_view_select_comboBox_activated(const QString&amp;)</slot>
+    </connection>
+    <connection>
+        <sender>test_run_button</sender>
+        <signal>clicked()</signal>
+        <receiver>OverlayDesignerMainWindow</receiver>
+        <slot>test_run_button_clicked()</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>overlay_tab</tabstop>
@@ -2616,9 +2783,12 @@ Python:    }
     <slot>editPreferences()</slot>
     <slot>message_listview_dropped( QDropEvent * )</slot>
     <slot>exportFlat()</slot>
+    <slot>test_view_select_comboBox_activated( const QString &amp; )</slot>
+    <slot>test_run_button_clicked()</slot>
 </slots>
 <layoutdefaults spacing="4" margin="4"/>
 <includehints>
+    <includehint>dotgraphwidget.h</includehint>
     <includehint>dotgraphwidget.h</includehint>
 </includehints>
 </UI>

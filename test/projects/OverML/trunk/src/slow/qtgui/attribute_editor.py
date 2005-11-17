@@ -180,6 +180,9 @@ class AttributeEditor(object):
         for attribute in attributes:
             build_item(attribute)
 
+    def attribute_model(self):
+        return self._attribute_descriptions
+
     def add_or_replace_node_attribute_clicked(self):
         a_name = qstrpy(self.node_attribute_name.text())
         if not a_name:
@@ -238,9 +241,9 @@ class AttributeEditor(object):
     def attribute_type_remove_clicked(self):
         name = qstrpy(self.type_name_field.text())
         if name in ALL_TYPES:
-            self.setStatus(self.tr("Cannot remove builtin type."))
+            self.__setStatus(self.tr("Cannot remove builtin type."))
         elif name in [ a.type_name for a in self._attribute_descriptions.itervalues() ]:
-            self.setStatus(self.tr("Cannot remove types used in attributes."))
+            self.__setStatus(self.tr("Cannot remove types used in attributes."))
         else:
             self.__custom_data_types.delType(name)
             type_list = self.node_attribute_type
