@@ -3,11 +3,21 @@ try:
 except:
     pass
 
-from weakref import WeakValueDictionary
-from observable import Observable, ReflectiveObservable
-
 import logging
+from weakref import WeakValueDictionary
 
+from observable import Observable, ReflectiveObservable
+from node       import StaticNode
+
+
+class PyAttribute(object):
+    def __init__(self, attribute):
+        self.name = attribute.name
+        self.type_name    = attribute.type_name
+        self.selected     = attribute.selected
+        self.transferable = attribute.transferable
+        self.identifier   = attribute.identifier
+        self.static       = attribute.static
 
 class NodeDB(ReflectiveObservable):
     NOTIFY_ADD_NODES    = 'add_nodes'
@@ -15,20 +25,20 @@ class NodeDB(ReflectiveObservable):
     NOTIFY_UPDATE_NODES = 'update_nodes'
 
     def __init__(self, name, local_node,
-                 attributes, attribute_defaults=None):
+                 pyattributes, attribute_defaults=None):
         ReflectiveObservable.__init__(self)
         self.name = name
         self.local_node = local_node
 
-        self.__identifiers = [ attribute.name for attribute in attributes
-                               if attribute.identifier ]
+        self.__identifiers = sorted( attribute.name for attribute in pyattributes.values()
+                                     if attribute.identifier )
 
         def node_identifier(node):
             return tuple(getattr(node, name) for name in self.__identifiers)
 
         self.node_identifier = node_identifier
-        self.__orig_attributes = attributes
-        self.__attributes = attributes
+        self.__orig_attributes = pyattributes
+        self.__attributes = pyattributes
         self.__attribute_defaults = attribute_defaults or {}
 
         self.__nodes = {}
@@ -51,14 +61,17 @@ class NodeDB(ReflectiveObservable):
 ##         attributes[name] = atype
 ##         self.__attribute_defaults[name] = default_value
 
+    def getIdentifiers(self):
+        return self.__identifiers
+
     def getAttributeTypes(self):
-        return self.__attributes
+        return self.__attributes.values()
 
     def getNodeAttributes(self):
-        return [ a.name for a in self.__attributes ]
+        return self.__attributes.keys()
 
     def getAttributeType(self, name):
-        return self.__attributes.getAttribute(name)
+        return self.__attributes[name]
 
     def getAttributeDefault(self, name):
         try:
@@ -202,17 +215,16 @@ class DBNode(object):
 
     def __repr__(self):
         return "node[%s]" % ','.join( "%s=%r" % (name, getattr(self,name,None))
-                                      for name in sorted(self._database.getNodeAttributes()) )
+                                      for name in self._getIDs() )
+
+    def _getIDs(self):
+        return self._database.getIdentifiers()
 
 
-class LocalNode(object):
-    def __init__(self, **kwargs):
-        self._attributes = kwargs.keys()
-        self.__dict__.update(kwargs)
-
-    def __repr__(self):
-        return "node[%s]" % ','.join( "%s=%r" % (name, getattr(self,name))
-                                      for name in self._attributes )
+class LocalNode(StaticNode):
+    def __init__(self, ids, **kwargs):
+        ids = sorted(name for name in ids if name in kwargs)
+        StaticNode.__init__(self, kwargs, ids)
 
 
 ################################################################################

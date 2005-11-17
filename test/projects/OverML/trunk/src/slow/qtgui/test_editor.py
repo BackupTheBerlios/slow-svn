@@ -2,13 +2,13 @@ STATIC_GLOBALS = globals().copy()
 exec 'from random import randint' in STATIC_GLOBALS
 
 from time import time
-from itertools import count
+from itertools import count, imap
 from qt import QStringList
 from qt_utils import qstrpy, pyqstr
 
 from slow.vis.view_viz import ViewGraph
-from slow.pyexec.pydb.views import NodeView, ViewRegistry
-from slow.pyexec.pydb.db    import NodeDB, DBNode, LocalNode
+from slow.pyexec.pydb.views import NodeView, ViewRegistry, PySlosl
+from slow.pyexec.pydb.db    import NodeDB, DBNode, LocalNode, PyAttribute
 
 DEFAULT_CODE = '''\
 NODES = 10
@@ -35,10 +35,7 @@ class TestRunner(object):
                     graphviz_program):
         import hotshot, hotshot.stats, os
 
-        try:
-            prof_filename = os.tempnam(None, 'slow-')
-        except RuntimeWarning:
-            pass
+        prof_filename = os.tempnam(None, 'slow-')
         prof = hotshot.Profile(prof_filename)
 
         graph = prof.runcall(self.build_graph, slosl_statements,
@@ -50,6 +47,8 @@ class TestRunner(object):
         stats.print_stats()
         os.remove(prof_filename)
 
+        return self.__build_svg(graph, graphviz_program)
+
     def run_test(self, slosl_statements, db_attributes, init_code,
                  graphviz_program):
         graph = self.build_graph(slosl_statements, db_attributes, init_code)
@@ -60,6 +59,9 @@ class TestRunner(object):
         if not ids:
             raise RuntimeError, "No identifiers specified."
 
+        pyslosl_statements = map(PySlosl, slosl_statements)
+        pyattributes       = dict( (a.name, a) for a in imap(PyAttribute, db_attributes) )
+
         node_setups = []
         all_nodes   = []
         def buildNode(**kwargs):
@@ -68,8 +70,8 @@ class TestRunner(object):
             except KeyError:
                 raise RuntimeError, "Node misses id attribute"
 
-            local_node = LocalNode(**kwargs)
-            db = NodeDB('db', local_node, db_attributes)
+            local_node = LocalNode(ids, **kwargs)
+            db = NodeDB('db', local_node, pyattributes)
             viewreg = ViewRegistry(db)
 
             node_setups.append( (local_node, db, viewreg) )
@@ -80,7 +82,6 @@ class TestRunner(object):
         static_globals['buildNode']    = buildNode
 
         # initialize nodes
-        self.status("Setting up nodes ...")
         exec init_code in static_globals
 
         make_foreign = static_globals['make_foreign']
@@ -88,7 +89,6 @@ class TestRunner(object):
             make_foreign = lambda x:x
 
         # copy nodes to all DBs and build node views
-        self.status("Copying nodes to databases ...")
         for local_node, local_db, local_viewreg in node_setups:
             for node in all_nodes:
                 if node is not local_node:
@@ -96,15 +96,13 @@ class TestRunner(object):
                     if attrs:
                         local_db.addNode( DBNode(local_db, **attrs) )
 
-        self.status("Creating node views ...")
         views_by_node = []
         for local_node, local_db, local_viewreg in node_setups:
             node_views = []
-            for statement in slosl_statements:
-                node_views.append( NodeView(statement, local_viewreg) )
+            for pyslosl in pyslosl_statements:
+                node_views.append( NodeView(pyslosl, local_viewreg) )
             views_by_node.append( (local_node, node_views) )
 
-        self.status("Generating graph ...")
         return ViewGraph(views_by_node).graph
 
 

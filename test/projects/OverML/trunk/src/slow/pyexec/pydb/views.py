@@ -22,6 +22,43 @@ from db         import NodeDB
 from node       import AbstractNode
 
 
+ATTRIBUTE_XPATH  = XPath(u"//{http://www.w3.org/1998/Math/MathML}ci[contains('node.', text())]")
+DEPENDENCY_XPATH = XPath(u"//{http://www.w3.org/1998/Math/MathML}ci")
+
+class PySlosl(object):
+    class PyRanked(object):
+        def __init__(self, ranked, _math_compile):
+            self.function = ranked.function
+            self.parameters = [
+                _math_compile(param, '<rankparam%d>' % i)
+                for i, param in enumerate(ranked.parameters)
+                ]
+    def __init__(self, slosl):
+        self.xml_slosl = slosl
+        self.attribute_dependencies = set(
+            a.name() for a in ATTRIBUTE_XPATH.evaluate(slosl))
+
+        mcompile = self._math_compile
+        self.name     = slosl.name
+        self.parents  = slosl.parents
+        self.bucket   = slosl.bucket
+        self.where    = mcompile(slosl.where,  '<where>')  or 'True'
+        self.having   = mcompile(slosl.having, '<having>') or 'True'
+        self.selects  = list((n, mcompile(v, '<select>'))  for (n,v) in slosl.selects)
+        self.withs    = list((n, mcompile(v, '<with>'))    for (n,v) in slosl.withs)
+        self.foreachs = list((n, mcompile(v, '<foreach>')) for (n,v) in slosl.foreachs)
+        try:
+            self.ranked = self.PyRanked(slosl.ranked, self._math_compile)
+        except AttributeError:
+            self.ranked = None
+
+    def _math_compile(self, expr, name):
+        try:
+            return compile(expr.serialize('python'), name, 'eval')
+        except AttributeError:
+            return None
+
+
 class DependencyError(AttributeError):
     __ERROR_LINE = "Parent view '%s' misses attribute '%s' that this view depends on."
     def __init__(self, parent_view_name, attr_name):
@@ -76,23 +113,18 @@ class ViewRegistry(object):
 
 #STATIC_VIEWREG = ViewRegistry() # FIXME: base_view ???
 
-ATTRIBUTE_XPATH  = XPath(u"//{http://www.w3.org/1998/Math/MathML}ci[contains('node.', text())]")
-DEPENDENCY_XPATH = XPath(u"//{http://www.w3.org/1998/Math/MathML}ci")
-
 class NodeView(ReflectiveObservable):
     """Holds a dict (of dicts of dicts of dicts) of nodes that match
     the view specification."""
-    def __init__(self, slosl_statement, viewreg, name_override=None, **variable_initializations):
+    def __init__(self, pyslosl, viewreg, name_override=None, **variable_initializations):
         ReflectiveObservable.__init__(self)
-        pyslosl = PySlosl(slosl_statement)
         self._slosl_statement = pyslosl
 
         self.parents  = tuple( viewreg[parent] # raises KeyError
                                for parent in pyslosl.parents )
         self.name     = name_override or pyslosl.name
         self._viewreg = viewreg
-        self._attribute_dependencies = set(
-            a.name() for a in ATTRIBUTE_XPATH.evaluate(slosl_statement))
+        self._attribute_dependencies = pyslosl.attribute_dependencies
         self._variables = variables = {}
         _globals = globals()
         _locals  = {}
@@ -134,16 +166,17 @@ class NodeView(ReflectiveObservable):
         Attributes are converted using the expressions defined in the
         view specification.
         """
-        statement = self._slosl_statement.xml_slosl
-        selects   = statement.selects
+        selects = self._slosl_statement.selects
 
+        dependencies = {}
         class ViewNode(AbstractNode):
             _attributes   = tuple(sorted(name for (name, value) in selects))
-            _dependencies = {}
-            __slots__ = ('_back_node', '_hashval', '_values') + _attributes
+            _dependencies = dependencies
+            __slots__ = ('_back_node', '_hashval', '_values', '_ids') + _attributes
             def __init__(self, back_node, value_dict):
                 self._back_node = back_node
                 self._hashval   = hash(back_node)
+                self._ids       = back_node._getIDs()
 
                 self._values = values = value_dict.copy()
                 values['node'] = back_node
@@ -153,18 +186,11 @@ class NodeView(ReflectiveObservable):
 ##                     propagate_qos(attribute.name, function)
 
         _globals = globals()
-        dependencies = ViewNode._dependencies
-        for attr_name, attr_value in selects:
-            try:
-                function = compile(attr_value.serialize('python'), '<select>', 'eval')
-            except AttributeError:
-                value = self.BackedAttributeDescriptor( attr_name )
-                f_dependencies = (attr_name,)
-            else:
-                value = self.FunctionAttributeDescriptor( function, _globals )
-                f_dependencies = set(d.name for d in DEPENDENCY_XPATH.evaluate(attr_value))
+        for attr_name, function in selects:
+            value = self.FunctionAttributeDescriptor( function, _globals )
             setattr(ViewNode, attr_name, value)
-            dependencies[attr_name] = f_dependencies
+##             f_dependencies = set(d.name for d in DEPENDENCY_XPATH.evaluate(attr_value))
+            dependencies[attr_name] = function.co_names
 
         return ViewNode
 
@@ -346,7 +372,7 @@ class NodeView(ReflectiveObservable):
         having_expr = spec.having
         def having(node):
             eval_globals['node'] = node
-            return bool(eval(having_expr, eval_globals, loop_value_dict))
+            return _bool(_eval(having_expr, eval_globals, loop_value_dict))
 
         candidates = filter(where, all_nodes)
 
@@ -422,44 +448,6 @@ def build_view_cascade(view_specs, viewreg, view_type=NodeView):
 
     return (views, tuple(remaining_specs))
 
-
-def pyeval(math_expr, locals):
-    if hasattr(math_expr, 'serialize'):
-        pyexpr = math_expr.serialize('python')
-    else:
-        pyexpr = str(math_expr)
-    return eval(pyexpr, globals(), locals)
-
-class PySlosl(object):
-    class PyRanked(object):
-        def __init__(self, ranked, _math_compile):
-            self.function = ranked.function
-            self.parameters = [
-                _math_compile(param, '<rankparam%d>' % i)
-                for i, param in enumerate(ranked.parameters)
-                ]
-    def __init__(self, slosl):
-        self.xml_slosl = slosl
-
-        mcompile = self._math_compile
-        self.name     = slosl.name
-        self.parents  = slosl.parents
-        self.bucket   = slosl.bucket
-        self.where    = mcompile(slosl.where  or 'True', '<where>')
-        self.having   = mcompile(slosl.having or 'True', '<having>')
-        self.selects  = list((n, mcompile(v, '<select>')) for (n,v) in slosl.selects)
-        self.withs    = list((n, mcompile(v, '<with>')) for (n,v) in slosl.withs)
-        self.foreachs = list((n, mcompile(v, '<foreach>')) for (n,v) in slosl.foreachs)
-        try:
-            self.ranked = self.PyRanked(slosl.ranked, self._math_compile)
-        except AttributeError:
-            self.ranked = None
-
-    def _math_compile(self, expr, name):
-        try:
-            return compile(expr.serialize('python'), name, 'eval')
-        except AttributeError:
-            return None
 
 class ViewFunctions(object):
     """Provide implementations of ranking functions.
