@@ -219,6 +219,10 @@ class OverlayDesigner_gui(OverlayDesignerMainWindow):
         print "OverlayDesigner_gui.test_run_button_clicked(): Not implemented yet"
 
 
+    def test_profile_button_clicked(self):
+        print "OverlayDesigner_gui.test_profile_button_clicked(): Not implemented yet"
+
+
 from genprefdialog import PrefDialog
 
 

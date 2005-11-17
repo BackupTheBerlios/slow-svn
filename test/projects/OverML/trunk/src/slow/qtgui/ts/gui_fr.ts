@@ -807,6 +807,10 @@ Functions to reimplement:&lt;br&gt;
         <source>circo</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PrefDialog</name>

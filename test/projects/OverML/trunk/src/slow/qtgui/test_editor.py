@@ -1,6 +1,7 @@
 STATIC_GLOBALS = globals().copy()
 exec 'from random import randint' in STATIC_GLOBALS
 
+from time import time
 from itertools import count
 from qt import QStringList
 from qt_utils import qstrpy, pyqstr
@@ -22,10 +23,39 @@ def make_foreign(local_node, attributes):
 '''
 
 class TestRunner(object):
-    def __init__(self):
+    def __init__(self, status_writer):
         self.static_globals = STATIC_GLOBALS
-        
-    def run_test(self, slosl_statements, db_attributes, init_code, graphviz_program):
+        self.status = status_writer
+
+    def __build_svg(self, graph, graphviz_program):
+        return graph.tostring('svg', graphviz_program,
+                              overlap='false', fontsize='8')
+
+    def run_profile(self, slosl_statements, db_attributes, init_code,
+                    graphviz_program):
+        import hotshot, hotshot.stats, os
+
+        try:
+            prof_filename = os.tempnam(None, 'slow-')
+        except RuntimeWarning:
+            pass
+        prof = hotshot.Profile(prof_filename)
+
+        graph = prof.runcall(self.build_graph, slosl_statements,
+                             db_attributes, init_code)
+        prof.close()
+        stats = hotshot.stats.load(prof_filename)
+        stats.strip_dirs()
+        stats.sort_stats('time', 'calls')
+        stats.print_stats()
+        os.remove(prof_filename)
+
+    def run_test(self, slosl_statements, db_attributes, init_code,
+                 graphviz_program):
+        graph = self.build_graph(slosl_statements, db_attributes, init_code)
+        return self.__build_svg(graph, graphviz_program)
+
+    def build_graph(self, slosl_statements, db_attributes, init_code):
         ids = sorted(a.name for a in db_attributes if a.identifier)
         if not ids:
             raise RuntimeError, "No identifiers specified."
@@ -50,6 +80,7 @@ class TestRunner(object):
         static_globals['buildNode']    = buildNode
 
         # initialize nodes
+        self.status("Setting up nodes ...")
         exec init_code in static_globals
 
         make_foreign = static_globals['make_foreign']
@@ -57,21 +88,24 @@ class TestRunner(object):
             make_foreign = lambda x:x
 
         # copy nodes to all DBs and build node views
-        views_by_node = []
+        self.status("Copying nodes to databases ...")
         for local_node, local_db, local_viewreg in node_setups:
             for node in all_nodes:
                 if node is not local_node:
                     attrs = make_foreign(local_node, dict(vars(node)))
                     if attrs:
                         local_db.addNode( DBNode(local_db, **attrs) )
+
+        self.status("Creating node views ...")
+        views_by_node = []
+        for local_node, local_db, local_viewreg in node_setups:
             node_views = []
             for statement in slosl_statements:
                 node_views.append( NodeView(statement, local_viewreg) )
             views_by_node.append( (local_node, node_views) )
 
-        view_graph = ViewGraph(views_by_node)
-        return view_graph.graph.tostring('svg', graphviz_program,
-                                         overlap='false', fontsize='10')
+        self.status("Generating graph ...")
+        return ViewGraph(views_by_node).graph
 
 
 class TestEditor(object):
@@ -80,7 +114,8 @@ class TestEditor(object):
         self.__view_tests = {}
         self.__current_test = None
         self.__running = False
-        self.__runner = TestRunner()
+
+        self.__runner = TestRunner(self.__setStatus)
 
     def activate_test_tab(self):
         slosl_model = self.slosl_model()
@@ -121,17 +156,23 @@ class TestEditor(object):
     def __stop_test(self):
         self.__running = False
 
+    def test_profile_button_clicked(self):
+        self.__run_test(self.__runner.run_profile)
+
     def test_run_button_clicked(self):
+        self.__run_test(self.__runner.run_test)
+
+    def __run_test(self, test_call):
         if self.__running:
             self.__stop_test()
         self.__running = True
 
         current_test = self.test_view_select_comboBox.currentText()
+        if current_test:
+            current_test = qstrpy(current_test)
         if not current_test:
             self.__setStatus(self.__tr("Please select a view to test"))
             return
-
-        current_test = qstrpy(current_test)
 
         slosl_model = self.slosl_model()
         statement = slosl_model.getStatement(current_test)
@@ -147,9 +188,12 @@ class TestEditor(object):
                 graphviz_program = 'neato'
 
             try:
-                result = self.__runner.run_test([statement], attribute_model,
-                                                init_code, graphviz_program)
+                t = time()
+                result = test_call([statement], attribute_model,
+                                     init_code, graphviz_program)
+                t = time() - t
                 self.test_view_graph.set_image_data(result)
+                self.__setStatus(self.__tr('Generated graph in %1 seconds.').arg(round(t,2)))
             except Exception, e:
                 self.__setStatus(e)
         else:

@@ -84,32 +84,29 @@ class NodeView(ReflectiveObservable):
     the view specification."""
     def __init__(self, slosl_statement, viewreg, name_override=None, **variable_initializations):
         ReflectiveObservable.__init__(self)
-        self._slosl_statement  = slosl_statement
+        pyslosl = PySlosl(slosl_statement)
+        self._slosl_statement = pyslosl
 
         self.parents  = tuple( viewreg[parent] # raises KeyError
-                               for parent in slosl_statement.parents )
-        self.name     = name_override or slosl_statement.name
+                               for parent in pyslosl.parents )
+        self.name     = name_override or pyslosl.name
         self._viewreg = viewreg
         self._attribute_dependencies = set(
             a.name() for a in ATTRIBUTE_XPATH.evaluate(slosl_statement))
         self._variables = variables = {}
-        for var_name, var_value in slosl_statement.withs:
-            try:
-                var_value = eval(var_value.serialize('python'), globals(), {})
-            except AttributeError:
-                var_value = None
-            variables[var_name] = var_value
+        _globals = globals()
+        _locals  = {}
+        for var_name, var_value in pyslosl.withs:
+            variables[var_name] = eval(var_value, _globals, _locals)
 
-        try:
-            ranked = slosl_statement.ranked
-            function_name = ranked.function
-        except AttributeError:
-            function_name = None
+        ranked = pyslosl.ranked
+        function_name = ranked.function or None
+
         if function_name in VIEW_FUNCTIONS.VALID_FUNCTIONS:
             node_selector = getattr(VIEW_FUNCTIONS, function_name)
-            self._node_selector = node_selector(*ranked.parameters)
+            self._node_ranker = node_selector(*ranked.parameters)
         else:
-            self._node_selector = None
+            self._node_ranker = None
 
         for var_name, value in variable_initializations.iteritems():
             self._setVariable(var_name, value)
@@ -137,7 +134,7 @@ class NodeView(ReflectiveObservable):
         Attributes are converted using the expressions defined in the
         view specification.
         """
-        statement = self._slosl_statement
+        statement = self._slosl_statement.xml_slosl
         selects   = statement.selects
 
         class ViewNode(AbstractNode):
@@ -155,15 +152,16 @@ class NodeView(ReflectiveObservable):
 ##                 for attribute in self._dependencies[attr_name]:
 ##                     propagate_qos(attribute.name, function)
 
+        _globals = globals()
         dependencies = ViewNode._dependencies
         for attr_name, attr_value in selects:
             try:
-                function = attr_value.serialize('python')
+                function = compile(attr_value.serialize('python'), '<select>', 'eval')
             except AttributeError:
                 value = self.BackedAttributeDescriptor( attr_name )
                 f_dependencies = (attr_name,)
             else:
-                value = self.FunctionAttributeDescriptor( function )
+                value = self.FunctionAttributeDescriptor( function, _globals )
                 f_dependencies = set(d.name for d in DEPENDENCY_XPATH.evaluate(attr_value))
             setattr(ViewNode, attr_name, value)
             dependencies[attr_name] = f_dependencies
@@ -171,12 +169,13 @@ class NodeView(ReflectiveObservable):
         return ViewNode
 
     class FunctionAttributeDescriptor(object):
-        __slots__ = 'function'
-        def __init__(self, function):
+        __slots__ = ('function', '_globals')
+        def __init__(self, function, _globals):
             self.function = function
+            self._globals = _globals
         def __get__(self, instance, owner):
             if instance is None: return self
-            return eval(self.function, globals(), instance._values)
+            return eval(self.function, self._globals, instance._values)
 
     class BackedAttributeDescriptor(object):
         __instances = {}
@@ -320,37 +319,43 @@ class NodeView(ReflectiveObservable):
         if not foreachs:
             yield ()
         else:
+            _pyeval  = eval
+            _globals = globals()
             variable_name, values = foreachs[0]
             for var_values in self._iter_foreach_values(foreachs[1:], value_dict):
-                py_values = pyeval(values, value_dict)
+                py_values = _pyeval(values, _globals, value_dict)
                 for value in py_values:
                     value_dict[variable_name] = value
                     yield var_values + (value,)
-        
 
     def _select_nodes_into_buckets(self, spec, all_nodes, buckets, tuple_prefix=()):
-        value_dict = self._variables.copy()
+        static_value_dict = self._variables.copy()
 
-        try:
-            where_expr = compile(spec.where.serialize('python'), '<where>', 'eval')
-            eval_globals = globals().copy()
-            eval_globals.update(value_dict)
-            def where(node):
-                return bool(eval(where_expr, eval_globals, {'node' : node}))
-        except AttributeError, e:
-            print e
-            def where(node):
-                return True
+        _eval = eval
+        _bool = bool
+        where_expr = spec.where
+        eval_globals = globals()
+        def where(node):
+            eval_globals['node'] = node
+            return _bool(_eval(where_expr, eval_globals, static_value_dict))
 
-        node_select     = self._node_selector
+        node_rank       = self._node_ranker
         build_view_node = self._node_class
 
-        if node_select:
+        loop_value_dict = static_value_dict.copy()
+        having_expr = spec.having
+        def having(node):
+            eval_globals['node'] = node
+            return bool(eval(having_expr, eval_globals, loop_value_dict))
+
+        candidates = filter(where, all_nodes)
+
+        if node_rank:
             # without loops, value_tuple is just ()
-            for value_tuple in self._iter_foreach_values(spec.foreachs, value_dict):
-                candidate_iterator = ifilter(where, all_nodes)
-                matches = [ build_view_node(node, value_dict)
-                            for node in node_select(candidate_iterator, value_dict)
+            for value_tuple in self._iter_foreach_values(spec.foreachs, loop_value_dict):
+                candidate_iterator = ifilter(having, candidates)
+                matches = [ build_view_node(node, loop_value_dict)
+                            for node in node_rank(candidate_iterator, loop_value_dict)
                             ]
                 buckets[tuple_prefix+value_tuple] = matches
 ##         elif spec.select_distinct:
@@ -361,9 +366,9 @@ class NodeView(ReflectiveObservable):
 ##                             for node in distinct(candidate_iterator) ]
 ##                 buckets[tuple_prefix+value_tuple] = matches
         else:
-            for value_tuple in self._iter_foreach_values(spec.foreachs, value_dict):
-                candidate_iterator = ifilter(where, all_nodes)
-                matches = [ build_view_node(node, value_dict)
+            for value_tuple in self._iter_foreach_values(spec.foreachs, loop_value_dict):
+                candidate_iterator = ifilter(having, candidates)
+                matches = [ build_view_node(node, loop_value_dict)
                             for node in candidate_iterator ]
                 buckets[tuple_prefix+value_tuple] = matches
 
@@ -383,7 +388,7 @@ class NodeView(ReflectiveObservable):
 def build_view_cascade(view_specs, viewreg, view_type=NodeView):
     "Creates the views in order of dependency and interconnects them."
     view_specs    = set(view_specs)
-    view_names    = set(spec.view_name for spec in view_specs)
+    view_names    = set(spec.name for spec in view_specs)
 
     orphant_specs = set()
 
@@ -391,7 +396,7 @@ def build_view_cascade(view_specs, viewreg, view_type=NodeView):
         return (view_name in view_names) or (view_name in viewreg)
 
     for spec in view_specs:
-        known_parents = filter(is_known_view, spec.view_parents)
+        known_parents = filter(is_known_view, spec.parents)
         if not known_parents:
             orphant_specs.add(spec)
 
@@ -406,8 +411,8 @@ def build_view_cascade(view_specs, viewreg, view_type=NodeView):
     while remaining_specs:
         add_success = False
         for spec in tuple(remaining_specs):
-            known_parents = filter(is_known_view, spec.view_parents)
-            if len(known_parents) == len(spec.view_parents):
+            known_parents = filter(is_known_view, spec.parents)
+            if len(known_parents) == len(spec.parents):
                 add_success = True
                 views.append( view_type(spec, viewreg) )
                 #known_names.add(spec.view_name)
@@ -425,16 +430,46 @@ def pyeval(math_expr, locals):
         pyexpr = str(math_expr)
     return eval(pyexpr, globals(), locals)
 
+class PySlosl(object):
+    class PyRanked(object):
+        def __init__(self, ranked, _math_compile):
+            self.function = ranked.function
+            self.parameters = [
+                _math_compile(param, '<rankparam%d>' % i)
+                for i, param in enumerate(ranked.parameters)
+                ]
+    def __init__(self, slosl):
+        self.xml_slosl = slosl
+
+        mcompile = self._math_compile
+        self.name     = slosl.name
+        self.parents  = slosl.parents
+        self.bucket   = slosl.bucket
+        self.where    = mcompile(slosl.where  or 'True', '<where>')
+        self.having   = mcompile(slosl.having or 'True', '<having>')
+        self.selects  = list((n, mcompile(v, '<select>')) for (n,v) in slosl.selects)
+        self.withs    = list((n, mcompile(v, '<with>')) for (n,v) in slosl.withs)
+        self.foreachs = list((n, mcompile(v, '<foreach>')) for (n,v) in slosl.foreachs)
+        try:
+            self.ranked = self.PyRanked(slosl.ranked, self._math_compile)
+        except AttributeError:
+            self.ranked = None
+
+    def _math_compile(self, expr, name):
+        try:
+            return compile(expr.serialize('python'), name, 'eval')
+        except AttributeError:
+            return None
+
 class ViewFunctions(object):
     """Provide implementations of ranking functions.
     'object_name' is the name space under which attributes are referenced.
     Each method returns a specialized list predicate that filters a list
     of objects.
     """
-    __slots__ = ('object_name',)
-
-    def __init__(self, object_name=None):
+    def __init__(self, object_name):
         self.object_name = object_name
+        self._globals    = globals()
 
     class __ReversedLowerEqual(object):
         __slots__ = ('item',)
@@ -444,9 +479,10 @@ class ViewFunctions(object):
     def _select(self, key_expr, objects, count, var_values,
                 distinct=False, reverse=False):
         object_name = self.object_name
+        _globals    = self._globals
         val_dict    = var_values.copy()
 
-        count = pyeval(count, var_values)
+        count = eval(count, _globals, var_values)
         if count == 0:
             return ()
 
@@ -510,9 +546,10 @@ class ViewFunctions(object):
 
     def _absolute(self, count, expression,
                   distinct=False, reverse=False):
-        _pyeval = pyeval
+        _pyeval  = eval
+        _globals = self._globals
         def evaluate(var_dict):
-            return _pyeval(expression, var_dict)
+            return _pyeval(expression, _globals, var_dict)
         select = self._select
         def _absolute_rank(objects, var_values={}):
             return select(evaluate, objects, count, var_values,
@@ -522,21 +559,22 @@ class ViewFunctions(object):
 
     def _relative(self, count, rel_value, expression,
                   distinct=False, reverse=False):
-        _abs = abs
-        _pyeval = pyeval
-        evaluate = expression.evaluate
+        _abs     = abs
+        _pyeval  = eval
+        _globals = self._globals
         try:
-            rel_value = pyeval(rel_value, {})
+            rel_value = _pyeval(rel_value, _globals, {})
             constant = True
         except:
             constant = False
 
         if constant:
             def _eval_expression(var_values):
-                return _abs(rel_value  - _pyeval(expression, var_values))
+                return _abs(rel_value  - _pyeval(expression, _globals, var_values))
         else:
             def _eval_expression(var_values):
-                return _abs(_pyeval(rel_value, var_values) - _pyeval(expression, var_values))
+                return _abs(_pyeval(rel_value,  _globals, var_values) -
+                            _pyeval(expression, _globals, var_values))
 
         select = self._select
         def _relative_rank(objects, var_values={}):
@@ -547,8 +585,8 @@ class ViewFunctions(object):
 
     VALID_FUNCTIONS = frozenset(func for func in locals() if func[0] != '_')
 
-VIEW_FUNCTIONS = ViewFunctions('node')
 
+VIEW_FUNCTIONS = ViewFunctions('node')
 
 import sys
 bind_all(sys.modules[__name__])

@@ -1773,7 +1773,18 @@ Python:    }
                                 <property name="name">
                                     <cstring>unnamed</cstring>
                                 </property>
-                                <widget class="QComboBox" row="0" column="0" rowspan="1" colspan="2">
+                                <widget class="QLabel" row="1" column="0">
+                                    <property name="name">
+                                        <cstring>textLabel2_2</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>GraphViz program to use:</string>
+                                    </property>
+                                    <property name="buddy" stdset="0">
+                                        <cstring>test_graphviz_program_comboBox</cstring>
+                                    </property>
+                                </widget>
+                                <widget class="QComboBox" row="0" column="0" rowspan="1" colspan="3">
                                     <property name="name">
                                         <cstring>test_view_select_comboBox</cstring>
                                     </property>
@@ -1786,7 +1797,7 @@ Python:    }
                                         </sizepolicy>
                                     </property>
                                 </widget>
-                                <widget class="QPushButton" row="0" column="2">
+                                <widget class="QPushButton" row="0" column="3">
                                     <property name="name">
                                         <cstring>test_run_button</cstring>
                                     </property>
@@ -1794,26 +1805,23 @@ Python:    }
                                         <string>Run test</string>
                                     </property>
                                 </widget>
-                                <widget class="QLabel" row="1" column="0">
+                                <widget class="QPushButton" row="0" column="4">
                                     <property name="name">
-                                        <cstring>textLabel2_2</cstring>
+                                        <cstring>test_profile_button</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>GraphViz program to use:</string>
-                                    </property>
-                                    <property name="buddy" stdset="0">
-                                        <cstring>test_graphviz_program_comboBox</cstring>
+                                        <string>Profile</string>
                                     </property>
                                 </widget>
-                                <widget class="QComboBox" row="1" column="1" rowspan="1" colspan="2">
+                                <widget class="QComboBox" row="1" column="2" rowspan="1" colspan="3">
                                     <item>
                                         <property name="text">
-                                            <string>neato</string>
+                                            <string>circo</string>
                                         </property>
                                     </item>
                                     <item>
                                         <property name="text">
-                                            <string>circo</string>
+                                            <string>neato</string>
                                         </property>
                                     </item>
                                     <item>
@@ -1835,7 +1843,24 @@ Python:    }
                                         <cstring>test_graphviz_program_comboBox</cstring>
                                     </property>
                                 </widget>
-                                <widget class="QGroupBox" row="2" column="0" rowspan="1" colspan="3">
+                                <spacer row="1" column="1">
+                                    <property name="name">
+                                        <cstring>spacer2</cstring>
+                                    </property>
+                                    <property name="orientation">
+                                        <enum>Horizontal</enum>
+                                    </property>
+                                    <property name="sizeType">
+                                        <enum>Expanding</enum>
+                                    </property>
+                                    <property name="sizeHint">
+                                        <size>
+                                            <width>24</width>
+                                            <height>20</height>
+                                        </size>
+                                    </property>
+                                </spacer>
+                                <widget class="QGroupBox" row="2" column="0" rowspan="1" colspan="5">
                                     <property name="name">
                                         <cstring>groupBox3_2</cstring>
                                     </property>
@@ -2713,6 +2738,12 @@ Functions to reimplement:&lt;br&gt;
         <receiver>OverlayDesignerMainWindow</receiver>
         <slot>test_run_button_clicked()</slot>
     </connection>
+    <connection>
+        <sender>test_profile_button</sender>
+        <signal>clicked()</signal>
+        <receiver>OverlayDesignerMainWindow</receiver>
+        <slot>test_profile_button_clicked()</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>overlay_tab</tabstop>
@@ -2785,6 +2816,7 @@ Functions to reimplement:&lt;br&gt;
     <slot>exportFlat()</slot>
     <slot>test_view_select_comboBox_activated( const QString &amp; )</slot>
     <slot>test_run_button_clicked()</slot>
+    <slot>test_profile_button_clicked()</slot>
 </slots>
 <layoutdefaults spacing="4" margin="4"/>
 <includehints>

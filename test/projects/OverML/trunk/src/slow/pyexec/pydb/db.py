@@ -139,7 +139,10 @@ class TypedAttributeDescriptor(object):
         self.name, self.type = name, atype
     def __get__(self, instance, owner):
         if instance is None: return self
-        return instance._values[self.name]
+        try:
+            return instance._values[self.name]
+        except KeyError:
+            raise AttributeError, self.name
     def __set__(self, instance, value):
         atype = self.type
         aname = self.name
@@ -198,8 +201,8 @@ class DBNode(object):
         self._notify_update = observer or self.__silent
 
     def __repr__(self):
-        return "node[%s]" % ','.join( "%s=%r" % (name, getattr(self,name))
-                                      for name in sorted(self._database.getAttributeTypes()) )
+        return "node[%s]" % ','.join( "%s=%r" % (name, getattr(self,name,None))
+                                      for name in sorted(self._database.getNodeAttributes()) )
 
 
 class LocalNode(object):
