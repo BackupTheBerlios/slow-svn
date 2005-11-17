@@ -126,12 +126,14 @@ class MenuFunctions(object):
         icon_positions = root.guidata.pos_dict
         statements     = root.statements
         edsm           = root.edsm
+        test_code      = root.guidata.testcode_dict
 
         self.reset_datatype_descriptions(datatype_descr)
         self.reset_attribute_descriptions(attr_descr)
         self.reset_message_descriptions(msg_descr)
         self.reset_edsm(edsm, icon_positions)
         self.reset_statements(statements)
+        self.reset_tests(test_code)
 
     def loadFile(self, filename):
         self.setStatus(self.tr("Loading file '%1'").arg(filename))

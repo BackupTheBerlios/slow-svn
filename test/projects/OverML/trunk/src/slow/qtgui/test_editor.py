@@ -21,24 +21,6 @@ def make_foreign(attributes):
     return attributes
 '''
 
-## DEFAULT_CODE = '''\
-## NODES  = 10
-## MAX_ID = 100
-
-## for n in range(NODES):
-##     buildNode(id=n)
-
-## def make_foreign(local_node, attributes):
-##     """Do something with the node attribute dictionary, then return it.
-##     Returning None or an empty dict will discard the node."""
-##     attributes["knows_chord"] = True
-##     attributes["alive"]       = True
-    
-##     dist = (attributes["id"] - local_node.id) % MAX_ID
-##     attributes["local_dist"] = dist
-##     return attributes
-## '''
-
 class TestRunner(object):
     def __init__(self):
         self.static_globals = STATIC_GLOBALS
@@ -173,13 +155,33 @@ class TestEditor(object):
         else:
             self.__setStatus(self.__tr("Error: view '%1' not found").arg(current_test))
 
-    def test_view_select_comboBox_activated(self, view_name):
-        view_name = qstrpy(view_name)
+    def __store_current_code(self):
         if self.__current_test:
             self.__view_tests[self.__current_test] = qstrpy(self.test_init_code.text())
+
+    def test_view_select_comboBox_activated(self, view_name):
+        view_name = qstrpy(view_name)
+        self.__store_current_code()
         self.__current_test = view_name
 
         test_code = self.__view_tests.get(view_name)
         if not test_code:
             test_code = DEFAULT_CODE
         self.test_init_code.setText(pyqstr(test_code))
+
+    def _store_gui_data(self, gui_data):
+        self.__store_current_code()
+        slosl_model = self.slosl_model()
+        for view_name, code in self.__view_tests.iteritems():
+            if slosl_model.getStatement(view_name):
+                gui_data.setTestCode(view_name, code)
+
+        super(TestEditor, self)._store_gui_data(gui_data)
+
+    def reset_tests(self, code_dict):
+        self.__view_tests = code_dict.copy()
+        if self.__current_test:
+            test_code = self.__view_tests.get(self.__current_test)
+            if not test_code:
+                test_code = DEFAULT_CODE
+            self.test_init_code.setText(pyqstr(test_code))

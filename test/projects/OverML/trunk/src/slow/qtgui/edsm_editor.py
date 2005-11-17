@@ -181,6 +181,10 @@ class EDSMIconViewIcon(EDSMEditorItem, QIconViewItem):
     def internal_name(self):
         return self._model.name
 
+    @property
+    def item_id(self):
+        return self._model.id
+
     def set_model(self, model):
         self._model = model
         self.reset_popup_menu()
@@ -489,7 +493,7 @@ class EDSMEditor(EDSMEditorItem):
         for iconview in self.iconviews():
             item = iconview.firstItem()
             while item:
-                gui_data.setPos(item.internal_name, item.x(), item.y())
+                gui_data.setPos(item.item_id, item.x(), item.y())
                 item = item.nextItem()
         super(EDSMEditor, self)._store_gui_data(gui_data)
 
@@ -525,11 +529,11 @@ class EDSMEditor(EDSMEditorItem):
                 state_item = self.StateIcon(iconview, state_model)
             elif type_name == 'subgraph':
                 state_item = self.SubgraphIcon(iconview, state_model)
-                self.add_iconview_tab(name, state_model)
+                self.add_iconview_tab(name, state_model, icon_positions)
             else:
                 raise TypeError, "Invalid state type '%s'." % type_name
             try:
-                x,y = icon_positions[name]
+                x,y = icon_positions[state_model.id]
                 state_item.move(x,y)
             except KeyError:
                 pass
@@ -560,7 +564,7 @@ class EDSMEditor(EDSMEditorItem):
 
         iconview.update()
 
-    def add_iconview_tab(self, name, model):
+    def add_iconview_tab(self, name, model, icon_positions={}):
         if model.type_name == 'subgraph':
             static_states = self.SUBGRAPH_STATIC_STATES
         else:
@@ -573,7 +577,7 @@ class EDSMEditor(EDSMEditorItem):
                      self.edsm_edit_state)
         self.connect(child_iconview,SIGNAL("itemRenamed(QIconViewItem*)"),
                      child_iconview.updateContents)
-        self._build_iconview(model, child_iconview, static_states)
+        self._build_iconview(model, child_iconview, static_states, icon_positions)
         self.edsm_tabs.addTab(child_iconview, model.readable_name or name)
 
         active_mode = self.active_edsm_mode()
