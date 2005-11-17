@@ -15,7 +15,7 @@ NODES = 10
 for n in range(NODES):
     "build a new node using buildNode(...)"
 
-def make_foreign(attributes):
+def make_foreign(local_node, attributes):
     """Do something with the node attribute dictionary, then return it.
     Returning None or an empty dict will not add the node."""
     return attributes
