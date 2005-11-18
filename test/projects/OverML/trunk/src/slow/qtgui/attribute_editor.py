@@ -1,7 +1,7 @@
 import sys, logging, math
 from itertools import *
 
-from qt import *
+import qt
 from qttable import QComboTableItem
 
 from qt_utils import pyqstr, qstrpy, FlagMaintainerListItem
@@ -17,10 +17,10 @@ from slow.model.sqldata_model   import SIMPLE_TYPES, ALL_TYPES, SQL_NAMESPACE_UR
 class AttributeListItem(FlagMaintainerListItem):
     pass
 
-class AttributeDragObject(QTextDrag):
+class AttributeDragObject(qt.QTextDrag):
     MIME_SUBTYPE = 'attribute-name'
     def __init__(self, text, source):
-        QTextDrag.__init__(self, text, source)
+        qt.QTextDrag.__init__(self, text, source)
         self.setSubtype(self.MIME_SUBTYPE)
 
 class DraggableAttributeListView(IterableListView):
@@ -97,7 +97,7 @@ class AttributeEditor(object):
         all_types = self._all_type_names()
         self.attribute_type_select.insertStrList(sorted(all_types))
 
-        type_names = QStringList(u'')
+        type_names = qt.QStringList(u'')
         for name in SIMPLE_TYPES:
             type_names.append(name)
 
@@ -131,7 +131,7 @@ class AttributeEditor(object):
         self.node_attribute_type.clear()
         self.node_attribute_type.insertStrList(type_names)
 
-        simple_type_names = QStringList()
+        simple_type_names = qt.QStringList()
         for type_name in type_names:
             if type_name not in ('composite', 'array'):
                 simple_type_names.append(type_name)
@@ -148,13 +148,13 @@ class AttributeEditor(object):
             combobox.setStringList(simple_type_names)
 
     class HighlightedFirstColumnListItem(AttributeListItem):
-        TEXT_COLOUR = Qt.red.light(120)
-        BG_COLOUR   = Qt.white.dark(110)
+        TEXT_COLOUR = qt.Qt.red.light(120)
+        BG_COLOUR   = qt.Qt.white.dark(110)
         def paintCell(self, painter, colour_group, column, width, align):
             if column == 0:
                 font = painter.font()
                 font.setBold(True)
-                colour_group = QColorGroup(colour_group)
+                colour_group = qt.QColorGroup(colour_group)
                 colour_group.setColor(colour_group.Base, self.BG_COLOUR)
                 colour_group.setColor(colour_group.Text, self.TEXT_COLOUR)
             FlagMaintainerListItem.paintCell(

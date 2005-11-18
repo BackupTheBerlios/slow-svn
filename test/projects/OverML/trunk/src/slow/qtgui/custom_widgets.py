@@ -1,10 +1,10 @@
 import re, os
 #from itertools import *
 
-from qt import *
+import qt
 from itertools import *
 import operator, math
-from qt_utils import ProcessManager, qt_signal_signature, qstrpy, pyqstr
+from qt_utils import ProcessManager, py_signal_signature, qstrpy, pyqstr
 
 
 class SelectiveCustomWidget(object):
@@ -30,13 +30,13 @@ class SelectiveCustomWidget(object):
             while mro.next() != cls:
                 pass
             superclass = mro.next()
-            while not issubclass(superclass, QWidget):
+            while not issubclass(superclass, qt.QWidget):
                 superclass = mro.next()
             return superclass(parent, name, *args)
 
 
-class ArrowPainter(QPainter):
-    START_PEN = QPen(Qt.yellow, 2)
+class ArrowPainter(qt.QPainter):
+    START_PEN = qt.QPen(qt.Qt.yellow, 2)
     def drawArrow(self, p_from, p_to, pen=None):
         vector = p_to - p_from
         #angle  = math.atan(vector.y() / vector.x())
@@ -169,14 +169,14 @@ class DotWriter(object):
         write('}\n')
 
 
-class DotGraphWidget(QWidget):
+class DotGraphWidget(qt.QWidget):
     RE_VIEWBOX = re.compile('<svg[^>]+viewBox\s*=\s*"([^"]*)"')
     def __init__(self, *args):
-        self._picture = QPicture()
+        self._picture = qt.QPicture()
         self._paint_rect = None
         self._graph_generator = DotWriter(self, format='svg')
         self.init_colours = self._graph_generator.init_colours
-        QWidget.__init__(self, *args)
+        qt.QWidget.__init__(self, *args)
 
         self.rebuild_running = False
         self.reschedule = False
@@ -185,7 +185,7 @@ class DotGraphWidget(QWidget):
     def set_editor(self, editor):
         self._editor = editor
 
-    @qt_signal_signature("rebuild_graph()", PYSIGNAL)
+    @py_signal_signature("rebuild_graph()")
     def rebuild_graph(self):
         if self.rebuild_running:
             self.reschedule = True
@@ -219,12 +219,12 @@ class DotGraphWidget(QWidget):
                 self._paint_rect = None
             break
 
-        image_buffer = QDataStream(QByteArray(image_data), IO_ReadOnly)
+        image_buffer = qt.QDataStream(qt.QByteArray(image_data), qt.IO_ReadOnly)
         self._picture.load(image_buffer.device(), 'svg')
         self.update()
 
     def paintEvent(self, event):
-        painter  = QPainter(self)
+        painter  = qt.QPainter(self)
         own_rect = self.rect()
 
         painter.drawLine(own_rect.topLeft(), own_rect.topRight())
@@ -244,7 +244,7 @@ class DotGraphWidget(QWidget):
         self.rebuild_graph()
 
 
-class IterableListView(SelectiveCustomWidget, QListView):
+class IterableListView(SelectiveCustomWidget, qt.QListView):
     def iterColumnItems(self):
         next_item = self.firstChild()
         while next_item:
@@ -263,7 +263,7 @@ class IterableListView(SelectiveCustomWidget, QListView):
     __iter__ = iterColumns
 
 
-class IterableComboBox(SelectiveCustomWidget, QComboBox):
+class IterableComboBox(SelectiveCustomWidget, qt.QComboBox):
     def __iter__(self):
         text = self.text
         count = self.count
@@ -280,11 +280,11 @@ class IterableComboBox(SelectiveCustomWidget, QComboBox):
         return False
 
 
-class EDSMIconView(SelectiveCustomWidget, QIconView):
+class EDSMIconView(SelectiveCustomWidget, qt.QIconView):
     def __init__(self, *args):
         self.connections = set()
         self.static_items = {}
-        QIconView.__init__(self, *args)
+        qt.QIconView.__init__(self, *args)
         self.setAutoArrange(False)
 
         self.__max_dist       = 30
@@ -330,10 +330,10 @@ class EDSMIconView(SelectiveCustomWidget, QIconView):
             self.takeItem(item)
 
     def viewportPaintEvent(self, event):
-        QIconView.viewportPaintEvent(self, event)
+        qt.QIconView.viewportPaintEvent(self, event)
 
         painter = ArrowPainter(self.viewport())
-        black = Qt.black
+        black = qt.Qt.black
         for connection in self.connections:
             source, dest = connection.from_state, connection.to_state
             pen = connection.colour
@@ -344,7 +344,7 @@ class EDSMIconView(SelectiveCustomWidget, QIconView):
 
     def contentsDropEvent(self, event):
         self.viewport().update()
-        QIconView.contentsDropEvent(self, event)
+        qt.QIconView.contentsDropEvent(self, event)
 
     def add_connection(self, connection):
         self.connections.add(connection)
@@ -418,7 +418,7 @@ class EDSMIconView(SelectiveCustomWidget, QIconView):
 
     def update(self):
         self.viewport().update()
-        QIconView.update(self)
+        qt.QIconView.update(self)
 
     def takeItem(self, item):
         remove = []
@@ -429,5 +429,5 @@ class EDSMIconView(SelectiveCustomWidget, QIconView):
             self.connections.discard(del_item)
 
         self.viewport().update()
-        QIconView.takeItem(self, item)
+        qt.QIconView.takeItem(self, item)
 

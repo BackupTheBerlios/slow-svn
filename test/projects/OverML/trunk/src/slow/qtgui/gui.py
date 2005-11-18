@@ -5,10 +5,11 @@ except: pass
 
 RUNNING_PSYCO = False
 
-import os, os.path, operator, logging
+import os, os.path, logging
 from itertools import *
-from qt import *
-from qt_utils import pyqstr, qstrpy, qt_signal_signature, ListViewIterator
+
+import qt
+from qt_utils import pyqstr, qstrpy, ListViewIterator
 
 from genaboutdialog import AboutDialog
 from gengui import OverlayDesignerMainWindow
@@ -48,32 +49,32 @@ class RegExps(object):
     RE_CLASS_NAME_LIST = '^\s*(?:%(classname)s\s*)(?:,\s*(?:%(classname)s)\s*)*$' % __SIMPLE_RE_DICT
 
 
-class IdentifierValidator(QRegExpValidator):
+class IdentifierValidator(qt.QRegExpValidator):
     def __init__(self, parent, allow_list=False):
         if allow_list:
             regexp = RegExps.RE_IDENTIFIER_LIST
         else:
             regexp = RegExps.RE_IDENTIFIER
-        QRegExpValidator.__init__(self, QRegExp(regexp), parent)
+        qt.QRegExpValidator.__init__(self, qt.QRegExp(regexp), parent)
 
     def validate(self, text, pos):
         text.replace(0, len(text), text.lower().replace('-', '_'))
-        return QRegExpValidator.validate(self, text, pos)
+        return qt.QRegExpValidator.validate(self, text, pos)
 
 
-class ClassNameValidator(QRegExpValidator):
+class ClassNameValidator(qt.QRegExpValidator):
     def __init__(self, parent, allow_list=False):
         if allow_list:
             regexp = RegExps.RE_CLASS_NAME_LIST
         else:
             regexp = RegExps.RE_CLASS_NAME
-        QRegExpValidator.__init__(self, QRegExp(regexp), parent)
+        qt.QRegExpValidator.__init__(self, qt.QRegExp(regexp), parent)
 
     def validate(self, text, pos):
         if len(text) > 0:
             text.replace(0, 1, text[0].upper())
         text.replace('-', '_')
-        return QRegExpValidator.validate(self, text, pos)
+        return qt.QRegExpValidator.validate(self, text, pos)
 
 
 class OverlayDesigner_aboutdialog(AboutDialog):
@@ -156,8 +157,8 @@ class MenuFunctions(object):
         self.setupModelFromTree(self.current_tree)
 
     def fileOpen(self):
-        filename = QFileDialog.getOpenFileName(
-            QString.null, self.FILE_FILTER, self,
+        filename = qt.QFileDialog.getOpenFileName(
+            qt.QString.null, self.FILE_FILTER, self,
             'open file dialog', self.tr('Open file ...'))
         filename = qstrpy(filename)
         if filename:
@@ -204,7 +205,7 @@ class MenuFunctions(object):
         self.setStatus(self.tr("File '%1' saved.").arg(filename))
 
     def fileSaveAs(self):
-        filename = QFileDialog.getSaveFileName(
+        filename = qt.QFileDialog.getSaveFileName(
             None, self.FILE_FILTER, self,
             'save file dialog', self.tr('Save to file ...'))
         filename = qstrpy(filename)
@@ -239,7 +240,7 @@ class MenuFunctions(object):
         except KeyError:
             self.setStatus(self.tr("Stylesheet 'flat_export' not installed."))
 
-        filename = QFileDialog.getSaveFileName(
+        filename = qt.QFileDialog.getSaveFileName(
             None, self.FLAT_FILE_FILTER, self,
             'export file dialog', self.tr('Export to flat file ...'))
         filename = qstrpy(filename)
@@ -337,7 +338,7 @@ class OverlayDesigner_gui(MenuFunctions,
 
         OverlayDesignerMainWindow.__init__(self, parent, name, fl)
 
-        self.delete_icon = QIconSet( self.slosl_foreach_remove_button.pixmap() )
+        self.delete_icon = qt.QIconSet( self.slosl_foreach_remove_button.pixmap() )
 
         self.loadPreferences()
         self.pref_dialog  = PreferenceDialog(self, self.storePreferences,
@@ -367,7 +368,7 @@ class OverlayDesigner_gui(MenuFunctions,
                 append(arg)
             elif isinstance(arg, str):
                 append(unicode(arg))
-            elif isinstance(arg, QString):
+            elif isinstance(arg, qt.QString):
                 append(qstrpy(arg))
             elif isinstance(arg, Exception):
                 self.logger.exception(arg)
@@ -396,7 +397,7 @@ class OverlayDesigner_gui(MenuFunctions,
 
 if __name__ == '__main__':
     import sys, optparse
-    app = QApplication(sys.argv)
+    app = qt.QApplication(sys.argv)
 
     opparser = optparse.OptionParser()
     opparser.add_option('-l', '--logfile', dest='logfile',
@@ -430,12 +431,12 @@ if __name__ == '__main__':
         logging.basicConfig(level=loglevel)
 
     if options.language:
-        translator = QTranslator()
+        translator = qt.QTranslator()
         if translator.load('gui_%s' % options.language, 'qtgui/ts'):
             app.installTranslator(translator)
 
     # setup GUI
-    QObject.connect(app, SIGNAL("lastWindowClosed()"), app, SLOT("quit()"))
+    qt.QObject.connect(app, qt.SIGNAL("lastWindowClosed()"), app, qt.SLOT("quit()"))
 
     w = OverlayDesigner_gui()
     app.setMainWidget(w)

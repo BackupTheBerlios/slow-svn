@@ -1,11 +1,12 @@
 from itertools import *
-from qt import *
+#from qt import *
+import qt
 
 def qstrpy(qstring):
     return unicode(str(qstring.utf8()), 'utf-8')
 
 def pyqstr(ustring):
-    return QString.fromUtf8( ustring.encode('utf-8') )
+    return qt.QString.fromUtf8( ustring.encode('utf-8') )
 
 
 ############################################################
@@ -13,7 +14,7 @@ def pyqstr(ustring):
 ############################################################
 
 class qaction(object):
-    ACTIVATED = SIGNAL('activated()')
+    ACTIVATED = qt.SIGNAL('activated()')
     def __init__(self, menu_text=None, accel=None, parent_attribute=None,
                  iconset=None, pixmap=None,
                  iconset_attribute=None, pixmap_attribute=None):
@@ -36,7 +37,7 @@ class qaction(object):
         else:
             parent = instance
 
-        action = QAction(parent, self.name)
+        action = qt.QAction(parent, self.name)
         if self.menu_text:
             menu_text = self.menu_text
             for source in (instance, parent):
@@ -53,7 +54,7 @@ class qaction(object):
             pixmap = self.pixmap
 
         if pixmap:
-            iconset = QIconSet(pixmap)
+            iconset = qt.QIconSet(pixmap)
         elif self.iconset_attribute:
             iconset = getattr(instance, self.iconset_attribute, self.iconset)
         else:
@@ -69,13 +70,13 @@ class qaction(object):
             method(instance)
 
         self.call_method = call_method
-        QObject.connect(action, self.ACTIVATED, call_method)
+        qt.QObject.connect(action, self.ACTIVATED, call_method)
 
         setattr(instance, self.name, action)
         return action
 
 
-def qt_signal_signature(signature, signal_class=SIGNAL):
+def qt_signal_signature(signature, signal_class=qt.SIGNAL):
     split_pos = signature.find('(')
     signal_name, args = signature[:split_pos], signature[split_pos:]
     def set_slot_sig(method):
@@ -84,12 +85,12 @@ def qt_signal_signature(signature, signal_class=SIGNAL):
         function = getattr(method, 'im_func', method)
 
         method.signal = signal_class(signal_name+args)
-        method.slot   = SLOT(function.func_name+args)
+        method.slot   = qt.SLOT(function.func_name+args)
         return method
     return set_slot_sig
 
 def py_signal_signature(signature):
-    return qt_signal_signature(signature, PYSIGNAL)
+    return qt_signal_signature(signature, qt.PYSIGNAL)
 
 
 ############################################################
@@ -98,7 +99,7 @@ def py_signal_signature(signature):
 
 class ListViewIterator(object):
     def __init__(self, listview_or_item):
-        if isinstance(listview_or_item, QListView):
+        if isinstance(listview_or_item, qt.QListView):
             self.item = listview_or_item.firstChild()
             self.column_nos = range(listview_or_item.columns())
         else:
@@ -115,12 +116,12 @@ class ListViewIterator(object):
         return map(qstrpy, imap(current.text, self.column_nos))
 
 
-class FlagMaintainerListItem(QCheckListItem):
+class FlagMaintainerListItem(qt.QCheckListItem):
     def __init__(self, parent, flag_object, flag_name, name=None, *args):
         if name is None:
             name = flag_name
         self.flag_object, self.flag_name = flag_object, flag_name
-        QCheckListItem.__init__(self, parent, name, QCheckListItem.CheckBox)
+        qt.QCheckListItem.__init__(self, parent, name, qt.QCheckListItem.CheckBox)
         for column, text in izip(count(1), args):
             self.setText(column, text)
         self.updateStatus()
@@ -132,9 +133,9 @@ class FlagMaintainerListItem(QCheckListItem):
         setattr(self.flag_object, self.flag_name, status)
 
 
-class FlagMaintainerAction(QAction):
+class FlagMaintainerAction(qt.QAction):
     def __init__(self, parent, flag_object, flag_name, menu_name=None):
-        QAction.__init__(self, parent, flag_name)
+        qt.QAction.__init__(self, parent, flag_name)
         if menu_name:
             self.setMenuText(menu_name)
         self.setToggleAction(True)
@@ -142,19 +143,19 @@ class FlagMaintainerAction(QAction):
         self.updateStatus()
 
     def updateStatus(self):
-        QAction.setOn(self, getattr(self.flag_object, self.flag_name))
+        qt.QAction.setOn(self, getattr(self.flag_object, self.flag_name))
 
     def setOn(self, on):
         setattr(self.flag_object, self.flag_name, on)
-        QAction.setOn(self, on)
+        qt.QAction.setOn(self, on)
 
 
-class ProcessManager(QProcess):
-    __STDOUT_READY_SIGNAL   = SIGNAL('readyReadStdout()')
-    __PROCESS_EXITED_SIGNAL = SIGNAL('processExited()')
-    __STDIN_WRITTEN_SIGNAL  = SIGNAL('wroteToStdin()')
+class ProcessManager(qt.QProcess):
+    __STDOUT_READY_SIGNAL   = qt.SIGNAL('readyReadStdout()')
+    __PROCESS_EXITED_SIGNAL = qt.SIGNAL('processExited()')
+    __STDIN_WRITTEN_SIGNAL  = qt.SIGNAL('wroteToStdin()')
     def __init__(self, parent, call_back, *args):
-        QProcess.__init__(self, parent)
+        qt.QProcess.__init__(self, parent)
 
         self.call_back = call_back
         for arg in args:
@@ -162,8 +163,8 @@ class ProcessManager(QProcess):
 
         self.output_data = []
         self.input_data  = []
-        QObject.connect(self, self.__STDOUT_READY_SIGNAL,   self.read)
-        QObject.connect(self, self.__PROCESS_EXITED_SIGNAL, self.exited)
+        qt.QObject.connect(self, self.__STDOUT_READY_SIGNAL,   self.read)
+        qt.QObject.connect(self, self.__PROCESS_EXITED_SIGNAL, self.exited)
 
         self.start()
 
@@ -174,12 +175,12 @@ class ProcessManager(QProcess):
         data = ''.join(self.input_data)
         del self.input_data[:]
         if data:
-            QObject.connect(self, self.__STDIN_WRITTEN_SIGNAL, self.closeStdin)
+            qt.QObject.connect(self, self.__STDIN_WRITTEN_SIGNAL, self.closeStdin)
             self.writeToStdin(data)
 
     def closeStdin(self):
-        QObject.disconnect(self, self.__STDIN_WRITTEN_SIGNAL, self.closeStdin)
-        QProcess.closeStdin(self)
+        qt.QObject.disconnect(self, self.__STDIN_WRITTEN_SIGNAL, self.closeStdin)
+        qt.QProcess.closeStdin(self)
 
     def read(self):
         data = str( self.readStdout() )
@@ -187,8 +188,8 @@ class ProcessManager(QProcess):
             self.output_data.append(data)
 
     def exited(self):
-        QObject.disconnect(self, self.__STDOUT_READY_SIGNAL,   self.read)
-        QObject.disconnect(self, self.__PROCESS_EXITED_SIGNAL, self.exited)
+        qt.QObject.disconnect(self, self.__STDOUT_READY_SIGNAL,   self.read)
+        qt.QObject.disconnect(self, self.__PROCESS_EXITED_SIGNAL, self.exited)
 
         self.read()
         data = ''.join(self.output_data)

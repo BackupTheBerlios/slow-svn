@@ -1,4 +1,4 @@
-from qt import *
+from qt import Qt, QComboBox, QIconViewItem, QPopupMenu, SIGNAL, PYSIGNAL
 from qt_utils import qstrpy, pyqstr, qt_signal_signature
 
 from itertools import *

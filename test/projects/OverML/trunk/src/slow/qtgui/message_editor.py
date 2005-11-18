@@ -1,5 +1,5 @@
 from itertools import *
-from qt import *
+import qt
 
 from qt_utils import qaction, qstrpy, pyqstr, FlagMaintainerAction
 
@@ -21,7 +21,7 @@ class DraggableMessageListView(IterableListView):
         self.viewport().setAcceptDrops(accepts)
 
     def dragObject(self):
-        return QTextDrag( self.currentItem().text(0), self )
+        return qt.QTextDrag( self.currentItem().text(0), self )
 
     def resizeEvent(self, event):
         IterableListView.resizeEvent(self, event)
@@ -31,32 +31,32 @@ class DraggableMessageListView(IterableListView):
         self.setColumnWidth(0, col_width)
         self.setColumnWidth(1, width - col_width)
 
-class TextDialog(QDialog):
+class TextDialog(qt.QDialog):
     def __init__(self, parent, name, title):
-        QDialog.__init__(self, parent, name)
-        browser = QTextEdit(self, 'xml')
+        qt.QDialog.__init__(self, parent, name)
+        browser = qt.QTextEdit(self, 'xml')
         browser.setReadOnly(True)
         browser.setWordWrap(browser.NoWrap)
-        browser.setTextFormat(Qt.PlainText)
+        browser.setTextFormat(qt.Qt.PlainText)
         browser.setPointSize(12)
         browser.setFamily('monospace')
 
-        layout = QVBoxLayout(self, 1, 1, "DialogLayout")
-        layout.setResizeMode(QLayout.FreeResize)
+        layout = qt.QVBoxLayout(self, 1, 1, "DialogLayout")
+        layout.setResizeMode(qt.QLayout.FreeResize)
         layout.addWidget(browser)
 
         self.setCaption(title)
-        self.setMinimumSize(QSize(150,100))
+        self.setMinimumSize(qt.QSize(150,100))
         self.setText = browser.setText
 
 
-class AddItemPopupAction(QAction):
-    ACTIVATE_SIGNAL = SIGNAL('activated()')
+class AddItemPopupAction(qt.QAction):
+    ACTIVATE_SIGNAL = qt.SIGNAL('activated()')
     def __init__(self, editor, title, item_parent, item_class,
                  type_name=None, item_name=None):
-        QAction.__init__(self, editor, 'popup entry')
+        qt.QAction.__init__(self, editor, 'popup entry')
         self.setMenuText(title)
-        self.setIconSet( QIconSet(item_class.PIXMAP) )
+        self.setIconSet( qt.QIconSet(item_class.PIXMAP) )
 
         model_type    = item_class.MODEL_TYPE
         readable_type = item_class.READABLE_NAME
@@ -72,14 +72,14 @@ class AddItemPopupAction(QAction):
 
         self.__action_method = action_method
 
-        QObject.connect(self, self.ACTIVATE_SIGNAL, action_method)
+        qt.QObject.connect(self, self.ACTIVATE_SIGNAL, action_method)
 
-class ShowMessagePopupAction(QAction):
-    ACTIVATE_SIGNAL = SIGNAL('activated()')
+class ShowMessagePopupAction(qt.QAction):
+    ACTIVATE_SIGNAL = qt.SIGNAL('activated()')
     def __init__(self, editor, title, item):
-        QAction.__init__(self, editor, 'popup entry')
+        qt.QAction.__init__(self, editor, 'popup entry')
         self.setMenuText(title)
-        #self.setIconSet( QIconSet(item.PIXMAP) )
+        #self.setIconSet( qt.QIconSet(item.PIXMAP) )
 
         def action_method():
             message_builder = STYLESHEETS['message_builder']
@@ -94,15 +94,15 @@ class ShowMessagePopupAction(QAction):
             dialog = TextDialog(editor, 'message',
                                 self.tr("Message '%1'").arg(item.access_name))
             dialog.setText(xml)
-            dialog.resize(QSize(550,300))
+            dialog.resize(qt.QSize(550,300))
             dialog.show()
 
         self.__action_method = action_method
 
-        QObject.connect(self, self.ACTIVATE_SIGNAL, action_method)
+        qt.QObject.connect(self, self.ACTIVATE_SIGNAL, action_method)
 
 
-class MListViewItem(QListViewItem, MenuProvider):
+class MListViewItem(qt.QListViewItem, MenuProvider):
     ORDER = 9
     ALLOWS_DELETE = True
     READABLE_NAME = MODEL_TYPE  = PIXMAP = None # provided by subclasses !!
@@ -121,9 +121,9 @@ class MListViewItem(QListViewItem, MenuProvider):
 
         sibling = self.find_predecessor(parent)
         if sibling:
-            QListViewItem.__init__(self, parent, sibling, readable_name, access_name, *args)
+            qt.QListViewItem.__init__(self, parent, sibling, readable_name, access_name, *args)
         else:
-            QListViewItem.__init__(self, parent, readable_name, access_name, *args)
+            qt.QListViewItem.__init__(self, parent, readable_name, access_name, *args)
 
         MenuProvider.__init__(self, editor, title=readable_name,
                               checkable=popup_checkable or bool(self.FLAG_NAMES))
@@ -181,7 +181,7 @@ class MListViewItem(QListViewItem, MenuProvider):
                     return
             model.access_name = text
 
-        QListViewItem.setText(self, column, text)
+        qt.QListViewItem.setText(self, column, text)
 
     def iterchildren(self):
         child = self.firstChild()
@@ -267,7 +267,7 @@ class ContainerListViewItem(MListViewItem):
     FIELD_MIME_TYPE     = 'text/%s;charset=UTF-8' % MListViewItem.MIME_SUBTYPE
 
     def acceptDrop(self, data):
-        return QTextDrag.canDecode(data)
+        return qt.QTextDrag.canDecode(data)
         print list(takewhile(bool, imap(data.format, count())))
         return data.provides(self.ATTRIBUTE_MIME_TYPE) or \
                data.provides(self.FIELD_MIME_TYPE)
@@ -413,7 +413,7 @@ class MessageItem(ContainerListViewItem):
 
     def protocol_menu(self):
         parent       = self.editor
-        menu         = QPopupMenu(parent, 'protocols')
+        menu         = qt.QPopupMenu(parent, 'protocols')
 
         protocol_set = self.__protocol_set
         supported    = protocol_set.to_set()
@@ -427,7 +427,7 @@ class MessageItem(ContainerListViewItem):
 
     def _populate_popup_menu(self, menu):
         menu.insertSeparator()
-        menu.insertItem( QIconSet(self.PROTOCOLS_PIXMAP),
+        menu.insertItem( qt.QIconSet(self.PROTOCOLS_PIXMAP),
                          self.PROTOCOLS_NAME,
                          self.protocol_menu() )
         if 'message_builder' in STYLESHEETS:

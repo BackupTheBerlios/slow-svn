@@ -6,13 +6,15 @@ except ImportError:
 
 import sys, os
 
-VERSION  = '0.3'
+VERSION  = '0.3.1'
 PACKAGE_NAME = 'slow'
-PACKAGES = ['slow', 'slow.model', 'slow.qtgui', 'slow.xslt']
+PACKAGES = ['slow', 'slow.model', 'slow.qtgui', 'slow.vis',
+            'slow.xslt', 'slow.schema']
 PACKAGE_DIRS = {'slow' : 'src/slow'}
 PACKAGE_DATA = {
-    'slow'      : ['schema/*.rng'],
-    'slow.xslt' : ['*.xsl'],
+    'slow.qtgui'  : ['ts/*.ts'],
+    'slow.schema' : ['*.rng'],
+    'slow.xslt'   : ['*.xsl'],
     }
 
 MAKE_DIRS = 'src/slow/qtgui', 'src/slow/schema'

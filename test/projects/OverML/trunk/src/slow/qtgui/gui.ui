@@ -1792,7 +1792,7 @@ Python:    }
                                         <sizepolicy>
                                             <hsizetype>7</hsizetype>
                                             <vsizetype>0</vsizetype>
-                                            <horstretch>0</horstretch>
+                                            <horstretch>2</horstretch>
                                             <verstretch>0</verstretch>
                                         </sizepolicy>
                                     </property>
@@ -1801,6 +1801,14 @@ Python:    }
                                     <property name="name">
                                         <cstring>test_run_button</cstring>
                                     </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>1</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>1</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
                                     <property name="text">
                                         <string>Run test</string>
                                     </property>
@@ -1808,6 +1816,14 @@ Python:    }
                                 <widget class="QPushButton" row="0" column="4">
                                     <property name="name">
                                         <cstring>test_profile_button</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>1</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>1</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
                                     </property>
                                     <property name="text">
                                         <string>Profile</string>

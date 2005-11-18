@@ -1,4 +1,4 @@
-from qt import *
+from qt import QCheckBox, QButton, QLineEdit, QTextEdit
 
 from slow.model.preference_model import buildPreferences
 from genprefdialog import PrefDialog

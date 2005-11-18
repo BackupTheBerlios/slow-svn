@@ -1,7 +1,7 @@
 import logging
 from itertools import *
 
-from qt import *
+from qt import QListViewItem
 
 from qt_utils import pyqstr, qstrpy, FlagMaintainerListItem
 from slow.model import slosl_model
@@ -169,7 +169,6 @@ class SLOSLEditor(object):
             term = str_to_mathdom(term_str, term_type)
             return term.getroot()
 
-        exception = None
         current_field = None
 
         try:
