@@ -1,9 +1,10 @@
 STATIC_GLOBALS = globals().copy()
 exec 'from random import randint' in STATIC_GLOBALS
 
+from StringIO import StringIO
 from time import time
 from itertools import count, imap
-from qt import QStringList
+from qt import QStringList, QDialog, QTabWidget, QTextEdit, QVBoxLayout, QSize
 from qt_utils import qstrpy, pyqstr
 
 from slow.vis.view_viz import ViewGraph
@@ -33,9 +34,13 @@ class TestRunner(object):
 
     def run_profile(self, slosl_statements, db_attributes, init_code,
                     graphviz_program):
-        import hotshot, hotshot.stats, os
+        import hotshot, hotshot.stats, os, sys
 
+	stderr = sys.stderr # discard runtime warning for tempnam
+	sys.stderr = StringIO()
         prof_filename = os.tempnam(None, 'slow-')
+	sys.stderr = stderr
+
         prof = hotshot.Profile(prof_filename)
 
         graph = prof.runcall(self.build_graph, slosl_statements,
@@ -43,8 +48,21 @@ class TestRunner(object):
         prof.close()
         stats = hotshot.stats.load(prof_filename)
         stats.strip_dirs()
+
+	stdout = sys.stdout
+
         stats.sort_stats('time', 'calls')
+	sys.stdout = StringIO()
         stats.print_stats()
+	profile_data = sys.stdout.getvalue()
+
+        stats.sort_stats('cumulative', 'calls')
+	sys.stdout = StringIO()
+        stats.print_stats()
+	self.profile_data = (profile_data, sys.stdout.getvalue())
+
+	sys.stdout = stdout
+
         os.remove(prof_filename)
 
         return self.__build_svg(graph, graphviz_program)
@@ -156,6 +174,29 @@ class TestEditor(object):
 
     def test_profile_button_clicked(self):
         self.__run_test(self.__runner.run_profile)
+	profile = self.__runner.profile_data
+
+	dialog = QDialog(self)
+
+	tabs = QTabWidget(dialog)
+
+	for i, output in enumerate(profile):
+	    browser = QTextEdit(tabs, 'profile')
+	    browser.setReadOnly(True)
+	    browser.setWordWrap(browser.NoWrap)
+	    browser.setTextFormat(browser.PlainText)
+	    browser.setFamily('Monospace')
+	    browser.setText(output)
+	    tabs.addTab(browser, "profile %d" % i)
+
+	layout = QVBoxLayout(dialog, 1, 1, "DialogLayout")
+	layout.setResizeMode(QVBoxLayout.FreeResize)
+	layout.addWidget(tabs)
+
+	dialog.setCaption(self.tr("Profile"))
+	dialog.setMinimumSize(QSize(400,500))
+
+	dialog.show()
 
     def test_run_button_clicked(self):
         self.__run_test(self.__runner.run_test)

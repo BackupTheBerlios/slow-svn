@@ -12,3 +12,6 @@ name_attribute =
 
 type_attribute =
    attribute type_name   { type_string }
+
+readable_name_attribute =
+   attribute readable_name { text }

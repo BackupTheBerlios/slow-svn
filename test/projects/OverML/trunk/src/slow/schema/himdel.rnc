@@ -1,30 +1,34 @@
 message_hierarchy =
    element himdel:message_hierarchy {
-      toplevel_container*,
-      header*,
-      protocol*
+      toplevel_container*
+    & header*
+    & protocol*
    }
 
 toplevel_container =
    element himdel:container {
+      readable_name_attribute?,
       type_attribute,
       content_field*
    }
 
 container =
    element himdel:container {
+      readable_name_attribute?,
       type_attribute?,
       content_field*
    }
 
 header =
    element himdel:header {
+      readable_name_attribute?,
       identifier_attribute?,
       ( header* & content_field* & message+ )
    }
 
 message =
    element himdel:message {
+      readable_name_attribute?,
       type_attribute,
       content_field*
    }
@@ -46,4 +50,6 @@ content_field =
  }
 
 content_attributes =
-   identifier_attribute, type_attribute
+   identifier_attribute,
+   type_attribute,
+   readable_name_attribute?

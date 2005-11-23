@@ -10,7 +10,7 @@ from model import NamedObject
 
 import random
 
-EDSM_NAMESPACE_URI = u"http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsm"
+EDSM_NAMESPACE_URI = u"http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl"
 
 def uniqueID(node, state_id):
     node_by_id = node.getObjectById

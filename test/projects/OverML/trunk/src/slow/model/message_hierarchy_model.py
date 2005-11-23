@@ -5,7 +5,7 @@ from lxml       import etree
 from xpathmodel import XPathModel
 from model import NamedObject
 
-MSG_NAMESPACE_URI = u"http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/msg"
+MSG_NAMESPACE_URI = u"http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"
 
 
 def buildMessageElement(parent, node_type, **kwargs):

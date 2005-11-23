@@ -37,9 +37,9 @@ class TextDialog(qt.QDialog):
         browser = qt.QTextEdit(self, 'xml')
         browser.setReadOnly(True)
         browser.setWordWrap(browser.NoWrap)
-        browser.setTextFormat(qt.Qt.PlainText)
+        browser.setTextFormat(browser.PlainText)
         browser.setPointSize(12)
-        browser.setFamily('monospace')
+        browser.setFamily('Monospace')
 
         layout = qt.QVBoxLayout(self, 1, 1, "DialogLayout")
         layout.setResizeMode(qt.QLayout.FreeResize)
