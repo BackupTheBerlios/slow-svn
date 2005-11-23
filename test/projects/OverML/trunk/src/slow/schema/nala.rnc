@@ -1,3 +1,6 @@
+nala_types =
+   element nala:types { anyOtherElement* }
+
 nala_attributes =
    element nala:attributes {
       nala_attribute*

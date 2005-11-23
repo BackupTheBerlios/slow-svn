@@ -15,3 +15,10 @@ type_attribute =
 
 readable_name_attribute =
    attribute readable_name { text }
+
+anyOtherElement =
+   element * - (slow:* | nala:* | slosl:* | himdel:* | edsl:*) {
+      (attribute * { text }
+       | text
+       | anyOtherElement)*
+   }

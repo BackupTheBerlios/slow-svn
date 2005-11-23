@@ -15,9 +15,6 @@ from gui_model                import GUI_NAMESPACE_URI
 def buildFile():
     return Element(u"{%s}file" % SLOW_FILE_NAMESPACE_URI)
 
-def buildTypes():
-    return Element(u"{%s}types" % SLOW_FILE_NAMESPACE_URI)
-
 class FileModel(XPathModel):
     DEFAULT_NAMESPACE = SLOW_FILE_NAMESPACE_URI
     SLOSL_NAMESPACE   = SLOSL_NAMESPACE_URI
@@ -29,7 +26,7 @@ class FileModel(XPathModel):
     @get_first
     @autoconstruct
     def _get_types(self):
-        u"./{%(DEFAULT_NAMESPACE)s}types"
+        u"./{%(DB_NAMESPACE)s}types"
 
     @get_first
     @autoconstruct
@@ -57,24 +54,5 @@ class FileModel(XPathModel):
         u"./{%(GUI_NAMESPACE)s}gui"
 
 
-class TypeModel(XPathModel):
-    @get_first
-    def _get_type(self, type_name):
-        u"./*[ @type_name = $type_name ]"
-    def _del_type(self, type_name):
-        u"./*[ @type_name = $type_name ]"
-
-    def _get_type_dict(self, _xpath_result):
-        u"./*[ string(@type_name) ]"
-        return dict( (child.get(u"type_name"), child)
-                     for child in _xpath_result)
-
-    def _get_type_list(self):
-        u"./*[ string(@type_name) ]"
-
-    _get_type_names =u"./*/@type_name"
-
-
 ns = etree.Namespace(SLOW_FILE_NAMESPACE_URI)
 ns[u'file']  = FileModel
-ns[u'types'] = TypeModel

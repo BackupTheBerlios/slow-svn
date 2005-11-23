@@ -3,16 +3,13 @@ start = slow_file
 
 slow_file =
    element slow:file {
-      types?
+      nala_types?
     & (nala_attribute* | nala_attributes)
     & (slosl_statement* | slosl_statements)
     & message_hierarchy
     & edsl_graph
     & slow_gui
    }
-
-types =
-   element slow:types { anyOtherElement* }
 
 slow_gui =
    element slowgui:gui { anyGuiElement* }
@@ -22,11 +19,4 @@ anyGuiElement =
       (attribute * { text }
        | text
        | anyGuiElement)*
-   }
-
-anyOtherElement =
-   element * - (slow:* | nala:* | slosl:* | himdel:* | edsl:*) {
-      (attribute * { text }
-       | text
-       | anyOtherElement)*
    }

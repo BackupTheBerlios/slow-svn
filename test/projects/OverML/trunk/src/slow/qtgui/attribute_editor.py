@@ -10,8 +10,7 @@ from custom_widgets import IterableListView
 from lxml import etree
 
 from slow.model import sqldata_model
-from slow.model.file_model      import buildTypes
-from slow.model.attribute_model import buildAttribute, buildAttributes, DB_NAMESPACE_URI
+from slow.model.attribute_model import buildTypes, buildAttribute, buildAttributes, DB_NAMESPACE_URI
 from slow.model.sqldata_model   import SIMPLE_TYPES, ALL_TYPES, SQL_NAMESPACE_URI
 
 class AttributeListItem(FlagMaintainerListItem):
