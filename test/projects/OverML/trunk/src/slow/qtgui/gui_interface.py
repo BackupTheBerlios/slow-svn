@@ -22,6 +22,11 @@ class OverlayDesigner_edsmdialog(EDSMDialog):
     def __init__(self,parent = None,name = None,modal = 0,fl = 0):
         EDSMDialog.__init__(self,parent,name,modal,fl)
 
+
+    def language_name_activated(self,a0):
+        print "OverlayDesigner_edsmdialog.language_name_activated( const QString & ): Not implemented yet"
+
+
 from gengui import OverlayDesignerMainWindow
 
 

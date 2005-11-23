@@ -4,8 +4,8 @@
   xmlns:file = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow"
   xmlns:sql  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/sql"
   xmlns:db   = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala"
-  xmlns:msg  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/msg"
-  xmlns:edsm = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsm"
+  xmlns:msg  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"
+  xmlns:edsm = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl"
   xmlns:slosl= "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl"
   >
 
@@ -21,8 +21,8 @@
 	xmlns:file = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow"
 	xmlns:sql  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/sql"
 	xmlns:db   = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala"
-	xmlns:msg  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/msg"
-	xmlns:edsm = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsm"
+	xmlns:msg  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"
+	xmlns:edsm = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl"
 	xmlns:slosl= "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl"
 	>
       <xsl:apply-templates select="file:types"       mode="file"/>

@@ -48,9 +48,7 @@ def buildSubgraph(parent, name, readable_name=None):
     subgraph.id = uniqueID(parent, str(id(subgraph)))
     states = subgraph.states
     entry_state = subgraph.entry_state = buildState(states, 'entry')
-    entry_state.code.class_name = 'VirtualState'
-    exit_state = subgraph.exit_state  = buildState(states, 'exit')
-    exit_state.code.class_name = 'VirtualState'
+    exit_state  = subgraph.exit_state  = buildState(states, 'exit')
     return subgraph
 
 EMPTY_MODEL = u'''\
@@ -161,10 +159,28 @@ class EDSMStateModel(EDSMClass, EDSMState, NamedObject):
             transition.discard()
         disconnect_element(self)
 
-    @get_first
-    @autoconstruct
-    def _get_code(self):
-        u"./{%(DEFAULT_NAMESPACE)s}code"
+    def _get_code(self, _xpath_result, language):
+        u"./{%(DEFAULT_NAMESPACE)s}code[@language = $language]"
+        if _xpath_result:
+            return _xpath_result[0]
+        else:
+            return SubElement(self, "{%s}code" % EDSM_NAMESPACE_URI, language=language)
+
+    def _set_code(self, _xpath_result, language, code, *class_name):
+        u"./{%(DEFAULT_NAMESPACE)s}code[@language = $language]"
+        if _xpath_result:
+            code_tag = _xpath_result[0]
+        else:
+            code_tag = SubElement(self, "{%s}code" % EDSM_NAMESPACE_URI, language=language)
+        code_tag.code = code
+        if class_name and class_name[0]:
+            code_tag.class_name = class_name[0]
+
+    def _del_code(self, language):
+        u"./{%(DEFAULT_NAMESPACE)s}code[@language = $language]"
+
+    _get_codes = u"./{%s}code" % EDSM_NAMESPACE_URI
+    _del_codes = u"./{%s}code" % EDSM_NAMESPACE_URI
 
     _attr_inherit_context = u"bool#./@inherit_context"
 

@@ -219,6 +219,12 @@
         <receiver>EDSMDialog</receiver>
         <slot>reject()</slot>
     </connection>
+    <connection>
+        <sender>language_name</sender>
+        <signal>activated(const QString&amp;)</signal>
+        <receiver>EDSMDialog</receiver>
+        <slot>language_name_activated(const QString&amp;)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>object_name</tabstop>
@@ -228,5 +234,11 @@
     <tabstop>buttonCancel</tabstop>
     <tabstop>buttonHelp</tabstop>
 </tabstops>
+<includes>
+    <include location="local" impldecl="in implementation">edsmdialog.ui.h</include>
+</includes>
+<slots>
+    <slot>language_name_activated( const QString &amp; )</slot>
+</slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

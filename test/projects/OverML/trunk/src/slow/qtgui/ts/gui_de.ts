@@ -874,6 +874,18 @@ TCP</source>
         <source>&amp;Cancel</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Python
+Java
+C++
+C
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Languages</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ProtocolSet</name>

@@ -26,8 +26,30 @@ class PreferenceModel(XPathModel):
 
     _get_optimize_xml_size, _set_optimize_xml_size = _build_bool_element(
         u"optimize_xml_size")
+
     _get_auto_update_edsm_graph, _set_auto_update_edsm_graph = _build_bool_element(
         u"auto_update_edsm_graph")
+
+    def _get_languages(self, _xpath_result):
+        u"./{%(DEFAULT_NAMESPACE)s}languages/*"
+        if _xpath_result:
+            return [ l.text for l in _xpath_result ]
+        else:
+            return []
+
+    def _set_languages(self, _xpath_result, languages):
+        u"./{%(DEFAULT_NAMESPACE)s}languages"
+        if _xpath_result:
+            lang_tag = _xpath_result[0]
+            lang_tag.clear()
+        else:
+            lang_tag = etree.SubElement(self, u"{%s}languages" % PREF_NAMESPACE_URI)
+
+        language_tagname = u"{%s}language" % PREF_NAMESPACE_URI
+        for language in languages:
+            tag = etree.SubElement(lang_tag, language_tagname)
+            tag.text = unicode(language)
+
 
     def __iter__(self):
         for name, value in vars(self.__class__).iteritems():

@@ -34,11 +34,12 @@ class GuiDataModel(XPathModel):
     def _set_testCode(self, _xpath_result, view_name, code):
         u"./{%(DEFAULT_NAMESPACE)s}testcode[ @view_name = $view_name]"
         if _xpath_result:
-            _xpath_result[0].code = code
+            code_tag = _xpath_result[0]
         else:
             tag = u"{%s}testcode" % GUI_NAMESPACE_URI
             code_tag = etree.SubElement(self, tag, view_name=view_name)
-            code_tag.code = code
+        code_tag.language = 'python'
+        code_tag.code = code
 
 
 class IconPositionModel(XPathModel):

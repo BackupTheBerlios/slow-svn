@@ -90,12 +90,12 @@ def on_xpath(expression, namespaces=None):
 __RE_ELEMENT_NAME = re.compile('({[^}]+})?([a-zA-Z_][a-zA-Z0-9_.-]*)')
 
 def autoconstruct(*args):
-    """Decorator to auto construct an element for set().
+    """Decorator to auto construct an element for set() or get().
     Limited to existing parents.
     Possible arguments are:
     * autoconstruct(parent_path, element_tag [, namespace_dict])
     * autoconstruct
-    The argument free version only works if set() uses a docstring (or
+    The argument free version only works if set/get uses a docstring (or
     on_xpath()) XPath expression that ends with '/{ns}element' or
     '/element'.
     """

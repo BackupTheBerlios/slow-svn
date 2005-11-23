@@ -1,4 +1,5 @@
 from qt import QCheckBox, QButton, QLineEdit, QTextEdit
+from qt_utils import qstrpy, pyqstr
 
 from slow.model.preference_model import buildPreferences
 from genprefdialog import PrefDialog
@@ -25,9 +26,11 @@ class PreferenceDialog(PrefDialog):
             elif isinstance(field, QButton):
                 field.setDown( bool(value) )
             elif isinstance(field, QLineEdit) or isinstance(field, QTextEdit):
-                field.setText(value)
+                if isinstance(value, (list, tuple)):
+                    value = '\n'.join(v for v in value if v)
+                field.setText(pyqstr(value))
             else:
-                raise TypeError, "unsupported field type: %s" % type(field)
+                raise TypeError, "unsupported field type for name '%s': %s" % (attribute, type(field))
 
     def copy_to_model(self):
         model = self.__model
@@ -40,8 +43,10 @@ class PreferenceDialog(PrefDialog):
                 value = field.isChecked()
             elif isinstance(field, QButton):
                 value = field.isDown()
-            elif isinstance(field, QLineEdit) or isinstance(field, QTextEdit):
+            elif isinstance(field, QLineEdit):
                 value = qstrpy( field.text() )
+            elif isinstance(field, QTextEdit):
+                value = filter(None, (s.strip() for s in qstrpy(field.text()).split('\n')))
             else:
                 raise TypeError, "unsupported field type: %s" % type(field)
 

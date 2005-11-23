@@ -30,36 +30,48 @@ class AbstractEDSMDialog(object):
             if hasattr(self, fieldname)
             )
 
+        self.code_field_dict = dict(
+            (attr_name, (getattr(self, fieldname), getattr(self, '%s_textlabel' % fieldname)))
+            for (attr_name, fieldname) in self.CODE_FIELD_MAP
+            if hasattr(self, fieldname)
+            )
+
+        self._code_dict = {}
+        self._selected_language = None
+
     FIELD_MAP = (
-        ('readable_name',   'object_name'),
-        ('message_type',    'message_type'),
-        ('code.language',   'language_name'),
-        ('code.code',       'init_code'),
-        ('code.class_name', 'class_name')
+        ('readable_name', 'object_name'),
+        ('message_type',  'message_type')
+        )
+
+    CODE_FIELD_MAP = (
+        ('language',   'language_name'),
+        ('code',       'init_code'),
+        ('class_name', 'class_name')
         )
 
     def collect_values(self, model_attribute, values):
-        field, label = self.field_dict[model_attribute]
+        try:
+            field, label = self.field_dict[model_attribute]
+        except KeyError:
+            field, label = self.code_field_dict[model_attribute]
+
         if not isinstance(field, QComboBox):
-            return
+            raise ValueError, "Only QComboBox fields are supported."
 
         field.clear()
         for value in values:
             field.insertItem(pyqstr(value))
 
-        try:
-            value = getattr(self._model, model_attribute)
-            field.setCurrentText(value)
-        except AttributeError:
-            pass
+    def setModel(self, dialog_model):
+        self._model = dialog_model
 
-    def setModel(self, model):
-        self._model = model
+        self._code_dict.clear()
+        self._selected_language = None
+
         for attrname, (field, label) in self.field_dict.iteritems():
-            value = model
             try:
-                for attrpart in attrname.split('.'):
-                    value = getattr(value, attrpart)
+                value = getattr(dialog_model, attrname)
             except AttributeError:
                 label.hide()
                 field.hide()
@@ -71,10 +83,63 @@ class AbstractEDSMDialog(object):
             label.show()
             field.show()
 
+        self.class_name.setCurrentItem(-1)
+        self.language_name.setCurrentItem(-1)
+        self.init_code.clear()
+        if hasattr(dialog_model, 'codes'):
+            field = self.language_name
+            lower_values = set(qstrpy(s).lower() for s in field)
+            for code in dialog_model.codes:
+                language = code.language
+                if language and language not in lower_values:
+                    field.insertItem(pyqstr(language.capitalize()))
+
+            codes = dialog_model.codes
+            self._code_dict.update( (c.language, c.code) for c in codes if c.language )
+
+            for code in codes:
+                if code.class_name:
+                    self.class_name.setCurrentText(pyqstr(code.class_name))
+                    break
+
+            if codes:
+                code = codes[0]
+                for language in self.language_name:
+                    if qstrpy(language).lower() == code.language:
+                        self._selected_language = code.language
+                        self.language_name.setCurrentText(language)
+                        self.init_code.setText(pyqstr(code.code or ''))
+                        break
+
+            for field, label in self.code_field_dict.itervalues():
+                label.show()
+                field.show()
+        else:
+            for field, label in self.code_field_dict.itervalues():
+                label.hide()
+                field.hide()
+
     def accept(self):
         model = self._model
+
+        if self._selected_language:
+            self._code_dict[self._selected_language] = qstrpy( self.init_code.text() )
+
+        class_name = None
+        if self.class_name.isVisible():
+            value = self.class_name.currentText()
+            validator = self.class_name_validator
+            if validator.validate(value, 0)[0] == validator.Acceptable:
+                if value not in self.class_name:
+                    self.class_name.insertItem(value)
+                class_name = qstrpy(value)
+            else:
+                self.class_name.setFocus()
+                return
+
         for attrname, fieldname in self.FIELD_MAP:
-            try: field = getattr(self, fieldname)
+            try:
+                field = getattr(self, fieldname)
             except AttributeError:
                 continue
             if field.isHidden():
@@ -85,26 +150,32 @@ class AbstractEDSMDialog(object):
             else:
                 value = field.text()
 
-            if fieldname == 'class_name' and len(value) > 0:
-                validator = self.class_name_validator
-                if validator.validate(value, 0)[0] == validator.Acceptable:
-                    if value not in self.class_name:
-                        self.class_name.insertItem(value)
-                else:
-                    self.class_name.setFocus()
-                    return
+            setattr(model, attrname, qstrpy(value))
 
-            if fieldname == 'message_type' and len(value) > 0:
-                # FIXME: link message to type name
-                pass
+        del model.codes
+        for language, code in self._code_dict.iteritems():
+            if not code.strip():
+                continue
+            model.setCode(language, code, class_name)
 
-            owner_object = model
-            for attrpart in attrname.split('.')[:-1]:
-                owner_object = getattr(owner_object, attrpart)
-            setattr(owner_object, attrname.rsplit('.', 1)[-1], qstrpy(value))
+        if class_name and not model.codes:
+            model.setCode('python', None, class_name)
 
         self.GUI_CLASS.accept(self)
         self._edsm_editor.edsm_model_updated(model)
+
+    def language_name_activated(self, language):
+        if self._selected_language:
+            self._code_dict[self._selected_language] = qstrpy( self.init_code.text() )
+
+        language = qstrpy(language).lower()
+        self._selected_language = language
+        try:
+            code = pyqstr( self._code_dict[language] )
+        except KeyError:
+            self.init_code.clear()
+        else:
+            self.init_code.setText(code)
 
 
 class AbstractTransitionDialog(AbstractEDSMDialog):
@@ -607,8 +678,11 @@ class EDSMEditor(EDSMEditorItem):
     def edsm_edit_state(self, state):
         if not state:
             return
-        self.state_dialog.setState(state)
-        self.state_dialog.show()
+        languages = self.preferences.languages
+        dialog = self.state_dialog
+        dialog.collect_values('language', languages)
+        dialog.setState(state)
+        dialog.show()
 
     def find_message_paths(self, messages):
         paths = []

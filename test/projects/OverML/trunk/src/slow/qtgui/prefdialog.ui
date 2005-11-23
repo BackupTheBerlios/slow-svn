@@ -93,7 +93,7 @@
             </widget>
             <widget class="QWidget">
                 <property name="name">
-                    <cstring>TabPage</cstring>
+                    <cstring>available_protocols</cstring>
                 </property>
                 <attribute name="title">
                     <string>Protocols</string>
@@ -104,7 +104,7 @@
                     </property>
                     <widget class="QTextEdit">
                         <property name="name">
-                            <cstring>available_protocols</cstring>
+                            <cstring>protocols</cstring>
                         </property>
                         <property name="enabled">
                             <bool>false</bool>
@@ -115,6 +115,40 @@
                         <property name="text">
                             <string>UDP
 TCP</string>
+                        </property>
+                        <property name="wordWrap">
+                            <enum>NoWrap</enum>
+                        </property>
+                    </widget>
+                </hbox>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>available_languages</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Languages</string>
+                </attribute>
+                <hbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QTextEdit">
+                        <property name="name">
+                            <cstring>languages</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>true</bool>
+                        </property>
+                        <property name="textFormat">
+                            <enum>PlainText</enum>
+                        </property>
+                        <property name="text">
+                            <string>Python
+Java
+C++
+C
+</string>
                         </property>
                         <property name="wordWrap">
                             <enum>NoWrap</enum>
