@@ -820,6 +820,17 @@ Functions to reimplement:&lt;br&gt;
 Functions to reimplement:&lt;br&gt;
 &lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;make_foreign&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;local_node&lt;/i&gt;, &lt;i&gt;node&lt;/i&gt;)&lt;br&gt;
  - transform local to foreign node (add/modify attributes, etc.)</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>All Python builtins are available, plus:&lt;br&gt;
+&lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;buildNode&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;attr1&lt;/i&gt;=&lt;i&gt;value1&lt;/i&gt;, ...)&lt;br&gt;
+ - build a new node and initialize it with the specified attributes&lt;br&gt;
+&lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;randint&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;min&lt;/i&gt;, &lt;i&gt;max&lt;/i&gt;)&lt;br&gt;
+ - get a random integer value&lt;br&gt;
+Functions to reimplement:&lt;br&gt;
+&lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;make_foreign&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;local_node&lt;/i&gt;, &lt;i&gt;node&lt;/i&gt;)&lt;br&gt;
+ - make &lt;i&gt;node&lt;/i&gt; foreign to the new local node (add/modify attributes, etc.)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
