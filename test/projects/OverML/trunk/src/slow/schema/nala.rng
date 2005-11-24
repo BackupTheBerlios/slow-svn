@@ -21,6 +21,31 @@
       <ref name="type_string"/>
     </attribute>
   </define>
+  <define name="readable_name_attribute">
+    <attribute name="readable_name"/>
+  </define>
+  <define name="anyOtherElement">
+    <element>
+      <anyName>
+        <except>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl"/>
+        </except>
+      </anyName>
+      <zeroOrMore>
+        <choice>
+          <attribute>
+            <anyName/>
+          </attribute>
+          <text/>
+          <ref name="anyOtherElement"/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
   <define name="math_expression">
     <choice>
       <element name="math:math">
@@ -120,8 +145,15 @@
     </choice>
   </define>
   <start>
-    <ref name="nala_attributes"/>
+    <ref name="nala_types"/>
   </start>
+  <define name="nala_types">
+    <element name="nala:types">
+      <zeroOrMore>
+        <ref name="anyOtherElement"/>
+      </zeroOrMore>
+    </element>
+  </define>
   <define name="nala_attributes">
     <element name="nala:attributes">
       <zeroOrMore>

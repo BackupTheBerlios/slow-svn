@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<grammar xmlns:himdel="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel" xmlns:slosl="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl" xmlns:nala="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala" xmlns:overml="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+<grammar xmlns:doc="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/annotate" xmlns:edsl="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl" xmlns:xsd="http://www.w3.org/2001/XMLSchema-datatypes" xmlns:himdel="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel" xmlns:slosl="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl" xmlns:slowgui="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow-gui" xmlns:slow="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow" xmlns:nala="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala" xmlns:overml="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <define name="identifier_string">
     <data type="Name"/>
   </define>
@@ -20,6 +20,31 @@
     <attribute name="type_name">
       <ref name="type_string"/>
     </attribute>
+  </define>
+  <define name="readable_name_attribute">
+    <attribute name="readable_name"/>
+  </define>
+  <define name="anyOtherElement">
+    <element>
+      <anyName>
+        <except>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl"/>
+        </except>
+      </anyName>
+      <zeroOrMore>
+        <choice>
+          <attribute>
+            <anyName/>
+          </attribute>
+          <text/>
+          <ref name="anyOtherElement"/>
+        </choice>
+      </zeroOrMore>
+    </element>
   </define>
   <define name="math_expression">
     <choice>
@@ -120,53 +145,58 @@
     </choice>
   </define>
   <start>
-    <ref name="overml_file"/>
+    <doc:documentation xml:lang="en">OverML Schema 0.1 - SUBJECT TO CHANGES!</doc:documentation>
+    <ref name="slow_file"/>
   </start>
-  <define name="overml_file">
-    <element name="overml:file">
-      <group>
+  <define name="slow_file">
+    <element name="slow:file">
+      <interleave>
         <optional>
-          <ref name="types"/>
+          <ref name="nala_types"/>
         </optional>
         <choice>
-          <ref name="nala_attribute"/>
+          <zeroOrMore>
+            <ref name="nala_attribute"/>
+          </zeroOrMore>
           <ref name="nala_attributes"/>
         </choice>
         <choice>
-          <ref name="slosl_statement"/>
+          <zeroOrMore>
+            <ref name="slosl_statement"/>
+          </zeroOrMore>
           <ref name="slosl_statements"/>
         </choice>
         <ref name="message_hierarchy"/>
-      </group>
-      <!--      edsm_description -->
+        <ref name="edsl_graph"/>
+        <ref name="slow_gui"/>
+      </interleave>
     </element>
   </define>
-  <define name="types">
-    <element name="overml:types">
+  <define name="slow_gui">
+    <element name="slowgui:gui">
       <zeroOrMore>
-        <ref name="anyOtherElement"/>
+        <ref name="anyGuiElement"/>
       </zeroOrMore>
     </element>
   </define>
-  <define name="anyOtherElement">
+  <define name="anyGuiElement">
     <element>
-      <anyName>
-        <except>
-          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML"/>
-          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala"/>
-          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl"/>
-          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"/>
-          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsm"/>
-        </except>
-      </anyName>
+      <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow-gui"/>
       <zeroOrMore>
         <choice>
           <attribute>
             <anyName/>
           </attribute>
           <text/>
-          <ref name="anyOtherElement"/>
+          <ref name="anyGuiElement"/>
         </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="nala_types">
+    <element name="nala:types">
+      <zeroOrMore>
+        <ref name="anyOtherElement"/>
       </zeroOrMore>
     </element>
   </define>
@@ -213,19 +243,24 @@
   </define>
   <define name="message_hierarchy">
     <element name="himdel:message_hierarchy">
-      <zeroOrMore>
-        <ref name="toplevel_container"/>
-      </zeroOrMore>
-      <zeroOrMore>
-        <ref name="header"/>
-      </zeroOrMore>
-      <zeroOrMore>
-        <ref name="protocol"/>
-      </zeroOrMore>
+      <interleave>
+        <zeroOrMore>
+          <ref name="toplevel_container"/>
+        </zeroOrMore>
+        <zeroOrMore>
+          <ref name="header"/>
+        </zeroOrMore>
+        <zeroOrMore>
+          <ref name="protocol"/>
+        </zeroOrMore>
+      </interleave>
     </element>
   </define>
   <define name="toplevel_container">
     <element name="himdel:container">
+      <optional>
+        <ref name="readable_name_attribute"/>
+      </optional>
       <ref name="type_attribute"/>
       <zeroOrMore>
         <ref name="content_field"/>
@@ -234,6 +269,9 @@
   </define>
   <define name="container">
     <element name="himdel:container">
+      <optional>
+        <ref name="readable_name_attribute"/>
+      </optional>
       <optional>
         <ref name="type_attribute"/>
       </optional>
@@ -244,6 +282,9 @@
   </define>
   <define name="header">
     <element name="himdel:header">
+      <optional>
+        <ref name="readable_name_attribute"/>
+      </optional>
       <optional>
         <ref name="identifier_attribute"/>
       </optional>
@@ -262,6 +303,9 @@
   </define>
   <define name="message">
     <element name="himdel:message">
+      <optional>
+        <ref name="readable_name_attribute"/>
+      </optional>
       <ref name="type_attribute"/>
       <zeroOrMore>
         <ref name="content_field"/>
@@ -301,6 +345,9 @@
   <define name="content_attributes">
     <ref name="identifier_attribute"/>
     <ref name="type_attribute"/>
+    <optional>
+      <ref name="readable_name_attribute"/>
+    </optional>
   </define>
   <define name="slosl_statements">
     <element name="slosl:statements">
@@ -432,6 +479,170 @@
           </choice>
         </element>
       </oneOrMore>
+    </element>
+  </define>
+  <define name="edsl_graph">
+    <element name="edsl:edsm">
+      <interleave>
+        <ref name="edsl_states"/>
+        <ref name="edsl_transitions"/>
+      </interleave>
+    </element>
+  </define>
+  <define name="edsl_states">
+    <element name="edsl:states">
+      <interleave>
+        <zeroOrMore>
+          <ref name="edsl_state"/>
+        </zeroOrMore>
+        <zeroOrMore>
+          <ref name="edsl_subgraph"/>
+        </zeroOrMore>
+      </interleave>
+    </element>
+  </define>
+  <define name="edsl_transitions">
+    <element name="edsl:transitions">
+      <zeroOrMore>
+        <ref name="edsl_transition"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="edsl_subgraph">
+    <element name="edsl:subgraph">
+      <interleave>
+        <ref name="name_attribute"/>
+        <attribute name="id">
+          <ref name="edsl_state_id"/>
+        </attribute>
+        <attribute name="entry_state">
+          <ref name="edsl_state_id"/>
+        </attribute>
+        <attribute name="exit_state">
+          <ref name="edsl_state_id"/>
+        </attribute>
+        <optional>
+          <ref name="edsl_readable_name"/>
+        </optional>
+        <ref name="edsl_states"/>
+        <ref name="edsl_transitions"/>
+      </interleave>
+    </element>
+  </define>
+  <define name="edsl_state">
+    <element name="edsl:state">
+      <interleave>
+        <ref name="name_attribute"/>
+        <attribute name="id">
+          <ref name="edsl_state_id"/>
+        </attribute>
+        <optional>
+          <ref name="edsl_readable_name"/>
+        </optional>
+        <zeroOrMore>
+          <ref name="edsl_code"/>
+        </zeroOrMore>
+      </interleave>
+    </element>
+  </define>
+  <define name="edsl_transition">
+    <element name="edsl:transition">
+      <interleave>
+        <optional>
+          <ref name="edsl_readable_name"/>
+        </optional>
+        <zeroOrMore>
+          <ref name="edsl_code"/>
+        </zeroOrMore>
+        <element name="edsl:from_state">
+          <ref name="edsl_state_ref"/>
+        </element>
+        <element name="edsl:to_state">
+          <ref name="edsl_state_ref"/>
+        </element>
+        <choice>
+          <group>
+            <attribute name="type">
+              <value>message</value>
+            </attribute>
+            <ref name="edsl_message_transition"/>
+          </group>
+          <group>
+            <attribute name="type">
+              <value>event</value>
+            </attribute>
+            <ref name="edsl_event_transition"/>
+          </group>
+          <attribute name="type">
+            <value>outputchain</value>
+          </attribute>
+          <!-- edsl_outputchain_transition) -->
+          <group>
+            <attribute name="type">
+              <value>transition</value>
+            </attribute>
+          </group>
+          <!-- edsl_immediate_transition) -->
+          <group>
+            <attribute name="type">
+              <value>timer</value>
+            </attribute>
+            <ref name="edsl_timer_transition"/>
+          </group>
+        </choice>
+      </interleave>
+    </element>
+  </define>
+  <define name="edsl_message_transition">
+    <optional>
+      <element name="edsl:messagetype">
+        <text/>
+      </element>
+    </optional>
+  </define>
+  <define name="edsl_event_transition">
+    <optional>
+      <element name="edsl:subscription">
+        <text/>
+      </element>
+    </optional>
+  </define>
+  <define name="edsl_timer_transition">
+    <element name="edsl:timerdelay">
+      <data type="integer"/>
+    </element>
+  </define>
+  <define name="edsl_code">
+    <element name="edsl:code">
+      <optional>
+        <attribute name="classname">
+          <ref name="identifier_string"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="methodname">
+          <ref name="identifier_string"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="language"/>
+      </optional>
+      <text>
+        <doc:documentation xml:lang="en">the text is base64-encoded(zlib-compressed(code))</doc:documentation>
+      </text>
+    </element>
+  </define>
+  <define name="edsl_state_ref">
+    <attribute name="ref">
+      <ref name="edsl_state_id"/>
+    </attribute>
+  </define>
+  <define name="edsl_state_id">
+    <text/>
+  </define>
+  <define name="edsl_readable_name">
+    <element name="edsl:readablename">
+      <text/>
     </element>
   </define>
 </grammar>

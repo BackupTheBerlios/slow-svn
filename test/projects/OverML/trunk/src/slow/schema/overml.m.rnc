@@ -1,8 +1,11 @@
-namespace overml = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML"
-namespace nala   = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala"
-namespace slosl  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl"
-namespace himdel = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"
-namespace edsm   = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsm"
+namespace overml  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML"
+namespace slow    = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow"
+namespace nala    = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala"
+namespace slosl   = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl"
+namespace himdel  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"
+namespace edsl    = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl"
+namespace slowgui = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow-gui"
+namespace doc     = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/annotate"
 
 namespace xsd    = "http://www.w3.org/2001/XMLSchema-datatypes"
 namespace math   = "http://www.w3.org/1998/Math/MathML"
@@ -21,6 +24,16 @@ name_attribute =
 
 type_attribute =
    attribute type_name   { type_string }
+
+readable_name_attribute =
+   attribute readable_name { text }
+
+anyOtherElement =
+   element * - (slow:* | nala:* | slosl:* | himdel:* | edsl:*) {
+      (attribute * { text }
+       | text
+       | anyOtherElement)*
+   }
 
 math_expression =
    element math:math { math_expression_content }
@@ -66,23 +79,25 @@ anyMathML =
  | math_number
  | math_constant
 
-start = overml_file
+[ doc:documentation [ xml:lang="en" "OverML Schema 0.1 - SUBJECT TO CHANGES!" ] ]
+start = slow_file
 
-overml_file =
-   element overml:file {
-      types?,
-      (nala_attribute | nala_attributes),
-      (slosl_statement | slosl_statements),
-      message_hierarchy
-#      edsm_description
+slow_file =
+   element slow:file {
+      nala_types?
+    & (nala_attribute* | nala_attributes)
+    & (slosl_statement* | slosl_statements)
+    & message_hierarchy
+    & edsl_graph
+    & slow_gui
    }
 
-types =
-   element overml:types { anyOtherElement* }
+slow_gui =
+   element slowgui:gui { anyGuiElement* }
 
-anyOtherElement =
-   element * - (overml:* | nala:* | slosl:* | himdel:* | edsm:*) {
+anyGuiElement =
+   element slowgui:* {
       (attribute * { text }
        | text
-       | anyOtherElement)*
+       | anyGuiElement)*
    }
