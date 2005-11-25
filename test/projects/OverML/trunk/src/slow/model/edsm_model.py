@@ -183,6 +183,7 @@ class EDSMStateModel(EDSMClass, EDSMState, NamedObject):
     _del_codes = u"./{%s}code" % EDSM_NAMESPACE_URI
 
     _attr_inherit_context = u"bool#./@inherit_context"
+    _attr_long_running    = u"bool#./@long_running"
 
 class EDSMTransition(object):
     TYPE_TRANSITION   = 0

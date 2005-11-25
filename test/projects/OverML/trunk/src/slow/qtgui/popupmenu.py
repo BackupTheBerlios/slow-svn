@@ -17,12 +17,13 @@ class MenuProvider(object):
     def _populate_popup_menu(self, menu):
         pass
 
-    def _build_flag_menu_area(self, menu, editor, model, flag_list):
+    def _build_flag_menu_area(self, menu, editor, model, flag_list, exclusive=True):
         if len(flag_list) == 1:
             group  = None
             parent = editor
         else:
             parent = group = QActionGroup(editor)
+            group.setExclusive(bool(exclusive))
 
         actions = [
             FlagMaintainerAction(parent, model, flag_name, translation)

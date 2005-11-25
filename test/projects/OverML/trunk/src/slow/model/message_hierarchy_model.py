@@ -22,6 +22,7 @@ class MessageHierarchyRoot(MessageHierarchyBaseClass):
     _get_protocols  = u"./{%(DEFAULT_NAMESPACE)s}protocol"
     _get_headers    = u"./{%(DEFAULT_NAMESPACE)s}header"
     _get_access_names  = u"./*/@access_name"
+    _get_type_names    = u"./*/@type_name"
     _get_message_names = u".//{%(DEFAULT_NAMESPACE)s}message/@type_name"
 
 
@@ -68,7 +69,7 @@ class HeaderModel(MessageFieldHierarchy, AccessibleMixin):
 class IPProtocolModel(MessageFieldHierarchy, AccessibleMixin):
     TYPE_NAME = 'protocol'
 
-class MessageModel(MessageFieldHierarchy, AccessibleMixin):
+class MessageModel(MessageFieldHierarchy):
     TYPE_NAME = 'message'
 
 

@@ -33,6 +33,10 @@
         <source>inherit context</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>long running</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AboutDialog</name>

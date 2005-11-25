@@ -31,6 +31,8 @@ edsl_state =
    element edsl:state {
       name_attribute
     & attribute id   { edsl_state_id }
+    & attribute inherit_context { xsd:boolean }
+    & attribute long_running    { xsd:boolean }
 
     & edsl_readable_name?
     & edsl_code*

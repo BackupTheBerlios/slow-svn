@@ -129,6 +129,7 @@ class MListViewItem(qt.QListViewItem, MenuProvider):
                               checkable=popup_checkable or bool(self.FLAG_NAMES))
 
         self.setPixmap(0, self.PIXMAP)
+        self.setRenameEnabled(0, True)
         self.setRenameEnabled(1, True)
         self.setDragEnabled(True)
 
@@ -173,6 +174,15 @@ class MListViewItem(qt.QListViewItem, MenuProvider):
         model = self.__model
         if column == 0:
             model.readable_name = text
+        elif model.TYPE_NAME == "message":
+            if model.type_name != text:
+                # FIXME: search protocols for old name references!!
+                parent = model.getparent()
+                if parent and hasattr(parent, 'type_names'):
+                    if text in parent.type_names:
+                        self.editor.setStatus(self.tr("Name '%1' already in use.").arg(text))
+                        return
+                model.type_name = text
         elif model.access_name != text:
             parent = model.getparent()
             if parent and hasattr(parent, 'access_names'):
@@ -182,6 +192,9 @@ class MListViewItem(qt.QListViewItem, MenuProvider):
             model.access_name = text
 
         qt.QListViewItem.setText(self, column, text)
+
+        if text and not model.readable_name:
+            self.setText(0, pyqstr(text.capitalize().replace('_', ' ')))
 
     def iterchildren(self):
         child = self.firstChild()
@@ -223,7 +236,7 @@ class MListViewItem(qt.QListViewItem, MenuProvider):
         if self.FLAG_NAMES:
             menu.insertSeparator()
             self._build_flag_menu_area(menu, self.editor, self.model,
-                                       self.FLAG_NAMES)
+                                       self.FLAG_NAMES, True)
         if self.ALLOWS_DELETE:
             menu.insertSeparator()
             self.menu_delete.setIconSet(self.editor.delete_icon)

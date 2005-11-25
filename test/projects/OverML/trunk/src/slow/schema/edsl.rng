@@ -202,6 +202,12 @@
         <attribute name="id">
           <ref name="edsl_state_id"/>
         </attribute>
+        <attribute name="inherit_context">
+          <data type="boolean"/>
+        </attribute>
+        <attribute name="long_running">
+          <data type="boolean"/>
+        </attribute>
         <optional>
           <ref name="edsl_readable_name"/>
         </optional>

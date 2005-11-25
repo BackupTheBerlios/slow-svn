@@ -83,9 +83,13 @@ class AbstractEDSMDialog(object):
             label.show()
             field.show()
 
-        self.class_name.setCurrentItem(-1)
-        self.language_name.setCurrentItem(-1)
-        self.init_code.clear()
+        if hasattr(self, 'class_name'):
+            self.class_name.setCurrentItem(-1)
+        if hasattr(self, 'language_name'):
+            self.language_name.setCurrentItem(-1)
+        if hasattr(self, 'init_code'):
+            self.init_code.clear()
+
         if hasattr(dialog_model, 'codes'):
             field = self.language_name
             lower_values = set(qstrpy(s).lower() for s in field)
@@ -126,7 +130,7 @@ class AbstractEDSMDialog(object):
             self._code_dict[self._selected_language] = qstrpy( self.init_code.text() )
 
         class_name = None
-        if self.class_name.isVisible():
+        if hasattr(self, 'class_name') and self.class_name.isVisible():
             value = self.class_name.currentText()
             validator = self.class_name_validator
             if validator.validate(value, 0)[0] == validator.Acceptable:
@@ -152,14 +156,15 @@ class AbstractEDSMDialog(object):
 
             setattr(model, attrname, qstrpy(value))
 
-        del model.codes
-        for language, code in self._code_dict.iteritems():
-            if not code.strip():
-                continue
-            model.setCode(language, code, class_name)
+        if hasattr(model, 'codes'):
+            del model.codes
+            for language, code in self._code_dict.iteritems():
+                if not code.strip():
+                    continue
+                model.setCode(language, code, class_name)
 
-        if class_name and not model.codes:
-            model.setCode('python', None, class_name)
+            if class_name and not model.codes:
+                model.setCode('python', None, class_name)
 
         self.GUI_CLASS.accept(self)
         self._edsm_editor.edsm_model_updated(model)
@@ -342,7 +347,7 @@ class IconViewStateIcon(EDSMIconViewIcon):
         if self.FLAG_NAMES:
             menu.insertSeparator()
             self._build_flag_menu_area(menu, self._edsm_editor, self._model,
-                                       self.FLAG_NAMES)
+                                       self.FLAG_NAMES, False)
         menu.insertSeparator()
         menu.insertItem(tr('edit'), self.menu_edit)
         if self.MODIFIABLE:
@@ -479,7 +484,9 @@ class EDSMEditor(EDSMEditorItem):
         subgraph_pixmap = pixmaps['subgraph']
 
         class StateIcon(IconViewStateIcon):
-            FLAG_NAMES = ( ('inherit_context', tr('inherit context')), )
+            FLAG_NAMES = ( ('inherit_context', tr('inherit context')),
+                           ('long_running',    tr('long running'))
+                           )
             def __init__(self, iconview, model):
                 IconViewStateIcon.__init__(self, iconview, editor,
                                            model, state_pixmap)
@@ -685,7 +692,7 @@ class EDSMEditor(EDSMEditorItem):
         dialog.show()
 
     def find_message_paths(self, messages):
-        paths = []
+        paths = set()
         def recursive_find(model, path):
             for child in model:
                 try: access_name = child.access_name
@@ -694,9 +701,9 @@ class EDSMEditor(EDSMEditorItem):
 
                 if access_name:
                     if child.type_name in ('header', 'container'):
-                        paths.append('//' + access_name)
+                        paths.add('//' + access_name)
                     path.append(access_name)
-                    paths.append( '/'.join(path) )
+                    paths.add( '/'.join(path) )
                     recursive_find(child, path)
                     path.pop()
                 else:
@@ -704,7 +711,7 @@ class EDSMEditor(EDSMEditorItem):
 
         for message in messages:
             path = '/' + message.type_name
-            paths.append(path)
+            paths.add(path)
             recursive_find(message, [path])
         return paths
 
@@ -717,9 +724,8 @@ class EDSMEditor(EDSMEditorItem):
         if connection.type == EDSMTransition.TYPE_MESSAGE:
             messages = STYLESHEETS['message_builder'].apply(ElementTree(self.message_model))
             paths = self.find_message_paths(messages.getroot())
-            paths.append(u'')
-            paths.sort()
-            dialog.collect_values('message_type', paths)
+            paths.add(u'')
+            dialog.collect_values('message_type', sorted(paths))
 
         dialog.setTransition(connection)
         dialog.show()
