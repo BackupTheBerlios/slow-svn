@@ -26,7 +26,8 @@ def buildTransition(parent, transition_type):
                       u"{%s}transition" % EDSM_NAMESPACE_URI,
                       type=transition_type)
 
-def buildState(parent, name, readable_name=None):
+def buildState(parent, name, readable_name=None,
+               inputs=('input',), outputs=('output',)):
     if isinstance(parent, EDSMRootModel):
         parent = parent.states
     state = SubElement(parent,
@@ -35,6 +36,12 @@ def buildState(parent, name, readable_name=None):
     if readable_name:
         state.readable_name = readable_name
     state.id = uniqueID(parent, str(id(state)))
+    if inputs:
+        for queue in inputs:
+            state.add_input(queue)
+    if outputs:
+        for queue in outputs:
+            state.add_output(queue)
     return state
 
 def buildSubgraph(parent, name, readable_name=None):
@@ -47,8 +54,8 @@ def buildSubgraph(parent, name, readable_name=None):
         subgraph.readable_name = readable_name
     subgraph.id = uniqueID(parent, str(id(subgraph)))
     states = subgraph.states
-    entry_state = subgraph.entry_state = buildState(states, 'entry')
-    exit_state  = subgraph.exit_state  = buildState(states, 'exit')
+    subgraph.entry_state = buildState(states, 'entry')
+    subgraph.exit_state  = buildState(states, 'exit')
     return subgraph
 
 EMPTY_MODEL = u'''\
@@ -128,6 +135,7 @@ class EDSMRootModel(EDSMClass):
     def _get_subgraph(self, id):
         u"./{%(DEFAULT_NAMESPACE)s}states//{%(DEFAULT_NAMESPACE)s}subgraph[ @id = $id ]"
 
+
 class EDSMSubgraphModel(EDSMRootModel, NamedObject):
     _attr_id = u"./@id"
     def discard(self):
@@ -148,6 +156,7 @@ class EDSMSubgraphModel(EDSMRootModel, NamedObject):
         return self.getState(self.get('exit_state'))
     def _set_exit_state(self, state):
         self.__setIOState('exit_state', state)
+
 
 class EDSMState(object):
     pass
@@ -184,6 +193,47 @@ class EDSMStateModel(EDSMClass, EDSMState, NamedObject):
 
     _attr_inherit_context = u"bool#./@inherit_context"
     _attr_long_running    = u"bool#./@long_running"
+
+    def _get_input_queues(self, _xpath_result):
+        u"./{%(DEFAULT_NAMESPACE)s}input/text()"
+        return set(imap(str, _xpath_result))
+    def _get_output_queues(self, _xpath_result):
+        u"./{%(DEFAULT_NAMESPACE)s}output/text()"
+        return set(imap(str, _xpath_result))
+
+    def _set_input_queues(self, _xpath_result, queues):
+        u"./{%(DEFAULT_NAMESPACE)s}input"
+        for queue in _xpath_result:
+            queue.discard()
+        for queue in queues:
+            self.add_input(queue)
+    def _set_output_queues(self, _xpath_result, queues):
+        u"./{%(DEFAULT_NAMESPACE)s}output"
+        for queue in _xpath_result:
+            queue.discard()
+        for queue in queues:
+            self.add_output(queue)
+
+    def add_input(self, name):
+        if name not in self.input_queues:
+            SubElement(self, "{%s}input" % EDSM_NAMESPACE_URI).text = name
+    def add_output(self, name):
+        if name not in self.output_queues:
+            SubElement(self, "{%s}output" % EDSM_NAMESPACE_URI).text = name
+
+    def del_input(self, name):
+        self._discard_child_with_text("{%s}input" % EDSM_NAMESPACE_URI, name)
+    def del_input(self, name):
+        self._discard_child_with_text("{%s}output" % EDSM_NAMESPACE_URI, name)
+
+    def _discard_child_with_text(self, tag, text):
+        for child in self:
+            if child.tag == tag and child.text == name:
+                child.discard()
+
+class EDSMQueueEntry(EDSMClass):
+    discard = disconnect_element
+
 
 class EDSMTransition(object):
     TYPE_TRANSITION   = 0
@@ -244,6 +294,20 @@ class EDSMTransitionModel(EDSMClass, EDSMTransition, NamedObject):
         assert self.getObjectById(state_id)
         _xpath_result[0].set(u"ref", state_id)
 
+    @get_first
+    def _get_from_queue(self):
+        u"./{%(DEFAULT_NAMESPACE)s}from_state/@queue"
+    def _set_from_queue(self, _xpath_result, name):
+        u"./{%(DEFAULT_NAMESPACE)s}from_state"
+        _xpath_result[0].set(u"queue", name)
+
+    @get_first
+    def _get_to_queue(self):
+        u"./{%(DEFAULT_NAMESPACE)s}to_state/@queue"
+    def _set_to_queue(self, _xpath_result, name):
+        u"./{%(DEFAULT_NAMESPACE)s}to_state"
+        _xpath_result[0].set(u"queue", name)
+
     def _get_timer_delay(self, _xpath_result):
         u"string(./{%(DEFAULT_NAMESPACE)s}timerdelay)"
         try:
@@ -274,4 +338,6 @@ ns[u'code']       = EDSMCodeContainer
 ns[u'edsm']       = EDSMRootModel
 ns[u'subgraph']   = EDSMSubgraphModel
 ns[u'state']      = EDSMStateModel
+ns[u'input']      = EDSMQueueEntry
+ns[u'output']     = EDSMQueueEntry
 ns[u'transition'] = EDSMTransitionModel

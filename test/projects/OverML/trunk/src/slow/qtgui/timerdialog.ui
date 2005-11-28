@@ -116,7 +116,7 @@
         </widget>
         <widget class="QLabel" row="1" column="0">
             <property name="name">
-                <cstring>textLabel6</cstring>
+                <cstring>timer_delay_textlabel</cstring>
             </property>
             <property name="text">
                 <string>Delay:</string>

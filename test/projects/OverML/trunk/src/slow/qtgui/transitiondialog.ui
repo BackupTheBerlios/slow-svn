@@ -1,17 +1,17 @@
 <!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>EDSMDialog</class>
+<class>EDSMTransitionDialog</class>
 <comment>Python:from custom_widgets import IterableComboBox as QComboBox
 </comment>
 <widget class="QDialog">
     <property name="name">
-        <cstring>EDSMDialog</cstring>
+        <cstring>EDSMTransitionDialog</cstring>
     </property>
     <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>348</width>
-            <height>246</height>
+            <width>382</width>
+            <height>269</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -23,7 +23,7 @@
         </sizepolicy>
     </property>
     <property name="caption">
-        <string>EDSM Dialog</string>
+        <string>EDSM Transition Dialog</string>
     </property>
     <property name="icon">
         <pixmap>image0</pixmap>
@@ -32,7 +32,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLineEdit" row="0" column="1">
+        <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>object_name</cstring>
             </property>
@@ -48,7 +48,18 @@
                 <cstring>object_name</cstring>
             </property>
         </widget>
-        <widget class="QLayoutWidget" row="5" column="0" rowspan="1" colspan="2">
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>message_type_textlabel</cstring>
+            </property>
+            <property name="text">
+                <string>Message Type:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>class_combobox</cstring>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget" row="4" column="0" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>Layout1</cstring>
             </property>
@@ -126,86 +137,130 @@
                 </widget>
             </hbox>
         </widget>
-        <widget class="QTextEdit" row="4" column="1">
+        <widget class="QComboBox" row="1" column="1" rowspan="1" colspan="3">
             <property name="name">
-                <cstring>init_code</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="4" column="0">
-            <property name="name">
-                <cstring>init_code_textlabel</cstring>
-            </property>
-            <property name="text">
-                <string>Init code:</string>
-            </property>
-            <property name="buddy" stdset="0">
-                <cstring>init_code</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="3" column="0">
-            <property name="name">
-                <cstring>language_name_textlabel</cstring>
-            </property>
-            <property name="text">
-                <string>Language:</string>
-            </property>
-            <property name="buddy" stdset="0">
-                <cstring>language_combobox</cstring>
-            </property>
-        </widget>
-        <widget class="QComboBox" row="3" column="1">
-            <item>
-                <property name="text">
-                    <string>Python</string>
-                </property>
-            </item>
-            <property name="name">
-                <cstring>language_name</cstring>
+                <cstring>message_type</cstring>
             </property>
         </widget>
         <widget class="QLabel" row="2" column="0">
             <property name="name">
-                <cstring>class_name_textlabel</cstring>
+                <cstring>from_queue_textlabel</cstring>
             </property>
             <property name="text">
-                <string>Class:</string>
+                <string>Source queue</string>
             </property>
-            <property name="buddy" stdset="0">
-                <cstring>class_combobox</cstring>
+        </widget>
+        <widget class="QComboBox" row="2" column="3">
+            <property name="name">
+                <cstring>to_queue</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>1</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
             </property>
         </widget>
         <widget class="QComboBox" row="2" column="1">
             <property name="name">
-                <cstring>class_name</cstring>
+                <cstring>from_queue</cstring>
             </property>
-            <property name="editable">
-                <bool>true</bool>
-            </property>
-            <property name="insertionPolicy">
-                <enum>NoInsertion</enum>
-            </property>
-            <property name="autoCompletion">
-                <bool>true</bool>
-            </property>
-            <property name="duplicatesEnabled">
-                <bool>false</bool>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>1</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
             </property>
         </widget>
-        <widget class="QLabel" row="1" column="0">
+        <widget class="QLabel" row="2" column="2">
             <property name="name">
-                <cstring>message_type_textlabel</cstring>
+                <cstring>to_queue_textlabel</cstring>
             </property>
             <property name="text">
-                <string>Message Type:</string>
-            </property>
-            <property name="buddy" stdset="0">
-                <cstring>class_combobox</cstring>
+                <string>Dest queue</string>
             </property>
         </widget>
-        <widget class="QComboBox" row="1" column="1">
+        <widget class="QGroupBox" row="3" column="0" rowspan="1" colspan="4">
             <property name="name">
-                <cstring>message_type</cstring>
+                <cstring>implementation_groupbox</cstring>
             </property>
+            <property name="title">
+                <string>Implementation</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QComboBox" row="0" column="1">
+                    <property name="name">
+                        <cstring>class_name</cstring>
+                    </property>
+                    <property name="editable">
+                        <bool>true</bool>
+                    </property>
+                    <property name="insertionPolicy">
+                        <enum>NoInsertion</enum>
+                    </property>
+                    <property name="autoCompletion">
+                        <bool>true</bool>
+                    </property>
+                    <property name="duplicatesEnabled">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="1" column="1">
+                    <item>
+                        <property name="text">
+                            <string>Python</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>language_name</cstring>
+                    </property>
+                </widget>
+                <widget class="QTextEdit" row="2" column="1">
+                    <property name="name">
+                        <cstring>init_code</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>class_name_textlabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Class:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>class_combobox</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>language_name_textlabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Language:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>language_combobox</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>init_code_textlabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Init code:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>init_code</cstring>
+                    </property>
+                </widget>
+            </grid>
         </widget>
     </grid>
 </widget>
@@ -218,34 +273,33 @@
     <connection>
         <sender>buttonOk</sender>
         <signal>clicked()</signal>
-        <receiver>EDSMDialog</receiver>
+        <receiver>EDSMTransitionDialog</receiver>
         <slot>accept()</slot>
     </connection>
     <connection>
         <sender>buttonCancel</sender>
         <signal>clicked()</signal>
-        <receiver>EDSMDialog</receiver>
+        <receiver>EDSMTransitionDialog</receiver>
         <slot>reject()</slot>
     </connection>
     <connection>
         <sender>language_name</sender>
         <signal>activated(const QString&amp;)</signal>
-        <receiver>EDSMDialog</receiver>
+        <receiver>EDSMTransitionDialog</receiver>
         <slot>language_name_activated(const QString&amp;)</slot>
     </connection>
 </connections>
 <tabstops>
     <tabstop>object_name</tabstop>
-    <tabstop>class_name</tabstop>
-    <tabstop>init_code</tabstop>
     <tabstop>buttonOk</tabstop>
     <tabstop>buttonCancel</tabstop>
     <tabstop>buttonHelp</tabstop>
 </tabstops>
 <includes>
-    <include location="local" impldecl="in implementation">edsmdialog.ui.h</include>
+    <include location="local" impldecl="in implementation">transitiondialog.ui.h</include>
 </includes>
 <slots>
+    <slot>language_name_activated( const QString &amp; )</slot>
     <slot>language_name_activated( const QString &amp; )</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>

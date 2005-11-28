@@ -135,7 +135,7 @@ class DotWriter(object):
         return u'\\n'.join(u' '.join(line) for line in lines)
 
     def connection_to_dot(self, connection):
-        colour = self.colours_by_type[connection.type_name].name()
+        colour = self.colours_by_type[connection.type_name]
         attributes = self.Attributes(color=colour)
 
         cname = connection.readable_name

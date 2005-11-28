@@ -36,32 +36,45 @@ edsl_state =
 
     & edsl_readable_name?
     & edsl_code*
+    & element input  { edsl_queue_name }*
+    & element output { edsl_queue_name }*
    }
 
 edsl_transition =
    element edsl:transition {
       edsl_readable_name?
     & edsl_code*
-    & element edsl:from_state { edsl_state_ref }
-    & element edsl:to_state   { edsl_state_ref }
     & (
        (attribute type { "message" },     edsl_message_transition)
      | (attribute type { "event" },       edsl_event_transition)
-     | (attribute type { "outputchain" }) # edsl_outputchain_transition)
-     | (attribute type { "transition" })  # edsl_immediate_transition)
+     | (attribute type { "outputchain" }, edsl_outputchain_transition)
+     | (attribute type { "transition" },  edsl_immediate_transition)
      | (attribute type { "timer" },       edsl_timer_transition)
     )
    }
 
 edsl_message_transition =
    element edsl:messagetype { text }?
+ & edsl_from_state
+ & edsl_to_queue
 
 edsl_event_transition =
    element edsl:subscription { text }?
+ & edsl_from_state
+ & edsl_to_queue
 
 edsl_timer_transition =
    element edsl:timerdelay { xsd:integer }
+ & edsl_from_state
+ & edsl_to_queue
 
+edsl_outputchain_transition =
+   edsl_from_queue
+ & edsl_to_queue
+
+edsl_immediate_transition =
+   edsl_from_state
+ & edsl_to_state
 
 edsl_code =
    element edsl:code {
@@ -74,8 +87,28 @@ edsl_code =
       )
    }
 
+edsl_from_state =
+   element edsl:from_state { edsl_state_ref }
+
+edsl_to_state =
+   element edsl:from_state { edsl_state_ref }
+
+edsl_from_queue =
+   element edsl:from_state { edsl_state_queue_ref }
+
+edsl_to_queue =
+   element edsl:from_state { edsl_state_queue_ref }
+
+
+edsl_queue_name =
+   identifier_string
+
 edsl_state_ref =
    attribute ref { edsl_state_id }
+
+edsl_state_queue_ref =
+   edsl_state_ref,
+   attribute queue { edsl_queue_name }?
 
 edsl_state_id =
    text

@@ -236,6 +236,47 @@ class OverlayDesigner_prefdialog(PrefDialog):
     def __init__(self,parent = None,name = None,modal = 0,fl = 0):
         PrefDialog.__init__(self,parent,name,modal,fl)
 
+from genstatedialog import EDSMStateDialog
+
+
+class OverlayDesigner_statedialog(EDSMStateDialog):
+
+    def __init__(self,parent = None,name = None,modal = 0,fl = 0):
+        EDSMStateDialog.__init__(self,parent,name,modal,fl)
+
+
+    def language_name_activated(self,a0):
+        print "OverlayDesigner_statedialog.language_name_activated( const QString & ): Not implemented yet"
+
+
+    def output_queues_selectionChanged(self):
+        print "OverlayDesigner_statedialog.output_queues_selectionChanged(): Not implemented yet"
+
+
+    def input_queues_selectionChanged(self):
+        print "OverlayDesigner_statedialog.input_queues_selectionChanged(): Not implemented yet"
+
+
+    def queue_name_textChanged(self,a0):
+        print "OverlayDesigner_statedialog.queue_name_textChanged( const QString & ): Not implemented yet"
+
+
+    def add_input_queue_button_clicked(self):
+        print "OverlayDesigner_statedialog.add_input_queue_button_clicked(): Not implemented yet"
+
+
+    def add_output_queue_button_clicked(self):
+        print "OverlayDesigner_statedialog.add_output_queue_button_clicked(): Not implemented yet"
+
+
+    def remove_input_queue_button_clicked(self):
+        print "OverlayDesigner_statedialog.remove_input_queue_button_clicked(): Not implemented yet"
+
+
+    def remove_output_queue_button_clicked(self):
+        print "OverlayDesigner_statedialog.remove_output_queue_button_clicked(): Not implemented yet"
+
+
 from gentimerdialog import EDSMTimerDialog
 
 
@@ -243,3 +284,20 @@ class OverlayDesigner_timerdialog(EDSMTimerDialog):
 
     def __init__(self,parent = None,name = None,modal = 0,fl = 0):
         EDSMTimerDialog.__init__(self,parent,name,modal,fl)
+
+from gentransitiondialog import EDSMTransitionDialog
+
+
+class OverlayDesigner_transitiondialog(EDSMTransitionDialog):
+
+    def __init__(self,parent = None,name = None,modal = 0,fl = 0):
+        EDSMTransitionDialog.__init__(self,parent,name,modal,fl)
+
+
+    def language_name_activated(self,a0):
+        print "OverlayDesigner_transitiondialog.language_name_activated( const QString & ): Not implemented yet"
+
+
+    def language_name_activated(self,a0):
+        print "OverlayDesigner_transitiondialog.language_name_activated( const QString & ): Not implemented yet"
+

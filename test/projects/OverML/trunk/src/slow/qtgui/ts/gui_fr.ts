@@ -37,6 +37,14 @@
         <source>long running</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>add input queue</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>add output queue</source>
+        <translation type="obsolete"></translation>
+    </message>
 </context>
 <context>
     <name>AboutDialog</name>
@@ -111,6 +119,14 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     </message>
     <message>
         <source>Message Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output queue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input queue</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

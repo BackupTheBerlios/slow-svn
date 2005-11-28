@@ -1,9 +1,11 @@
-from qt import Qt, QComboBox, QIconViewItem, QPopupMenu, SIGNAL, PYSIGNAL
+from qt import (Qt, QWidget, QComboBox, QListBox,
+                QIconViewItem, QPopupMenu, SIGNAL, PYSIGNAL)
 from qt_utils import qstrpy, pyqstr, qt_signal_signature
 
 from itertools import *
 
-from genedsmdialog  import EDSMDialog
+from genstatedialog      import EDSMStateDialog
+from gentransitiondialog import EDSMTransitionDialog
 from gentimerdialog import EDSMTimerDialog
 from custom_widgets import EDSMIconView
 
@@ -41,7 +43,11 @@ class AbstractEDSMDialog(object):
 
     FIELD_MAP = (
         ('readable_name', 'object_name'),
-        ('message_type',  'message_type')
+        ('message_type',  'message_type'),
+        ('from_queue',    'from_queue'),
+        ('to_queue',      'to_queue'),
+        ('output_queues', 'output_queues'),
+        ('input_queues',  'input_queues'),
         )
 
     CODE_FIELD_MAP = (
@@ -50,7 +56,27 @@ class AbstractEDSMDialog(object):
         ('class_name', 'class_name')
         )
 
+    def _active_fields(self):
+        if isinstance(self.FIELDS, dict):
+            return set(self.FIELDS[self._model.type_name])
+        else:
+            return set(self.FIELDS)
+
+    def activate_fields(self):
+        model = self._model
+        field_names = self._active_fields()
+
+        for field, label in chain(self.field_dict.itervalues(),
+                                  self.code_field_dict.itervalues()):
+            if field.name() in field_names:
+                field.show()
+                label.show()
+            else:
+                field.hide()
+                label.hide()
+
     def collect_values(self, model_attribute, values):
+        "Call *before* setModel()"
         try:
             field, label = self.field_dict[model_attribute]
         except KeyError:
@@ -66,6 +92,8 @@ class AbstractEDSMDialog(object):
     def setModel(self, dialog_model):
         self._model = dialog_model
 
+        self.activate_fields()
+
         self._code_dict.clear()
         self._selected_language = None
 
@@ -73,15 +101,31 @@ class AbstractEDSMDialog(object):
             try:
                 value = getattr(dialog_model, attrname)
             except AttributeError:
-                label.hide()
-                field.hide()
                 continue
             if isinstance(field, QComboBox):
                 field.setCurrentText(value)
+            elif isinstance(field, QListBox):
+                field.clear()
+                for line in sorted(value):
+                    field.insertItem(pyqstr(line))
             else:
                 field.setText(value)
-            label.show()
-            field.show()
+
+        for queue_type in ('to', 'from'):
+            try:
+                field    = getattr(self, "%s_queue" % queue_type)
+                state    = getattr(dialog_model, "%s_state" % queue_type)
+                selected = getattr(dialog_model, "%s_queue" % queue_type, None)
+                queues   = getattr(state, queue_type == 'to'
+                                   and 'input_queues'
+                                   or  'output_queues')
+            except AttributeError:
+                continue
+            field.clear()
+            for i, queue in enumerate(sorted(queues)):
+                field.insertItem(pyqstr(queue))
+            if selected:
+                field.setCurrentText(selected)
 
         if hasattr(self, 'class_name'):
             self.class_name.setCurrentItem(-1)
@@ -115,22 +159,15 @@ class AbstractEDSMDialog(object):
                         self.init_code.setText(pyqstr(code.code or ''))
                         break
 
-            for field, label in self.code_field_dict.itervalues():
-                label.show()
-                field.show()
-        else:
-            for field, label in self.code_field_dict.itervalues():
-                label.hide()
-                field.hide()
-
     def accept(self):
         model = self._model
+        field_names = self._active_fields()
 
-        if self._selected_language:
+        if 'language_name' in field_names and self._selected_language:
             self._code_dict[self._selected_language] = qstrpy( self.init_code.text() )
 
         class_name = None
-        if hasattr(self, 'class_name') and self.class_name.isVisible():
+        if 'class_name' in field_names:
             value = self.class_name.currentText()
             validator = self.class_name_validator
             if validator.validate(value, 0)[0] == validator.Acceptable:
@@ -149,12 +186,16 @@ class AbstractEDSMDialog(object):
             if field.isHidden():
                 continue
 
-            if isinstance(field, QComboBox):
-                value = field.currentText()
+            if isinstance(field, QListBox):
+                values = [ qstrpy(field.text(i))
+                           for i in range(field.count()) ]
+                setattr(model, attrname, values)
             else:
-                value = field.text()
-
-            setattr(model, attrname, qstrpy(value))
+                if isinstance(field, QComboBox):
+                    value = field.currentText()
+                else:
+                    value = field.text()
+                setattr(model, attrname, qstrpy(value))
 
         if hasattr(model, 'codes'):
             del model.codes
@@ -182,6 +223,35 @@ class AbstractEDSMDialog(object):
         else:
             self.init_code.setText(code)
 
+    def _append_to_list(self, listbox, line):
+        qline = pyqstr(line)
+        for i in range(listbox.count()):
+            if qline == listbox.text(i):
+                return
+        listbox.insertItem(qline)
+
+    def add_input_queue_button_clicked(self):
+        name = qstrpy(self.queue_name.text()).strip()
+        if name:
+            self._append_to_list(self.input_queues, name)
+    def add_output_queue_button_clicked(self):
+        name = qstrpy(self.queue_name.text()).strip()
+        if name:
+            self._append_to_list(self.output_queues, name)
+
+    def _remove_selected(self, listbox):
+        selected = []
+        for i in range(listbox.count()):
+            if listbox.isSelected(i):
+                selected.append(listbox.item(i))
+        for item in selected:
+            listbox.takeItem(item)
+
+    def remove_input_queue_button_clicked(self):
+        self._remove_selected(self.input_queues)
+    def remove_output_queue_button_clicked(self):
+        self._remove_selected(self.output_queues)
+
 
 class AbstractTransitionDialog(AbstractEDSMDialog):
     def setTransition(self, transition):
@@ -189,13 +259,22 @@ class AbstractTransitionDialog(AbstractEDSMDialog):
         self.setCaption(transition.description)
         self.setModel(transition._model)
 
-class TransitionDialog(AbstractTransitionDialog, EDSMDialog):
-    GUI_CLASS = EDSMDialog
+class TransitionDialog(AbstractTransitionDialog, EDSMTransitionDialog):
+    GUI_CLASS = EDSMTransitionDialog
+    FIELDS = {
+        'message'     : ['object_name', 'message_type', 'to_queue'],
+        'event'       : ['object_name', 'event_type',   'to_queue'],
+        'outputchain' : ['object_name', 'from_queue',   'to_queue'],
+        'transition'  : ['object_name']
+        }
     def setTransition(self, transition):
         super(TransitionDialog, self).setTransition(transition)
+        self.implementation_groupbox.hide()
 
-class StateDialog(AbstractEDSMDialog, EDSMDialog):
-    GUI_CLASS = EDSMDialog
+class StateDialog(AbstractEDSMDialog, EDSMStateDialog):
+    GUI_CLASS = EDSMStateDialog
+    FIELDS = ('object_name', 'class_name', 'language_name', 'init_code',
+              'output_queues', 'input_queues')
     def setState(self, state):
         self.state = state
         self.setModel(state._model)
@@ -204,6 +283,7 @@ class StateDialog(AbstractEDSMDialog, EDSMDialog):
 class TimerDialog(AbstractTransitionDialog, EDSMTimerDialog):
     GUI_CLASS = EDSMTimerDialog
     UNITS = (1, 1000, 60000)
+    FIELDS = {'timer' : ['object_name', 'timer_delay', 'timer_delay_unit']}
     def setTransition(self, transition):
         super(TimerDialog, self).setTransition(transition)
         model = self._model
@@ -415,8 +495,7 @@ class ConnectionItem(EDSMEditorItem):
 
     def _populate_popup_menu(self, menu):
         tr = self.tr
-        if self._model.type not in (EDSMTransition.TYPE_TRANSITION,
-                                    EDSMTransition.TYPE_OUTPUT_CHAIN):
+        if self._model.type != EDSMTransition.TYPE_TRANSITION:
             menu.insertItem(tr('edit'), self.menu_edit)
             menu.insertSeparator()
         menu.insertItem(self._edsm_editor.delete_icon,
@@ -539,8 +618,8 @@ class EDSMEditor(EDSMEditorItem):
         if hasattr(self, 'edsm_dot_graph'):
             self.edsm_dot_graph.set_editor(self)
             type_names = EDSMTransition.TYPENAMES
-            colours = dict( (type_names[key], value)
-                            for key, value in ConnectionItem.CONNECTION_COLOURS.iteritems() )
+            colours = dict( (type_names[key], str(qcolour.name()))
+                            for key, qcolour in ConnectionItem.CONNECTION_COLOURS.iteritems() )
             self.edsm_dot_graph.init_colours(colours)
             self.connect(self, self.__GRAPH_CHANGED_SIGNAL, self.edsm_dot_graph.rebuild_graph)
 
