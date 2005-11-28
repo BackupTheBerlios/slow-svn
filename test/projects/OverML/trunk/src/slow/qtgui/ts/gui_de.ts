@@ -123,11 +123,11 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     </message>
     <message>
         <source>Output queue</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>Input queue</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
 </context>
 <context>
