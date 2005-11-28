@@ -96,6 +96,10 @@ class ViewRegistry(object):
             if hasattr(parent, 'removeView'):
                 parent.removeView(view)
 
+    @property
+    def local_node(self):
+        return self.base_view.local_node
+
     def __iter__(self):
         return self.__register.iterkeys()
 
@@ -116,7 +120,8 @@ class ViewRegistry(object):
 class NodeView(ReflectiveObservable):
     """Holds a dict (of dicts of dicts of dicts) of nodes that match
     the view specification."""
-    def __init__(self, pyslosl, viewreg, name_override=None, **variable_initializations):
+    def __init__(self, pyslosl, viewreg, name_override=None,
+                 **variable_initializations):
         ReflectiveObservable.__init__(self)
         self._slosl_statement = pyslosl
 
@@ -160,6 +165,10 @@ class NodeView(ReflectiveObservable):
         # populate view and register
         self._select_parent_nodes()
         viewreg.register(self)
+
+    @property
+    def local_node(self):
+        return self._viewreg.local_node
 
     def _build_node_class(self):
         """Build a new view node class.
@@ -354,13 +363,16 @@ class NodeView(ReflectiveObservable):
                     value_dict[variable_name] = value
                     yield var_values + (value,)
 
-    def _select_nodes_into_buckets(self, spec, all_nodes, buckets, tuple_prefix=()):
+    def _select_nodes_into_buckets(self, spec, all_nodes,
+                                   buckets, tuple_prefix=()):
         static_value_dict = self._variables.copy()
+        static_value_dict['local'] = self.local_node
 
         _eval = eval
         _bool = bool
         where_expr = spec.where
         eval_globals = globals()
+        eval_globals['local'] = self.local_node
         def where(node):
             eval_globals['node'] = node
             return _bool(_eval(where_expr, eval_globals, static_value_dict))
@@ -378,21 +390,25 @@ class NodeView(ReflectiveObservable):
 
         if node_rank:
             # without loops, value_tuple is just ()
-            for value_tuple in self._iter_foreach_values(spec.foreachs, loop_value_dict):
+            for value_tuple in self._iter_foreach_values(spec.foreachs,
+                                                         loop_value_dict):
                 candidate_iterator = ifilter(having, candidates)
                 matches = [ build_view_node(node, loop_value_dict)
-                            for node in node_rank(candidate_iterator, loop_value_dict)
+                            for node in node_rank(candidate_iterator,
+                                                  loop_value_dict)
                             ]
                 buckets[tuple_prefix+value_tuple] = matches
 ##         elif spec.select_distinct:
 ##             distinct = self.distinct_selector
-##             for value_tuple in self._iter_foreach_values(spec.foreachs, value_dict):
+##             for value_tuple in self._iter_foreach_values(spec.foreachs,
+##                                                          value_dict):
 ##                 candidate_iterator = ifilter(where, all_nodes)
 ##                 matches = [ build_view_node(node, value_dict)
 ##                             for node in distinct(candidate_iterator) ]
 ##                 buckets[tuple_prefix+value_tuple] = matches
         else:
-            for value_tuple in self._iter_foreach_values(spec.foreachs, loop_value_dict):
+            for value_tuple in self._iter_foreach_values(spec.foreachs,
+                                                         loop_value_dict):
                 candidate_iterator = ifilter(having, candidates)
                 matches = [ build_view_node(node, loop_value_dict)
                             for node in candidate_iterator ]

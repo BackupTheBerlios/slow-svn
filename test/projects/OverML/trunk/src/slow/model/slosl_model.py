@@ -28,9 +28,11 @@ def buildStatements():
 __statement_tag = u"{%s}statement"  % SLOSL_NAMESPACE_URI
 def buildStatement(statements=None):
     if statements:
-        return SubElement(statements, __statement_tag)
+        element = SubElement(statements, __statement_tag)
     else:
-        return Element(__statement_tag)
+        element = Element(__statement_tag)
+    SubElement(element, u"{%s}buckets"  % SLOSL_NAMESPACE_URI)
+    return element
 
 
 EMPTY_MODEL = Element(__statements_tag)
@@ -53,7 +55,7 @@ class SloslStatements(SloslElement):
     DEFAULT_ROOT_NAME=u'statements'
     DOCUMENT_SCHEMA = SLOSL_RNG_SCHEMA.copy(start=u"slosl_statements")
 
-    _get_names = u"./slosl:statement/@name"
+    _get_names = u"./{%(DEFAULT_NAMESPACE)s}statement/@name"
     def _get_statements(self):
         u"./{%(DEFAULT_NAMESPACE)s}statement"
 
@@ -182,6 +184,8 @@ class SloslStatement(SloslElement):
     @autoconstruct(u'.', u'{%s}ranked' % SLOSL_NAMESPACE_URI)
     def _get_ranked(self):
         u"./{%(DEFAULT_NAMESPACE)s}ranked"
+
+    _del_ranked = u"./{%(DEFAULT_NAMESPACE)s}ranked"
 
     @result_filter(bool)
     def _get_bucket(self):

@@ -40,7 +40,6 @@ class SLOSLEditor(object):
         self.__setup_child_calls()
         self.__init_visible_widgets()
         self.__init_text_verifiers()
-        self.reset_statements()
 
     def __setup_child_calls(self):
         try:
@@ -162,7 +161,7 @@ class SLOSLEditor(object):
         self.slosl_disable_having(model.bucket or len(foreachs) == 0)
 
     def copy_slosl_to_model(self, model=None):
-        if not model:
+        if model is None:
             model = self.__model
 
         def to_term(term_str, term_type='infix_term'):
@@ -170,12 +169,20 @@ class SLOSLEditor(object):
             return term.getroot()
 
         current_field = None
-
         try:
             old_name = str(model.view)
 
             current_field = self.slosl_view_name
             model.view = qstrpy(self.slosl_view_name.text()).strip()
+
+            current_field = self.slosl_from
+            parents = filter(None, (name.strip()
+                                    for name in qstrpy(self.slosl_from.text()).split(',')))
+            if parents:
+                model.parents = parents
+            else:
+                self.__setStatus("Parent view names missing.")
+                return self.slosl_from
 
             current_field = self.slosl_attribute_select
             attributes = qstrpy(self.slosl_attribute_select.text()).strip()
@@ -202,10 +209,7 @@ class SLOSLEditor(object):
                     ):
                     ranked.setParameter(i, to_term(qstrpy(text)))
             else:
-                model.ranked.function = u''
-
-            current_field = self.slosl_from
-            model.parents = [ name.strip() for name in qstrpy(self.slosl_from.text()).split(',') ]
+                del model.ranked
 
             current_field = self.slosl_with
             with = qstrpy(self.slosl_with.text()).strip()
@@ -250,15 +254,19 @@ class SLOSLEditor(object):
             self.__setStatus(e)
             return current_field
 
-        if model.validate():
-            name = model.name
-            self.__slosl_models.setStatement(name, model)
+        if not model.validate():
+            self.__setStatus("Statement validation failed.")
+            return None
 
-            listview = self.slosl_view_list
-            if old_name != name:
-                old_item = listview.findItem(old_name, 0)
-                if old_item:
-                    listview.takeItem(old_item)
+        if model.getparent() is None:
+            self.__slosl_models.setStatement(model.name, model)
+
+        name = model.name
+        listview = self.slosl_view_list
+        if old_name != name:
+            old_item = listview.findItem(old_name, 0)
+            if old_item:
+                listview.takeItem(old_item)
             self._add_model_to_list(model)
 
         self.__setStatus()

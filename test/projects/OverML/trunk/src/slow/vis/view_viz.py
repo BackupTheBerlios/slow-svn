@@ -89,10 +89,13 @@ class ViewGraph(object):
                 if isinstance(variables[0][1], (list, tuple, xrange)):
                     max_val = max(variables[0][1])
             colour_dict = {}
+            max_colour_index = len(view_colours) - 1
             for c, loop_values in enumerate(view.variables()):
-                colour_dict[loop_values] = view_colours[ (c*1000) // value_count ]
+                colour_dict[loop_values] = view_colours[
+                    min( (c*1000) // value_count, max_colour_index) ]
 
-            build_bucket_edges(view.iterBuckets(), view.name, max_val, node_name, view_colours)
+            build_bucket_edges(view.iterBuckets(), view.name, max_val,
+                               node_name, view_colours)
 
     def build_edges(self, graph, local_node, nodes, **kwargs):
         for node in nodes:
