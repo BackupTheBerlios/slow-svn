@@ -59,14 +59,14 @@ class AddItemPopupAction(qt.QAction):
         self.setIconSet( qt.QIconSet(item_class.PIXMAP) )
 
         model_type    = item_class.MODEL_TYPE
-        readable_type = item_class.READABLE_NAME
+        readable_name = item_class.READABLE_NAME
 
         def action_method():
             model = buildMessageElement(
                 item_parent.model,
                 model_type,
                 type_name=type_name or model_type,
-                readable_type=item_name or readable_type)
+                readable_name=item_name or readable_name)
             item_class(editor, item_parent, model)
             item_parent.setOpen(True)
 
@@ -92,7 +92,7 @@ class ShowMessagePopupAction(qt.QAction):
                 xml = message_builder.tostring(xslt_result)
 
             dialog = TextDialog(editor, 'message',
-                                self.tr("Message '%1'").arg(item.access_name))
+                                self.tr("Message '%1'").arg(item.type_name))
             dialog.setText(xml)
             dialog.resize(qt.QSize(550,300))
             dialog.show()
@@ -105,7 +105,7 @@ class ShowMessagePopupAction(qt.QAction):
 class MListViewItem(qt.QListViewItem, MenuProvider):
     ORDER = 9
     ALLOWS_DELETE = True
-    READABLE_NAME = MODEL_TYPE  = PIXMAP = None # provided by subclasses !!
+    READABLE_NAME = MODEL_TYPE = PIXMAP = None # provided by subclasses !!
     REF_TYPE = REF_MODEL_TYPE = None
     FLAG_NAMES = ()
     MIME_SUBTYPE = 'field-item'
@@ -115,23 +115,66 @@ class MListViewItem(qt.QListViewItem, MenuProvider):
         self.tr = editor.tr
 
         self.__model = model
-
-        readable_name = getattr(model, 'readable_name', self.READABLE_NAME)
-        access_name   = getattr(model, 'access_name', None) or ''
+        coltext1 = self._get_coltext1()
+        coltext2 = self._get_coltext2()
 
         sibling = self.find_predecessor(parent)
         if sibling:
-            qt.QListViewItem.__init__(self, parent, sibling, readable_name, access_name, *args)
+            qt.QListViewItem.__init__(self, parent, sibling, coltext1, coltext2, *args)
         else:
-            qt.QListViewItem.__init__(self, parent, readable_name, access_name, *args)
+            qt.QListViewItem.__init__(self, parent, coltext1, coltext2, *args)
 
-        MenuProvider.__init__(self, editor, title=readable_name,
+        MenuProvider.__init__(self, editor, title=coltext1,
                               checkable=popup_checkable or bool(self.FLAG_NAMES))
 
         self.setPixmap(0, self.PIXMAP)
+        self._enable_renaming()
+        self._enable_drag()
+
+    def _get_coltext1(self):
+        try:
+            return self.__model.readable_name
+        except AttributeError:
+            return self.READABLE_NAME
+
+    def _set_coltext1(self, text):
+        self.__model.readable_name = text
+
+    def _get_coltext2(self):
+        try:
+            return self.__model.access_name
+        except AttributeError:
+            try:
+                return self.__model.type_name
+            except AttributeError:
+                return ''
+
+    def _set_coltext2(self, text):
+        if self._check_accessname(text):
+            self.__model.access_name = text
+
+    def _enable_renaming(self):
         self.setRenameEnabled(0, True)
         self.setRenameEnabled(1, True)
+
+    def _enable_drag(self):
         self.setDragEnabled(True)
+
+    def _check_typename(self, name):
+        parent = self.__model.getparent()
+        if parent and hasattr(parent, 'type_names'):
+            if name in parent.type_names:
+                self.editor.setStatus(self.tr("Name '%1' already in use.").arg(name))
+                return False
+        return True
+
+    def _check_accessname(self, name):
+        parent = self.__model.getparent()
+        if parent and hasattr(parent, 'access_names'):
+            if name in parent.access_names:
+                self.editor.setStatus(self.tr("Name '%1' already in use.").arg(name))
+                return False
+        return True
 
     def new_reference(self, new_parent):
         if self.REF_MODEL_TYPE and self.REF_ITEM_CLASS:
@@ -173,28 +216,14 @@ class MListViewItem(qt.QListViewItem, MenuProvider):
         text = qstrpy(text).strip()
         model = self.__model
         if column == 0:
-            model.readable_name = text
-        elif model.TYPE_NAME == "message":
-            if model.type_name != text:
-                # FIXME: search protocols for old name references!!
-                parent = model.getparent()
-                if parent and hasattr(parent, 'type_names'):
-                    if text in parent.type_names:
-                        self.editor.setStatus(self.tr("Name '%1' already in use.").arg(text))
-                        return
-                model.type_name = text
-        elif model.access_name != text:
-            parent = model.getparent()
-            if parent and hasattr(parent, 'access_names'):
-                if text in parent.access_names:
-                    self.editor.setStatus(self.tr("Name '%1' already in use.").arg(text))
-                    return
-            model.access_name = text
+            self._set_coltext1(text)
+        else:
+            self._set_coltext2(text)
 
         qt.QListViewItem.setText(self, column, text)
 
-        if text and not model.readable_name:
-            self.setText(0, pyqstr(text.capitalize().replace('_', ' ')))
+##         if text and not model.readable_name:
+##             self.setText(0, pyqstr(text.capitalize().replace('_', ' ')))
 
     def iterchildren(self):
         child = self.firstChild()
@@ -268,6 +297,7 @@ class ContainerListViewItem(MListViewItem):
             (tr('Add Content'),   ContentItem),
             (tr('Add View Data'), ViewDataItem),
             (tr('Add Container'), ContainerItem),
+            (tr('Add Container'), PredefContainerItem),
             (tr('Add Header'),    HeaderItem),
             (tr('Add Message'),   MessageItem),
             )
@@ -295,51 +325,40 @@ class ContainerListViewItem(MListViewItem):
             item.moveItem(sibling)
 
     def dropped(self, data):
-        listview = self.listView()
         source = data.source()
+        if source is None:
+            return
+        listview = self.listView()
         if source == listview:
             item = source.currentItem()
-            if item != self and self._accepts_child_class(item.__class__):
-                if not self.hasParent(item):
-                    reference = False
-                    parent = item.parent()
-                    while hasattr(parent, 'parent'):
-                        if isinstance(parent, ContainersItem):
-                            reference = True
-                            break
-                        parent = parent.parent()
-
-                    if reference:
-                        self.insertItem( item.new_reference(self) )
-                    else:
-                        self.moveChild(item)
-                    self.setOpen(True)
-            return
-        elif not self._accepts_child_class(ContentItem):
-            return
-
-        # broken:
-
-##         if data.provides(self.ATTRIBUTE_MIME_TYPE):
-##             mime_type = self.ATTRIBUTE_MIME_TYPE
-##         elif data.provides(self.FIELD_MIME_TYPE):
-##             listview = self.listView()
-##             source = data.source()
-##             if source == listview:
-##                 print source.currentItem().text(0)
-##             mime_type = self.FIELD_MIME_TYPE
-##         else:
-##             print data.source(), 'IGNORE'
-##             data.ignore()
-##             return
-
-##         type_name = unicode(str(data.encodedData(mime_type)), 'UTF-8')
-##         model = ContentModel(type_name)
-##         ContentItem(self.editor, self, model)
-##         self.setOpen(True)
+            if item == self or self.hasParent(item):
+                self.setStatus(self.tr('Drop aborted, invalid target.'))
+                return
+            if isinstance(item, PredefContainerItem) and self._accepts_child_class(ContainerItem):
+                self.insertItem( item.new_reference(self) )
+                self.setOpen(True)
+            elif self._accepts_child_class(item.__class__):
+                self.moveChild(item)
+                self.setOpen(True)
+        elif source.name() == 'node_attribute_list':
+            model = self.model
+            item = source.currentItem()
+            if hasattr(item, 'text'):
+                name = qstrpy( item.text() )
+                if not name:
+                    return
+                access_name = self.build_access_name(name, model)
+                new_model = buildMessageElement(model, 'attribute',
+                                                readable_name=qstrpy(self.tr('Attribute')),
+                                                type_name=name,
+                                                access_name=access_name)
+                item = AttributeContentItem(self.editor, self, new_model)
+                self.setOpen(True)
+        else:
+            self.setStatus('DROP from %s' % source.name())
 
     def _accepts_child_class(self, child_class):
-        return True
+        return child_class is not PredefContainerItem
 
     def _populate_popup_menu(self, menu):
         menu.insertSeparator()
@@ -357,6 +376,22 @@ class ContentItem(MListViewItem):
     MIME_SUBTYPE = 'item-content'
     MODEL_TYPE = "content"
 
+    def _get_coltext1(self):
+        return self.model.type_name
+    def _set_coltext1(self, text):
+        self.model.type_name = text
+
+class AttributeContentItem(MListViewItem):
+    ORDER = 1
+    MIME_SUBTYPE = 'item-attribute'
+    MODEL_TYPE = "attribute"
+
+    def _get_coltext1(self):
+        return self.model.type_name
+    def _set_coltext1(self, text):
+        if self._check_typename(text):
+            self.model.type_name = text
+
 class ViewDataItem(MListViewItem):
     ORDER = 1
     MIME_SUBTYPE = 'item-viewdata'
@@ -368,6 +403,18 @@ class ViewDataItem(MListViewItem):
             ('list',       editor.tr('node list')),
             )
         MListViewItem.__init__(self, editor, popup_checkable=True, *args)
+
+    def _get_coltext1(self):
+        return self.model.type_name
+    def _set_coltext1(self, text):
+        if self._check_typename(text):
+            self.model.type_name = text
+
+    def _get_coltext2(self):
+        return self.model.access_name
+    def _set_coltext2(self, text):
+        if self._check_accessname(text):
+            self.model.access_name = text
 
     @property
     def structured(self):
@@ -383,8 +430,27 @@ class ContainerItem(ContainerListViewItem):
             )
         MListViewItem.__init__(self, editor, popup_checkable=True, *args)
 
+    def _get_coltext2(self):
+        return self.model.access_name
+
+    def _set_coltext2(self, text):
+        if self._check_accessname(text):
+            self.model.access_name = text
+
+    def _enable_renaming(self):
+        self.setRenameEnabled(0, False)
+        self.setRenameEnabled(1, True)
+
     def _accepts_child_class(self, child_class):
-        return child_class not in (MessageItem, HeaderItem)
+        return child_class not in (MessageItem, HeaderItem, PredefContainerItem)
+
+class PredefContainerItem(ContainerItem):
+    def _get_coltext2(self):
+        return self.model.type_name
+
+    def _set_coltext2(self, text):
+        if self._check_typename(text):
+            self.model.type_name = text
 
 class HeaderItem(ContainerListViewItem):
     ORDER = 2
@@ -397,6 +463,16 @@ class MessageItem(ContainerListViewItem):
     MODEL_TYPE = "message"
 
     PROTOCOLS_PIXMAP = PROTOCOLS_NAME = None
+
+    def _get_coltext2(self):
+        return self.model.type_name
+    def _set_coltext2(self, text):
+        if self._check_typename(text):
+            self.model.type_name = text
+
+    def _enable_renaming(self):
+        self.setRenameEnabled(0, False)
+        self.setRenameEnabled(1, True)
 
     class ProtocolSet(object):
         __slots__ = AVAILABLE_PROTOCOLS
@@ -455,13 +531,35 @@ class ContainerRefItem(MListViewItem):
     MIME_SUBTYPE = ContainerItem.MIME_SUBTYPE
     MODEL_TYPE   = "container-ref"
 
+    def _get_coltext1(self):
+        return self.model.type_name
+    def _set_coltext1(self, text):
+        if self._check_typename(text):
+            self.model.type_name = text
+
+    def _get_coltext2(self):
+        return self.model.access_name
+    def _set_coltext2(self, text):
+        if self._check_accessname(text):
+            self.model.access_name = text
 
 class TopLevelItem(ContainerListViewItem):
     ALLOWS_DELETE = False
     def __init__(self, *args, **kwargs):
         ContainerListViewItem.__init__(self, *args, **kwargs)
         self.FLAG_NAMES = ()
+
+    def _get_coltext2(self):
+        return ''
+    def _set_coltext2(self, text):
+        pass
+
+    def _enable_drag(self):
         self.setDragEnabled(False)
+
+    def _enable_renaming(self):
+        self.setRenameEnabled(0, False)
+        self.setRenameEnabled(1, False)
 
     def _accepts_child_class(self, child_class):
         return child_class == self.CHILD_CLASS
@@ -470,13 +568,13 @@ class MessagesItem(TopLevelItem):
     CHILD_CLASS = HeaderItem
 
 class ContainersItem(TopLevelItem):
-    CHILD_CLASS = ContainerItem
+    CHILD_CLASS = PredefContainerItem
 
 
 class MessageEditor(MenuProvider):
     __TOP_LEVEL_CLASSES = (MessagesItem, ContainersItem)
     __ITEM_CLASSES = (HeaderItem, MessageItem, ContainerItem,
-                      ViewDataItem, ContentItem)
+                      ViewDataItem, ContentItem, AttributeContentItem)
     __ITEM_TYPE_DICT = dict(
         (cls.MODEL_TYPE, cls)
         for cls in chain(__ITEM_CLASSES, (ContainerRefItem,))
@@ -545,12 +643,16 @@ class MessageEditor(MenuProvider):
         menu_provider.show_popup_menu(point)
 
     def message_listview_dropped(self, event):
-        print event
-        pass
+        dest = self.message_listview.itemAt( event.pos() )
+        if dest is not None:
+            dest.dropped(event)
 
     def __recursive_from_model(self, parent, model, messages):
-        model_type = model.tag.split('}', 1)[-1]
-        cls = self.__ITEM_TYPE_DICT[model_type]
+        if isinstance(parent, ContainersItem):
+            cls = PredefContainerItem
+        else:
+            model_type = model.tag.split('}', 1)[-1]
+            cls = self.__ITEM_TYPE_DICT[model_type]
         if not parent._accepts_child_class(cls):
             raise ValueError, "invalid child class"
 

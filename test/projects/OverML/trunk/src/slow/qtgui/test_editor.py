@@ -1,4 +1,5 @@
 STATIC_GLOBALS = globals().copy()
+exec 'import random' in STATIC_GLOBALS
 exec 'from random import randint' in STATIC_GLOBALS
 
 from StringIO import StringIO
@@ -18,8 +19,30 @@ for n in range(NODES):
     "build a new node using buildNode(...)"
 
 def make_foreign(local_node, attributes):
-    """Do something with the node attribute dictionary, then return it.
-    Returning None or an empty dict will not add the node."""
+    """Do something with the node attribute
+    dictionary, then return it.  Returning None
+    or an empty dict will not add the node."""
+    return attributes
+'''
+
+_DEFAULT_CODE = '''\
+NODES  = 20
+MAX_ID = 2**6
+
+for n in range(0, MAX_ID, MAX_ID // NODES):
+    buildNode(id=n)
+
+def make_foreign(local_node, attributes):
+    """Do something with the node attribute
+    dictionary, then return it.  Returning None
+    or an empty dict will discard the node."""
+    attributes["knows_chord"]   = True
+    attributes["alive"]         = True
+
+    dist = attributes["id"] - local_node.id
+    if dist < 0:
+        dist = MAX_ID + dist
+    attributes["local_chorddist"] = dist
     return attributes
 '''
 
@@ -28,12 +51,7 @@ class TestRunner(object):
         self.static_globals = STATIC_GLOBALS
         self.status = status_writer
 
-    def __build_svg(self, graph, graphviz_program):
-        return graph.tostring('svg', graphviz_program,
-                              overlap='false', fontsize='8')
-
-    def run_profile(self, slosl_statements, db_attributes, init_code,
-                    graphviz_program):
+    def run_profile(self, slosl_statements, db_attributes, init_code):
         import hotshot, hotshot.stats, os, sys
 
 	stderr = sys.stderr # discard runtime warning for tempnam
@@ -64,13 +82,10 @@ class TestRunner(object):
 	sys.stdout = stdout
 
         os.remove(prof_filename)
+        return graph
 
-        return self.__build_svg(graph, graphviz_program)
-
-    def run_test(self, slosl_statements, db_attributes, init_code,
-                 graphviz_program):
-        graph = self.build_graph(slosl_statements, db_attributes, init_code)
-        return self.__build_svg(graph, graphviz_program)
+    def run_test(self, slosl_statements, db_attributes, init_code):
+        return self.build_graph(slosl_statements, db_attributes, init_code)
 
     def build_graph(self, slosl_statements, db_attributes, init_code):
         ids = sorted(a.name for a in db_attributes if a.identifier)
@@ -98,6 +113,13 @@ class TestRunner(object):
         static_globals = self.static_globals.copy()
         static_globals['make_foreign'] = lambda x:x
         static_globals['buildNode']    = buildNode
+
+	for view in pyslosl_statements:
+            for varname, pyvalue in view.withs:
+                try:
+                    static_globals[varname] = eval(pyvalue, static_globals)
+		except NameError:
+                    pass
 
         # initialize nodes
         exec init_code in static_globals
@@ -133,11 +155,17 @@ class TestEditor(object):
 
         self.__runner = TestRunner(self.__setStatus)
 
+    def __build_svg(self, graph, graphviz_program):
+        use_splines = self.test_splines_checkbox.isChecked() and 'true' or 'false'
+        return graph.tostring('svg', graphviz_program,
+                              overlap='false', fontsize='8',
+			      splines=use_splines)
+
     def activate_test_tab(self):
         slosl_model = self.slosl_model()
         statement_names = sorted(s.name for s in slosl_model.statements)
 
-        combobox = self.test_view_select_comboBox
+        combobox = self.test_view_select_combobox
         old_selection = qstrpy( combobox.currentText() )
         combobox.clear()
         strlist = QStringList()
@@ -206,7 +234,7 @@ class TestEditor(object):
             self.__stop_test()
         self.__running = True
 
-        current_test = self.test_view_select_comboBox.currentText()
+        current_test = self.test_view_select_combobox.currentText()
         if current_test:
             current_test = qstrpy(current_test)
         if not current_test:
@@ -220,7 +248,7 @@ class TestEditor(object):
             attribute_model = self.attribute_model()
             init_code = qstrpy(self.test_init_code.text())
 
-            graphviz_program = self.test_graphviz_program_comboBox.currentText()
+            graphviz_program = self.test_graphviz_program_combobox.currentText()
             if graphviz_program:
                 graphviz_program = qstrpy(graphviz_program)
             else:
@@ -228,9 +256,10 @@ class TestEditor(object):
 
             try:
                 t = time()
-                result = test_call([statement], attribute_model,
-                                     init_code, graphviz_program)
+                result_graph = test_call([statement], attribute_model, init_code)
                 t = time() - t
+
+		result = self.__build_svg(result_graph, graphviz_program)
                 self.test_view_graph.set_image_data(result)
                 self.__setStatus(self.__tr('Generated graph in %1 seconds.').arg(round(t,2)))
             except Exception, e:
@@ -242,7 +271,7 @@ class TestEditor(object):
         if self.__current_test:
             self.__view_tests[self.__current_test] = qstrpy(self.test_init_code.text())
 
-    def test_view_select_comboBox_activated(self, view_name):
+    def test_view_select_activated(self, view_name):
         view_name = qstrpy(view_name)
         self.__store_current_code()
         self.__current_test = view_name

@@ -374,8 +374,7 @@ class EDSMIconViewIcon(EDSMEditorItem, QIconViewItem):
             return
 
         active_mode = self._edsm_editor.active_edsm_mode()
-        if active_mode not in EDSMTransition.TYPES_BY_NAME:
-            self._edsm_editor.setStatus(self.tr("Please select a transition type."))
+        if active_mode != 'transition':
             return
 
         source = self._iconview.currentItem()
@@ -404,7 +403,8 @@ class EDSMIconViewIcon(EDSMEditorItem, QIconViewItem):
         if closest_parent is None:
             closest_parent = self._model
         transitions = closest_parent.transitions
-        model = buildTransition(transitions, active_mode)
+        transition_type = self._edsm_editor.active_transition_type()
+        model = buildTransition(transitions, transition_type)
 
         model.from_state = source._model
         model.to_state   = self._model
@@ -503,8 +503,9 @@ class ConnectionItem(EDSMEditorItem):
 
 
 class EDSMEditor(EDSMEditorItem):
-    TOOL_BUTTONS  = ('edit', 'state', 'subgraph', 'message', 'timer',
-                     'event', 'outputchain', 'transition')
+    TOOL_BUTTONS     = ('edit', 'state', 'subgraph', 'transition')
+    TRANSITION_TYPES = ('message', 'timer', 'event', 'outputchain', 'transition')
+
     STATIC_STATES = ('start',)
     SUBGRAPH_STATIC_STATES = ('entry', 'exit')
 
@@ -535,6 +536,9 @@ class EDSMEditor(EDSMEditorItem):
         self.__init_tools()
 
     def __init_tools(self):
+        self._edsm_transition_type = self.TRANSITION_TYPES[0]
+        self.edsm_transition_type.setCurrentItem(0)
+
         self._edsm_last_button = None
         self.edsm_tool_button_toggled(True)
 
@@ -617,6 +621,7 @@ class EDSMEditor(EDSMEditorItem):
     def __init_dot(self):
         if hasattr(self, 'edsm_dot_graph'):
             self.edsm_dot_graph.set_editor(self)
+            self.edsm_dot_graph.set_splines(True)
             type_names = EDSMTransition.TYPENAMES
             colours = dict( (type_names[key], str(qcolour.name()))
                             for key, qcolour in ConnectionItem.CONNECTION_COLOURS.iteritems() )
@@ -868,6 +873,9 @@ class EDSMEditor(EDSMEditorItem):
     def active_edsm_mode(self):
         return self._edsm_last_button
 
+    def active_transition_type(self):
+        return self.TRANSITION_TYPES[ self.edsm_transition_type.currentItem() ]
+
     def make_name_unique(self, prefix):
         known_names = self.__edsm_model.used_names
         new_state_no = -1
@@ -891,7 +899,8 @@ class EDSMEditor(EDSMEditorItem):
         if item:
             return (item,)
 
-        preferred_type = EDSMTransition.TYPES_BY_NAME.get(active_button)
+        transition_type = self.active_transition_type()
+        preferred_type = EDSMTransition.TYPES_BY_NAME.get(transition_type)
         items = iconview.connections_at(contents_pos, preferred_type)
 
         if items:

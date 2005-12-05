@@ -1,5 +1,5 @@
 from itertools import *
-import random, copy
+import random, copy, heapq
 
 try:
     from psyco.classes import *

@@ -1,18 +1,17 @@
 import os, re, random, math, operator
-from itertools import chain
+from itertools import imap, chain, repeat
 
-#from twisted.internet   import defer
-
-
-def build_colour_table(rows):
-    c_step = 1.0 / rows
-    colours = [ [ "%.3f,%.3f,%.3f" % (h*c_step + (b*c_step)/1000.0, 1.0, 0.8) # b*(1.0/1000.0))
-                  for b in range(1000)
-                  ]
-                for h in range(rows)
-                ]
-
+def build_colour_table():
+    "Build a list of colours with decreasing colour distance"
+    colours = ["0.0,1.0,0.8"]
+    power_step = 1.0
+    for power in xrange(7): # 1094 entries should be enough
+        power_step *= 2.0
+        colours.extend( "%.3f,1.0,0.8" % (step/power_step)
+                        for step in xrange(1,int(power_step),2) )
     return colours
+
+COLOUR_TABLE = build_colour_table()
 
 
 class ViewGraph(object):
@@ -30,72 +29,47 @@ class ViewGraph(object):
         graph_name = kwargs.get('graph_name') or 'Views'
         self.graph = graph = Dot(graph_name=graph_name, ordering='out', **kwargs)
 
-        max_view_count = 1
         for (node_name, views) in node_views_tuples:
-            max_view_count = max(max_view_count, len(views))
             graph.add_node( self.build_node(str(node_name)) )
 
-        self.colours = build_colour_table(max_view_count)
+        def random_colour():
+            choice  = random.choice
+            while True:
+                yield choice(COLOUR_TABLE)
+
+        # never ending story...
+        next_colour = chain(COLOUR_TABLE,
+                            imap(random.choice, repeat(COLOUR_TABLE))).next
+        colour_map = {}
 
         build_edges_from_views = self.build_edges_from_views
         for node, views in node_views_tuples:
-            build_edges_from_views(str(node), views)
+            build_edges_from_views(str(node), views,
+                                   colour_map, next_colour)
 
     def rebuild_edges_from_views(self, node_name, views):
         vnode = self.graph.node_dict[node_name]
         self.graph.remove_edges_of_node(vnode)
         self.build_edges_from_views(node_name, views)
 
-    def build_edges_from_views(self, node_name, views):
-        view_count  = len(views)
-        colours     = self.colours
+    def build_edges_from_views(self, node_name, views,
+                               colour_map, next_colour):
         build_edges = self.build_edges
         graph       = self.graph
 
-        used_colours = set()
-        colour_map   = {}
-        def build_bucket_edges(bucket_iterator, view_name, max_val, node_name, view_colours):
-            for var_values, nodelist in bucket_iterator:
-                if var_values:
-                    weight=100 - ((100*var_values[0]) // max_val)
-                else:
-                    weight=0
-
+        def build_bucket_edges(bucket_iterator, view_name, node_name):
+            for weight, (var_values, nodelist) in enumerate(bucket_iterator):
+                weight = 100 // (weight+1)
                 colour_key = (view_name,) + var_values
                 try:
                     colour = colour_map[colour_key]
                 except KeyError:
-                    colour = random.choice(view_colours)
-                    i = 0
-                    while colour in used_colours and i < 20:
-                        colour = random.choice(view_colours)
-                        i += 1
-                    colour_map[colour_key] = colour
-                    used_colours.add(colour)
+                    colour = colour_map[colour_key] = next_colour()
                 build_edges(graph, node_name, nodelist,
                             color=colour, weight=weight)
 
-        deferreds = []
-        for i, view in enumerate(views):
-            variables = view.variables().items()
-            spec = view.getSpec()
-            loop_count  = len(variables)
-            view_colours = colours[i]
-            max_val = value_count = 1
-            if variables:
-                value_count = reduce(operator.mul,
-                                     (len(loop[1]) for loop in variables
-                                      if isinstance(loop[1], (list, tuple, xrange))), 1)
-                if isinstance(variables[0][1], (list, tuple, xrange)):
-                    max_val = max(variables[0][1])
-            colour_dict = {}
-            max_colour_index = len(view_colours) - 1
-            for c, loop_values in enumerate(view.variables()):
-                colour_dict[loop_values] = view_colours[
-                    min( (c*1000) // value_count, max_colour_index) ]
-
-            build_bucket_edges(view.iterBuckets(), view.name, max_val,
-                               node_name, view_colours)
+        for view in views:
+            build_bucket_edges(view.iterBuckets(), view.name, node_name)
 
     def build_edges(self, graph, local_node, nodes, **kwargs):
         for node in nodes:

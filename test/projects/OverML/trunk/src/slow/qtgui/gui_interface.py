@@ -216,8 +216,8 @@ class OverlayDesigner_gui(OverlayDesignerMainWindow):
         print "OverlayDesigner_gui.exportFlat(): Not implemented yet"
 
 
-    def test_view_select_comboBox_activated(self,a0):
-        print "OverlayDesigner_gui.test_view_select_comboBox_activated( const QString & ): Not implemented yet"
+    def test_view_select_activated(self,a0):
+        print "OverlayDesigner_gui.test_view_select_activated( const QString & ): Not implemented yet"
 
 
     def test_run_button_clicked(self):

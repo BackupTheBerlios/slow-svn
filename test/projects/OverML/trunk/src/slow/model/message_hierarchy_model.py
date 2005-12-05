@@ -53,6 +53,9 @@ class ContainerLinkModel(LinkModel, AccessibleMixin):
 class ContentModel(MessageFieldBase, AccessibleMixin):
     TYPE_NAME = 'content'
 
+class AttributeModel(MessageFieldBase, AccessibleMixin):
+    TYPE_NAME = 'attribute'
+
 class ViewDataModel(MessageFieldBase, AccessibleMixin):
     TYPE_NAME = 'viewdata'
     _attr_structured = u"bool#./@structured"

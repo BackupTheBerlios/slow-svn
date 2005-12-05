@@ -90,6 +90,12 @@
                     <property name="name">
                         <cstring>init_code</cstring>
                     </property>
+                    <property name="font">
+                        <font>
+                            <family>Monospace</family>
+                            <pointsize>8</pointsize>
+                        </font>
+                    </property>
                 </widget>
                 <widget class="QLabel" row="0" column="0">
                     <property name="name">

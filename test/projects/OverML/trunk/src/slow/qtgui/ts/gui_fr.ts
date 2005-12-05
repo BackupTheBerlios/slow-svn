@@ -76,6 +76,17 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     </message>
 </context>
 <context>
+    <name>ContainerListViewItem</name>
+    <message>
+        <source>Drop aborted, invalid target.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attribute</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>EDSMDialog</name>
     <message>
         <source>EDSM Dialog</source>
@@ -134,7 +145,7 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     <name>EDSMIconViewIcon</name>
     <message>
         <source>Please select a transition type.</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
 </context>
 <context>
@@ -271,6 +282,13 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     <message>
         <source>Writing to file failed:</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MessageEditor</name>
+    <message>
+        <source>Attribute</source>
+        <translation type="obsolete"></translation>
     </message>
 </context>
 <context>
@@ -469,27 +487,27 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     </message>
     <message>
         <source>Alt+M</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>&amp;Message</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>Alt+T</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>&amp;Timer</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>Alt+V</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>E&amp;vent</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>View Event</source>
@@ -501,15 +519,15 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     </message>
     <message>
         <source>&amp;Output</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>&amp;Advance</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>Immediately start the target state.</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>start</source>
@@ -765,7 +783,7 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     </message>
     <message>
         <source>Node init code</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>Test</source>
@@ -794,7 +812,7 @@ Additional available Functions:&lt;br&gt;
     </message>
     <message>
         <source>GraphViz program to use:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>dotty</source>
@@ -851,6 +869,124 @@ Functions to reimplement:&lt;br&gt;
 Functions to reimplement:&lt;br&gt;
 &lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;make_foreign&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;local_node&lt;/i&gt;, &lt;i&gt;node&lt;/i&gt;)&lt;br&gt;
  - make &lt;i&gt;node&lt;/i&gt; foreign to the new local node (add/modify attributes, etc.)</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source> Node init code </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Python builtins are available, plus:
+&lt;ul&gt;
+&lt;li&gt;build new node and initialize its attributes:&lt;br&gt;
+  &lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;buildNode&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;attr1&lt;/i&gt;=&lt;i&gt;value1&lt;/i&gt;, ...)&lt;/li&gt;
+&lt;li&gt;get a random integer value:&lt;br&gt;
+  &lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;randint&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;min&lt;/i&gt;, &lt;i&gt;max&lt;/i&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+Functions to reimplement:
+&lt;ul&gt;
+&lt;li&gt;make &lt;i&gt;node&lt;/i&gt; foreign to the new local node (add/modify attributes, etc.):&lt;br&gt;
+  &lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;make_foreign&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;local_node&lt;/i&gt;, &lt;i&gt;node&lt;/i&gt;)&lt;/li&gt;
+&lt;/ul&gt;</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>The name of this view.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Node attributes that are visible in this view.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comma separated list of base views.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View options, to be set at design/deployment/run time.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Basic constraints for candidate nodes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Per-bucket ranking expression.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name and values of a bucket vcariable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Names and values of all bucket variables.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of selected nodes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The rank expression.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select nodes closest/furthest to this expression.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Transition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Timer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output Chain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Advance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Python builtins are available, plus:&lt;br&gt;
+&lt;font face=&quot;Monospace&quot;&gt;&amp;nbsp;&lt;b&gt;buildNode&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;attr1&lt;/i&gt;=&lt;i&gt;value1&lt;/i&gt;, ...)&lt;br&gt;
+&lt;font face=&quot;Monospace&quot;&gt;&amp;nbsp;&lt;b&gt;randint&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;min&lt;/i&gt;, &lt;i&gt;max&lt;/i&gt;)&lt;br&gt;
+Functions to reimplement:&lt;br&gt;
+&lt;font face=&quot;Monospace&quot;&gt;&amp;nbsp;&lt;b&gt;make_foreign&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;local_node&lt;/i&gt;, &lt;i&gt;node_attributes&lt;/i&gt;)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Python builtins are available, plus:
+&lt;ul&gt;
+&lt;li&gt;build new node and initialize its attributes:&lt;br&gt;
+  &lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;buildNode&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;attr1&lt;/i&gt;=&lt;i&gt;value1&lt;/i&gt;, ...)&lt;/li&gt;
+&lt;li&gt;get a random integer value:&lt;br&gt;
+  &lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;randint&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;min&lt;/i&gt;, &lt;i&gt;max&lt;/i&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+Functions to reimplement:
+&lt;ul&gt;
+&lt;li&gt;make &lt;i&gt;node&lt;/i&gt; foreign to the new local node (add/modify attributes, etc.):&lt;br&gt;
+  &lt;font face=&quot;Monospace&quot;&gt;&lt;b&gt;make_foreign&lt;/b&gt;&lt;/font&gt;(&lt;i&gt;local_node&lt;/i&gt;, &lt;i&gt;node_attributes&lt;/i&gt;)&lt;/li&gt;
+&lt;/ul&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GraphViz program:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Splines</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>use splines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attribute</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

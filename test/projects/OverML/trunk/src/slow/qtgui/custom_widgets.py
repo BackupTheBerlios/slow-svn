@@ -136,13 +136,22 @@ class DotWriter(object):
 
     def connection_to_dot(self, connection):
         colour = self.colours_by_type[connection.type_name]
-        attributes = self.Attributes(color=colour)
+        attributes = self.Attributes(color=colour,
+                                     fontcolor='gray', fontsize='6')
 
         cname = connection.readable_name
         if cname:
             if len(cname) > 12:
                 cname = self.split_name(cname, 12)
-            attributes.add(label=cname, fontcolor='gray', fontsize='4')
+            attributes.add(label=cname)
+        from_queue = connection.from_queue
+        if from_queue and from_queue != 'output':
+            attributes.add(taillabel=from_queue,
+                           labelfontcolor='black')
+        to_queue = connection.to_queue
+        if to_queue and to_queue != 'input':
+            attributes.add(headlabel=to_queue,
+                           labelfontcolor='black')
 
         return u'"%s" -> "%s" [%s]' % (
             connection.from_state.id,
@@ -181,9 +190,13 @@ class DotGraphWidget(qt.QWidget):
         self.rebuild_running = False
         self.reschedule = False
         self._editor = None
+        self._use_splines = 'false'
 
     def set_editor(self, editor):
         self._editor = editor
+
+    def set_splines(self, splines_on):
+        self._use_splines = splines_on and 'true' or 'false'
 
     @py_signal_signature("rebuild_graph()")
     def rebuild_graph(self):
@@ -194,10 +207,9 @@ class DotGraphWidget(qt.QWidget):
         if not self._editor:
             return
 
-        editor = self._editor
         self._graph_generator.generate_for_callback(
-            self.set_image_data, editor.edsm_model,
-            splines='true'
+            self.set_image_data, self._editor.edsm_model,
+            splines=self._use_splines
             )
 
         self.rebuild_running = True
@@ -214,9 +226,12 @@ class DotGraphWidget(qt.QWidget):
 
         self._paint_rect = None
         for match in self.RE_VIEWBOX.finditer(image_data):
-            self._paint_rect = map(float, match.group(1).split())
-            if len(self._paint_rect) != 4:
-                self._paint_rect = None
+            try:
+                self._paint_rect = map(float, match.group(1).split())
+                if len(self._paint_rect) != 4:
+                    self._paint_rect = None
+            except ValueError:
+                pass
             break
 
         image_buffer = qt.QDataStream(qt.QByteArray(image_data), qt.IO_ReadOnly)

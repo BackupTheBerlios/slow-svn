@@ -5,7 +5,8 @@ from qt import QListViewItem
 
 from qt_utils import pyqstr, qstrpy, FlagMaintainerListItem
 from slow.model import slosl_model
-from mathml.termparser import InfixTermParser, ParseException, term_parsers, cached
+from mathml.termparser  import InfixTermParser, ParseException, term_parsers, cached
+from mathml.termbuilder import InfixTermBuilder, tree_converters
 import pyparsing
 
 str_to_mathdom = slosl_model.MathDOM.fromString
@@ -32,6 +33,15 @@ class SloslForeachListParser(InfixTermParser):
 
 term_parsers.register_converter('slosl_foreach_list',
                                 SloslForeachListParser().p_foreach_list())
+
+
+class SloslForeachListSerializer(InfixTermBuilder):
+    def _handle_list(self, operator, operands, status):
+        assert operator == u'list'
+        return [ u'%s' % u','.join(operands) ]
+
+tree_converters.register_converter('slosl_foreach_list',
+                                   SloslForeachListSerializer())
 
 
 class SLOSLEditor(object):
@@ -101,14 +111,14 @@ class SLOSLEditor(object):
         if model is None:
             model = self.__model
 
-        def build_term(node):
+        def build_term(node, term_type='infix'):
             if hasattr(node, 'serialize'):
-                return unicode( node.serialize('infix') )
+                return unicode( node.serialize(term_type) )
             else:
                 return u''
 
-        def build_qterm(node):
-            return pyqstr( build_term(node) )
+        def build_qterm(node, term_type='infix'):
+            return pyqstr( build_term(node, term_type) )
 
         def build_assign(t):
             name = unicode(t[0])
@@ -130,7 +140,7 @@ class SLOSLEditor(object):
 
         params = ranked.parameters
         if len(params):
-            self.slosl_rank_count.setValue(params[0] and int(build_term(params[0])) or 1)
+            self.slosl_rank_count.setText(params[0] and build_qterm(params[0]) or '1')
             self.slosl_rank_expression.setText(params[1] and build_qterm(params[1]) or '')
             if len(params) > 2 and params[2]:
                 compare = build_qterm(params[2])
@@ -138,7 +148,7 @@ class SLOSLEditor(object):
                 compare = ''
             self.slosl_rank_compare.setText(compare)
         else:
-            self.slosl_rank_count.setValue(1)
+            self.slosl_rank_count.setText('1')
             self.slosl_rank_expression.setText('')
             self.slosl_rank_compare.setText('')
 
@@ -155,8 +165,11 @@ class SLOSLEditor(object):
         foreachs = model.foreachs
         for variable_name, variable_declaration in foreachs:
             QListViewItem(foreach_list, variable_name,
-                          build_qterm(variable_declaration))
+                          build_qterm(variable_declaration,
+                                      'slosl_foreach_list'))
 
+        self.slosl_foreach_values.clear()
+        self.slosl_foreach_varname.clear()
         self.slosl_copy_buckets_checkbox.setChecked(model.bucket)
         self.slosl_disable_having(model.bucket or len(foreachs) == 0)
 
@@ -200,14 +213,14 @@ class SLOSLEditor(object):
             if ranking_function_name:
                 ranked = model.ranked
                 ranked.function = ranking_function_name
-                for i, text in islice(
-                    enumerate( (self.slosl_rank_count.cleanText(),
-                                self.slosl_rank_expression.text(),
-                                self.slosl_rank_compare.text())
+                for i, field in islice(
+                    enumerate( (self.slosl_rank_count,
+                                self.slosl_rank_expression,
+                                self.slosl_rank_compare)
                                ),
                     ranked.function_parameter_count()
                     ):
-                    ranked.setParameter(i, to_term(qstrpy(text)))
+                    ranked.setParameter(i, to_term(qstrpy(field.text())))
             else:
                 del model.ranked
 
@@ -326,7 +339,7 @@ class SLOSLEditor(object):
         if item:
             self.__current_foreach_entry = name = qstrpy(item.text(0))
             entry = self.__model.getForeach(name)
-            declaration = entry and entry.serialize('infix') or ""
+            declaration = entry and entry.serialize('slosl_foreach_list') or ""
             # FIXME: bug, handle inconsistent view/model somewhere??
             self.slosl_foreach_varname.setText(name)
             self.slosl_foreach_values.setText(declaration)
