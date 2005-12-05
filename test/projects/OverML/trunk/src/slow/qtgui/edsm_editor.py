@@ -296,7 +296,7 @@ class TimerDialog(AbstractTransitionDialog, EDSMTimerDialog):
         self.timer_delay_unit.setCurrentItem( timer_unit[0] )
 
     def accept(self):
-        model = self.transition._model
+        model = self._model
         model.timer_delay = self.timer_delay.value() * self.UNITS[self.timer_delay_unit.currentItem()]
         super(TimerDialog, self).accept()
 

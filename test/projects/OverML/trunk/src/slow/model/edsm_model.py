@@ -311,7 +311,7 @@ class EDSMTransitionModel(EDSMClass, EDSMTransition, NamedObject):
     def _get_timer_delay(self, _xpath_result):
         u"string(./{%(DEFAULT_NAMESPACE)s}timerdelay)"
         try:
-            return int(_xpath_result[0])
+            return int(_xpath_result)
         except (ValueError, IndexError):
             return 0
     @autoconstruct
