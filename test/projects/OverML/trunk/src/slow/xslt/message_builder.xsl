@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:msg="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel">
+  xmlns:msg="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"
+  >
 
   <xsl:import href="common.xsl"/>
-
   <xsl:output method="xml" encoding="UTF-8" indent="no" />
+  <xsl:strip-space elements="*"/>
+
+  <xsl:param name="copy_toplevel">false</xsl:param>
 
   <xsl:template match="msg:message_hierarchy">
     <msg:messages>
       <xsl:apply-templates mode="messages"/>
+      <xsl:if test="$copy_toplevel != 'false'">
+	<xsl:copy-of select="msg:container"/>
+	<xsl:copy-of select="msg:protocol"/>
+      </xsl:if>
     </msg:messages>
   </xsl:template>
 
@@ -17,6 +24,10 @@
     <msg:messages>
       <xsl:apply-templates select="." mode="messages"/>
     </msg:messages>
+  </xsl:template>
+
+  <xsl:template match="/*">
+    <xsl:apply-templates select="msg:message_hierarchy" />
   </xsl:template>
 
   <xsl:template match="msg:message" mode="messages">
@@ -91,7 +102,7 @@
 
   <xsl:template match="msg:container-ref[string(@access_name)]" mode="message">
     <msg:container>
-      <xsl:apply-templates select="@access_name" mode="copyattr"/>
+      <xsl:apply-templates select="@access_name|@type_name" mode="copyattr"/>
       <xsl:variable name="typename" select="@type_name"/>
       <xsl:apply-templates
 	  select="ancestor::msg:message_hierarchy/msg:container[@type_name = $typename]/msg:*"
