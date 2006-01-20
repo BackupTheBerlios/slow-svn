@@ -134,11 +134,11 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     </message>
     <message>
         <source>Output queue</source>
-        <translation type="obsolete"></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Input queue</source>
-        <translation type="obsolete"></translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
