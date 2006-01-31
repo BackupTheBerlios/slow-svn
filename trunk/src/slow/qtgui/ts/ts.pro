@@ -1,7 +1,8 @@
 FORMS	= gui.ui \
 	aboutdialog.ui \
 	timerdialog.ui \
-	edsmdialog.ui \
+	statedialog.ui \
+	transitiondialog.ui \
 	prefdialog.ui
 
 SOURCES	= gui.py \
@@ -16,7 +17,8 @@ SOURCES	= gui.py \
 	gengui.py \
 	genaboutdialog.py \
 	gentimerdialog.py \
-	genedsmdialog.py \
+	genstatedialog.py \
+	gentransitiondialog.py \
         genprefdialog.py
 	
 

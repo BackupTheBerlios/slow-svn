@@ -90,10 +90,112 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     <name>EDSMDialog</name>
     <message>
         <source>EDSM Dialog</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>&amp;Help</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>F1</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>&amp;OK</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>Init code:</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>Language:</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>Python</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>Class:</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>Message Type:</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>Output queue</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>Input queue</source>
+        <translation type="obsolete"></translation>
+    </message>
+</context>
+<context>
+    <name>EDSMIconViewIcon</name>
+    <message>
+        <source>Please select a transition type.</source>
+        <translation type="obsolete"></translation>
+    </message>
+</context>
+<context>
+    <name>EDSMStateDialog</name>
+    <message>
+        <source>EDSM State Dialog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Implementation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Python</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Class:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Language:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Init code:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Queues</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Queue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -111,41 +213,6 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     <message>
         <source>&amp;Cancel</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Init code:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Language:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Python</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Class:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Message Type:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Output queue</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Input queue</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>EDSMIconViewIcon</name>
-    <message>
-        <source>Please select a transition type.</source>
-        <translation type="obsolete"></translation>
     </message>
 </context>
 <context>
@@ -188,6 +255,65 @@ Designing overlays in no-time!&lt;/p&gt;</source>
     </message>
     <message>
         <source>minutes</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>EDSMTransitionDialog</name>
+    <message>
+        <source>EDSM Transition Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Message Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Source queue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dest queue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Implementation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Python</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Class:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Language:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Init code:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
