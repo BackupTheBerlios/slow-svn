@@ -6,8 +6,8 @@ except:
 import logging
 from weakref import WeakValueDictionary
 
-from observable import Observable, ReflectiveObservable
-from node       import StaticNode
+from slow.pyexec.utils.observable import Observable, ReflectiveObservable
+from node import StaticNode
 
 
 class PyAttribute(object):

@@ -17,9 +17,9 @@ from lxml.etree import XPath
 
 from mathml.utils import pyterm
 
-from observable import ReflectiveObservable
-from db         import NodeDB
-from node       import AbstractNode
+from slow.pyexec.utils.observable import ReflectiveObservable
+from db   import NodeDB
+from node import AbstractNode
 
 
 ATTRIBUTE_XPATH  = XPath(u"//{http://www.w3.org/1998/Math/MathML}ci[contains('node.', text())]")
