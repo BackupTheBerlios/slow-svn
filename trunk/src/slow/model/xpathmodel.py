@@ -120,11 +120,9 @@ def autoconstruct(*args):
     elif len(args) == 3:
         namespaces = args[2]
         args = args[:2]
-        return set_autoconstruct
-    elif len(args) in (0,2):
-        return set_autoconstruct
-    else:
+    elif len(args) not in (0,2):
         raise ValueError, "Only 0, 2 or 3 arguments are accepted."
+    return set_autoconstruct
 
 def result_filter(converter):
     "Filter result of get() through 'converter'."

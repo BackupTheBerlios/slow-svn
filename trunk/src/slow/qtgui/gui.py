@@ -420,7 +420,7 @@ if __name__ == '__main__':
             import psyco
             psyco.profile()
             RUNNING_PSYCO = True
-        except:
+        except ImportError:
             pass
 
     loglevel = getattr(logging, options.loglevel.upper(), logging.ERROR)
