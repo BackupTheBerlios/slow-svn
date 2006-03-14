@@ -8,10 +8,12 @@ What is it?
 -----------
 
 The SLOSL Overlay Workbench ('slow' for short) is a graphical RAD tool for
-implementing overlay networks.  It is based on a data-driven model that
-supports the abstract design of these systems.  This means that you can use it
-to design an overlay description in the OverML language and can then map it to
-a networking framework of your choice to build an executable implementation.
+modelling and implementing overlay networks.  It is based on a data-driven
+model that supports the abstract design of these systems.  This means that you
+can use it to design an overlay description in the OverML language and then
+map it to a networking framework of your choice to build an executable
+implementation.  Once the generic mapping is available for a given framework,
+overlays can be built, tested and modified in edit-compile-run cycles.
 
 There is some additional documentation becoming available at
 http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/
@@ -19,6 +21,8 @@ http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/
 You may especially want to read these two papers:
 http://www.dvs1.informatik.tu-darmstadt.de/publications/pdf/behnel2005overlayspecification.pdf
 http://www.dvs1.informatik.tu-darmstadt.de/publications/pdf/behnel2005overlaylanguages.pdf
+
+They contain a description of the language and examples for their use.
 
 
 How to install it
@@ -34,10 +38,10 @@ Qt:   http://www.trolltech.com/
 PyQt: http://www.riverbankcomputing.co.uk/pyqt/
 
 Further, Slow requires lxml and MathDOM to work. You can get both from the
-'contrib' directory of Slow or from
+'contrib' directory of the Slow source distribution or from
 http://mathdom.sourceforge.net/
 
-Note that lxml currently requires a patch to work, so the default version
+Note that lxml currently requires a patch to work, so the official version
 (0.8) will not work. The patch will eventually be folded back into the
 mainstream version. For now, please use the version that comes with Slow and
 MathDOM.
