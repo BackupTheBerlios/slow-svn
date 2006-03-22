@@ -1,6 +1,5 @@
 from itertools  import chain
 from lxml       import etree
-#from lxml.etree import SubElement
 
 from xpathmodel import XPathModel
 from model import NamedObject

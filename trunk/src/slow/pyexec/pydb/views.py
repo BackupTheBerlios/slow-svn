@@ -13,7 +13,7 @@ except:
         pass
 
 from lxml import etree
-from lxml.etree import XPath
+from lxml.etree import ETXPath
 
 from mathml.utils import pyterm
 
@@ -22,8 +22,8 @@ from db   import NodeDB
 from node import AbstractNode
 
 
-ATTRIBUTE_XPATH  = XPath(u"//{http://www.w3.org/1998/Math/MathML}ci[contains('node.', text())]")
-DEPENDENCY_XPATH = XPath(u"//{http://www.w3.org/1998/Math/MathML}ci")
+ATTRIBUTE_XPATH  = ETXPath(u"//{http://www.w3.org/1998/Math/MathML}ci[contains('node.', text())]")
+DEPENDENCY_XPATH = ETXPath(u"//{http://www.w3.org/1998/Math/MathML}ci")
 
 class PySlosl(object):
     class PyRanked(object):

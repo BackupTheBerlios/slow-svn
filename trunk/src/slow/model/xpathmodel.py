@@ -76,14 +76,14 @@ from itertools import chain, izip
 
 from lxml import etree
 from lxml.etree import (ElementTree, SubElement, Element, ElementBase,
-                        XPath, XPathEvaluator, RelaxNG)
+                        ETXPath, XPathEvaluator, RelaxNG)
 # decorators
 
 def on_xpath(expression, namespaces=None):
     "Use this decorator to register an XPath expression for a method."
     def set_expression(function):
         function.__doc__ = expression
-        function.XPATH = XPath(expression, namespaces)
+        function.XPATH = ETXPath(expression, namespaces)
         return function
     return set_expression
 
@@ -229,7 +229,7 @@ class AugmenterMetaClass(type):
             if parent_path[-1:] == '/':
                 parent_path = parent_path[:-1]
             if parent_path and parent_path != '.':
-                xpath_eval = XPath(parent_path).evaluate
+                xpath_eval = ETXPath(parent_path).evaluate
                 def get_parent(context_node):
                     return xpath_eval(context_node)[0]
             else:
@@ -277,7 +277,7 @@ class AugmenterMetaClass(type):
                             validator = complete_dict.get('_val_'+attr_name, None)
                         class_dict[attr_name] = attribute_access(class_attribute, validator)
                 elif name.startswith('_compiled_xpath_'):
-                    class_dict[name] = XPath(class_attribute % complete_dict, xpath_namespaces)
+                    class_dict[name] = ETXPath(class_attribute % complete_dict, xpath_namespaces)
 
         attribute_names = frozenset(chain(getters, setters))
 
@@ -289,7 +289,7 @@ class AugmenterMetaClass(type):
                 pass
             if method.__doc__:
                 doc = method.__doc__ % complete_dict
-                return XPath(doc, xpath_namespaces)
+                return ETXPath(doc, xpath_namespaces)
             else:
                 return None
 
@@ -359,7 +359,7 @@ class AugmenterMetaClass(type):
         def build_autoconstruct(auto_tuple):
             if not auto_tuple:
                 return None
-            parent_path = XPath(auto_tuple[0] % complete_dict, auto_tuple[1])
+            parent_path = ETXPath(auto_tuple[0] % complete_dict, auto_tuple[1])
             element_tag = auto_tuple[2] % complete_dict
 
             if element_tag[:1] != '{':
@@ -425,7 +425,7 @@ class AugmenterMetaClass(type):
             getter_argnames = ()
 
             if isinstance(mget, (str, unicode)):
-                getter_xpath = XPath(mget, xpath_namespaces)
+                getter_xpath = ETXPath(mget, xpath_namespaces)
             elif mget:
                 getter_argnames = func_argnames(mget)
                 assert getter_argnames[0] == 'self'
@@ -460,7 +460,7 @@ class AugmenterMetaClass(type):
                         parent.remove(child)
 
             if isinstance(mdel, (str, unicode)):
-                deller_xpath = XPath(mdel, xpath_namespaces)
+                deller_xpath = ETXPath(mdel, xpath_namespaces)
                 mdel = default_del
                 deller_argnames = func_argnames(default_del)
             else:
