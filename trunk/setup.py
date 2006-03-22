@@ -47,13 +47,14 @@ SLOW - The SLOSL Overlay Workbench
 What is SLOW?
 -------------
 
-SLOW is a visual rapid development environment for overlay networks.  It is
-strongly focused on the design of local topology decisions based on SLOSL and
-concepts from the database area.  SLOW allows you to visually design and
-specify topologies and protocols in a platform and language neutral way.  You
-can test them against different scenarios from within the workbench before you
-bet your money on their implementation.  At any time, you can write out the
-specification in OverML and generate a source code implementation from it.
+SLOW is a visual rapid development environment for Internet overlay networks
+and Peer-to-Peer systems.  It is strongly focused on the design of local
+topology decisions based on SLOSL and concepts from the database area.  SLOW
+allows you to visually design and specify topologies and protocols in a
+platform and language neutral way.  You can test them against different
+scenarios from within the workbench before you bet your money on their
+implementation.  At any time, you can write out the specification in OverML
+and generate a source code implementation from it.
 
 What are SLOSL and OverML?
 --------------------------
