@@ -110,8 +110,17 @@ libxml2_ and libxslt_ to be installed.
     classifiers = [
     'Development Status :: 3 - Alpha',
     'Intended Audience :: Developers',
-    'Intended Audience :: Science/Research',
+    'Environment :: X11 Applications :: Qt',
+    'Operating System :: OS Independent',
     'Programming Language :: Python',
+    'License :: OSI Approved :: GNU General Public License (GPL)',
+    'Intended Audience :: Science/Research',
+    'Topic :: Communications',
+    'Topic :: Internet',
+    'Topic :: Scientific/Engineering :: Visualization',
+    'Topic :: Software Development :: Code Generators',
+    'Topic :: System :: Distributed Computing',
+    'Topic :: System :: Networking',
     ],
     **setup_args
 )
