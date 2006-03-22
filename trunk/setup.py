@@ -12,7 +12,8 @@ import sys, os
 VERSION  = '0.3.2'
 PACKAGE_NAME = 'slow'
 PACKAGES = ['slow', 'slow.model', 'slow.qtgui', 'slow.vis',
-            'slow.xslt', 'slow.schema']
+            'slow.xslt', 'slow.schema',
+            'slow.pyexec.pydb', 'slow.pyexec.utils']
 PACKAGE_DIRS = {'slow' : 'src/slow'}
 PACKAGE_DATA = {
     'slow.qtgui'  : ['ts/*.ts'],
