@@ -3,7 +3,7 @@
 setup_args = {}
 try:
     from setuptools import setup
-    setup_args['install_requires'] = [ 'PyQt', 'mathdom>=0.7', 'lxml>=0.9' ]
+    setup_args['install_requires'] = [ 'mathdom>=0.7', 'lxml>=0.9' ]
 except ImportError:
     from distutils.core import setup
 
