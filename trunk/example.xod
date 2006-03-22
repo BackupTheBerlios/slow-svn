@@ -1,0 +1,485 @@
+<?xml version="1.0"?>
+<file xmlns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow" xmlns:gui="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow-gui" xmlns:db="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala">
+  <db:types xmlns:sql="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/sql">
+    <sql:decimal bits="256" type_name="id256"/>
+  </db:types>
+  <db:attributes>
+    <db:attribute name="latency" selected="true" type_name="interval"/>
+    <db:attribute name="knows_chord" selected="true" type_name="boolean">
+      <db:static/>
+      <db:transferable/>
+    </db:attribute>
+    <db:attribute name="id" selected="true" type_name="id256">
+      <db:transferable/>
+      <db:identifier/>
+      <db:static/>
+    </db:attribute>
+    <db:attribute type_name="boolean" name="alive" selected="true">
+      <db:transferable/>
+    </db:attribute>
+    <db:attribute type_name="id256" name="local_chorddist" selected="true">
+      <db:static/>
+    </db:attribute>
+    <db:attribute type_name="boolean" name="knows_pastry" selected="true">
+      <db:static/>
+      <db:transferable/>
+    </db:attribute>
+    <db:attribute type_name="smallint" name="local_pastryprefix" selected="true">
+      <db:static/>
+    </db:attribute>
+    <db:attribute type_name="smallint" name="local_nextpastrydigit" selected="true">
+      <db:static/>
+    </db:attribute>
+  </db:attributes>
+  <msg:message_hierarchy xmlns:msg="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel">
+    <msg:header readable_name="Header" access_name="header0">
+      <msg:message readable_name="Message" type_name="joined"/>
+      <msg:message readable_name="Message" type_name="data_message">
+        <msg:content access_name="data" readable_name="Content" type_name="integer"/>
+        <msg:viewdata access_name="fingertable" readable_name="View Data" structured="true" type_name="chord_fingertable"/>
+      </msg:message>
+      <msg:container-ref readable_name="&gt;Container" type_name="ids" access_name="addresses"/>
+    </msg:header>
+    <msg:protocol access_name="udp" type_name="udp">
+      <msg:message-ref type_name="joined"/>
+    </msg:protocol>
+    <msg:protocol access_name="tcp" type_name="tcp">
+      <msg:message-ref type_name="data_message"/>
+    </msg:protocol>
+    <msg:container type_name="ids" readable_name="Container">
+      <msg:attribute type_name="id" readable_name="Attribute" access_name="source"/>
+      <msg:attribute type_name="id" readable_name="Attribute" access_name="dest"/>
+    </msg:container>
+  </msg:message_hierarchy>
+  <edsm:edsm xmlns:edsm="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl">
+  </edsm:edsm>
+  <slosl:statements xmlns:slosl="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl">
+    <slosl:statement xmlns:ns0="http://www.w3.org/1998/Math/MathML" name="chord_fingertable" selected="true">
+      <slosl:ranked function="lowest">
+        <slosl:parameter>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer">1</cn>
+          </math>
+        </slosl:parameter>
+        <slosl:parameter>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <ci>node.local_chorddist</ci>
+          </math>
+        </slosl:parameter>
+      </slosl:ranked>
+      <slosl:where>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <and/>
+            <apply>
+              <eq/>
+              <ci>node.knows_chord</ci>
+              <true/>
+            </apply>
+            <apply>
+              <eq/>
+              <ci>node.alive</ci>
+              <true/>
+            </apply>
+          </apply>
+        </math>
+      </slosl:where>
+      <slosl:having>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <in/>
+            <ci>node.local_chorddist</ci>
+            <interval closure="closed-open">
+              <apply>
+                <power/>
+                <cn type="integer">2</cn>
+                <ci>l</ci>
+              </apply>
+              <apply>
+                <power/>
+                <cn type="integer">2</cn>
+                <apply>
+                  <plus/>
+                  <ci>l</ci>
+                  <cn type="integer">1</cn>
+                </apply>
+              </apply>
+            </interval>
+          </apply>
+        </math>
+      </slosl:having>
+      <slosl:buckets inherit="false">
+        <slosl:foreach name="l">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <interval closure="closed-open">
+              <cn type="integer">0</cn>
+              <ci>log_k</ci>
+            </interval>
+          </math>
+        </slosl:foreach>
+      </slosl:buckets>
+      <slosl:parent>db</slosl:parent>
+      <slosl:select name="id">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <ci>node.id</ci>
+        </math>
+      </slosl:select>
+      <slosl:select name="local_chorddist">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <ci>node.local_chorddist</ci>
+        </math>
+      </slosl:select>
+      <slosl:with name="log_k">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <cn type="integer">5</cn>
+        </math>
+      </slosl:with>
+    </slosl:statement>
+    <slosl:statement xmlns:default="http://www.w3.org/1998/Math/MathML" name="chord_last_neighbour" selected="true">
+      <slosl:ranked function="highest">
+        <slosl:parameter>
+          <default:math xmlns="http://www.w3.org/1998/Math/MathML">
+            <default:cn type="integer">1</default:cn>
+          </default:math>
+        </slosl:parameter>
+        <slosl:parameter>
+          <default:math xmlns="http://www.w3.org/1998/Math/MathML">
+            <default:ci>node.local_chorddist</default:ci>
+          </default:math>
+        </slosl:parameter>
+      </slosl:ranked>
+      <slosl:where>
+        <default:math xmlns="http://www.w3.org/1998/Math/MathML">
+          <default:apply>
+            <default:eq/>
+            <default:ci>node.side</default:ci>
+            <default:cn type="integer">1</default:cn>
+          </default:apply>
+        </default:math>
+      </slosl:where>
+      <slosl:buckets inherit="true"/>
+      <slosl:parent>db</slosl:parent>
+      <slosl:select name="id">
+        <default:math xmlns="http://www.w3.org/1998/Math/MathML">
+          <default:ci>node.id</default:ci>
+        </default:math>
+      </slosl:select>
+      <slosl:select name="local_chorddist">
+        <default:math xmlns="http://www.w3.org/1998/Math/MathML">
+          <default:ci>node.local_chorddist</default:ci>
+        </default:math>
+      </slosl:select>
+    </slosl:statement>
+    <slosl:statement xmlns:default="http://www.w3.org/1998/Math/MathML" name="chord_neighbours" selected="true">
+      <slosl:ranked function="lowest">
+        <slosl:parameter>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer">1</cn>
+          </math>
+        </slosl:parameter>
+        <slosl:parameter>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <min/>
+              <apply>
+                <abs/>
+                <apply>
+                  <minus/>
+                  <ci>node.id</ci>
+                  <ci>local.id</ci>
+                </apply>
+              </apply>
+              <apply>
+                <abs/>
+                <apply>
+                  <plus/>
+                  <ci>max_id</ci>
+                  <apply>
+                    <times/>
+                    <ci>sign</ci>
+                    <apply>
+                      <minus/>
+                      <ci>node.id</ci>
+                      <ci>local.id</ci>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </slosl:parameter>
+      </slosl:ranked>
+      <slosl:where>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <and/>
+            <apply>
+              <eq/>
+              <ci>node.knows_chord</ci>
+              <true/>
+            </apply>
+            <apply>
+              <eq/>
+              <ci>node.alive</ci>
+              <true/>
+            </apply>
+          </apply>
+        </math>
+      </slosl:where>
+      <slosl:having>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <or/>
+            <apply>
+              <and/>
+              <apply>
+                <leq/>
+                <apply>
+                  <abs/>
+                  <apply>
+                    <minus/>
+                    <ci>node.id</ci>
+                    <ci>local.id</ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <divide/>
+                  <ci>max_id</ci>
+                  <cn type="integer">2</cn>
+                </apply>
+              </apply>
+              <apply>
+                <gt/>
+                <apply>
+                  <times/>
+                  <ci>sign</ci>
+                  <apply>
+                    <minus/>
+                    <ci>node.id</ci>
+                    <ci>local.id</ci>
+                  </apply>
+                </apply>
+                <cn type="integer">0</cn>
+              </apply>
+            </apply>
+            <apply>
+              <and/>
+              <apply>
+                <gt/>
+                <apply>
+                  <abs/>
+                  <apply>
+                    <minus/>
+                    <ci>node.id</ci>
+                    <ci>local.id</ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <divide/>
+                  <ci>max_id</ci>
+                  <cn type="integer">2</cn>
+                </apply>
+              </apply>
+              <apply>
+                <lt/>
+                <apply>
+                  <times/>
+                  <ci>sign</ci>
+                  <apply>
+                    <minus/>
+                    <ci>node.id</ci>
+                    <ci>local.id</ci>
+                  </apply>
+                </apply>
+                <cn type="integer">0</cn>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </slosl:having>
+      <slosl:buckets inherit="false">
+        <slosl:foreach name="sign">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <list>
+              <cn type="integer">-1</cn>
+              <cn type="integer">1</cn>
+            </list>
+          </math>
+        </slosl:foreach>
+      </slosl:buckets>
+      <slosl:parent>db</slosl:parent>
+      <slosl:select name="id">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <ci>node.id</ci>
+        </math>
+      </slosl:select>
+      <slosl:select name="side">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <ci>sign</ci>
+        </math>
+      </slosl:select>
+      <slosl:with name="log_k">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <cn type="integer">6</cn>
+        </math>
+      </slosl:with>
+      <slosl:with name="max_id">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <power/>
+            <cn type="integer">2</cn>
+            <cn type="integer">6</cn>
+          </apply>
+        </math>
+      </slosl:with>
+    </slosl:statement>
+    <slosl:statement name="de_bruijn" selected="true">
+      <slosl:buckets inherit="false">
+        <slosl:foreach name="digit">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <interval closure="closed-open">
+              <cn type="integer">0</cn>
+              <ci>max_digits</ci>
+            </interval>
+          </math>
+        </slosl:foreach>
+      </slosl:buckets>
+      <slosl:parent>db</slosl:parent>
+      <slosl:where>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <eq/>
+            <ci>node.alive</ci>
+            <true/>
+          </apply>
+        </math>
+      </slosl:where>
+      <slosl:having>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <eq/>
+            <ci>node.id</ci>
+            <apply>
+              <rem/>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <ci>local.id</ci>
+                  <ci>max_digits</ci>
+                </apply>
+                <ci>digit</ci>
+              </apply>
+              <ci>max_id</ci>
+            </apply>
+          </apply>
+        </math>
+      </slosl:having>
+      <slosl:select name="id">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <ci>node.id</ci>
+        </math>
+      </slosl:select>
+      <slosl:with name="max_id">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <power/>
+            <cn type="integer">2</cn>
+            <cn type="integer">4</cn>
+          </apply>
+        </math>
+      </slosl:with>
+      <slosl:with name="max_digits">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <cn type="integer">2</cn>
+        </math>
+      </slosl:with>
+      <slosl:ranked/>
+    </slosl:statement>
+    <slosl:statement name="pastry_routingtable" selected="true">
+      <slosl:buckets inherit="false">
+        <slosl:foreach name="digit">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <interval closure="open-closed">
+              <cn type="integer">0</cn>
+              <ci>max_pastry_digit</ci>
+            </interval>
+          </math>
+        </slosl:foreach>
+        <slosl:foreach name="prefix">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <interval closure="open-closed">
+              <cn type="integer">0</cn>
+              <ci>pastry_id_len</ci>
+            </interval>
+          </math>
+        </slosl:foreach>
+      </slosl:buckets>
+      <slosl:parent>db</slosl:parent>
+      <slosl:where>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <eq/>
+            <ci>node.alive</ci>
+            <true/>
+          </apply>
+        </math>
+      </slosl:where>
+      <slosl:having>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <and/>
+            <apply>
+              <eq/>
+              <ci>node.local_nextpastrydigit</ci>
+              <ci>digit</ci>
+            </apply>
+            <apply>
+              <eq/>
+              <ci>node.local_pastryprefix</ci>
+              <ci>prefix</ci>
+            </apply>
+          </apply>
+        </math>
+      </slosl:having>
+      <slosl:select name="id">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <ci>node.id</ci>
+        </math>
+      </slosl:select>
+      <slosl:with name="max_pastry_digit">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <cn type="integer">3</cn>
+        </math>
+      </slosl:with>
+      <slosl:with name="pastry_id_len">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <cn type="integer">5</cn>
+        </math>
+      </slosl:with>
+      <slosl:ranked/>
+    </slosl:statement>
+  </slosl:statements>
+  <gui:gui>
+    <gui:pos y="10" x="10" ref="start"/>
+    <gui:pos y="10" x="10" ref="1137152188"/>
+    <gui:pos y="10" x="10" ref="437BCCAC"/>
+    <gui:pos y="142" x="84" ref="437BCDEC"/>
+    <gui:pos y="9" x="77" ref="437BCE6C"/>
+    <gui:pos y="69" x="85" ref="437C004C"/>
+    <gui:pos y="73" x="183" ref="437C00CC"/>
+    <gui:pos y="41" x="282" ref="437BCF0C"/>
+    <gui:pos y="142" x="286" ref="1143932124"/>
+    <gui:pos y="10" x="10" ref="1143933564"/>
+    <gui:pos y="162" x="329" ref="876662866"/>
+    <gui:pos y="163" x="214" ref="1141388796"/>
+    <gui:pos y="109" x="68" ref="1141390668"/>
+    <gui:pos y="71" x="229" ref="1142792572"/>
+    <gui:pos y="73" x="301" ref="1142794156"/>
+    <gui:testcode view_name="chord_neighbours" language="python">eNpl0MFOwzAMBuB7nsLKqZOqDS4ckHYb104CbghVWeO11lIbpS5jb4/bDYqEL4mUz86fVPvd0wts4f7BuaNkYCCGHLjF4q6EPnzVFH9W2Gygmvzq0YHVYaQUK4lYUNzyyrmIR6MnrG0SUstFkiakmo2UEFQzHUbF4dbuvd8JDNKjdsQtnEk70A5h8gufbaRGSTjkSzkRi4g6Zgura4DneT+NqISv3l4SGLD/0Mvca8NTst3QhBx/L1lbhJkv2d78ieU81E0nOfp3+5nXPOI/FBJ9oh1f6w+65Vqs+wbl2XHR</gui:testcode>
+    <gui:testcode view_name="pastry_routingtable" language="python">eNptkk1PwzAMhu/9FaYSUjf2BUekHpDGgQNFAg5IaFTZkrXWumRKU9b9e9wkLJ26XJrGj187r5O9LZ8/AFJ4WESvT1/5y5L2e9bmB1Ybfco5FmjGY/+HPK+EjKKt0iABJWgmC5EsJuBy/78wn0PWKY8eI6C1brDimeIiQZ7KURRxsaUqO5GTksBCJpXasCqXhEyAGaNx3RhR+/Q4jpcKarUXpkRZwBFNCaYU0PEBtyzHjUElmT5NOoRaFKbR1KyZAbzbfSeRKel4ugmTIPYHc7K5JF5VJGyAcX4uMqMWLB56+453Uh1rb1S86kz81I0YYKzCX9HF/fKY5c6+0mk/B3m8skCrNM2gNhQP7A8Eu2bInZIWW2z7WDcquIN7Gz6WWImgdpPCwnl7UWQ+nP0Z8gWmKSl6pylMBUPF3vH82itKLnqbOsXp/aiXd3ulg4Gj/vaiNY6zGDmcQmh5yDvWFbWw21raP5KQFP0ByPkAIg==</gui:testcode>
+    <gui:testcode view_name="chord_last_neighbour" language="python">eNplkD9PwzAQxXd/ilOmtIQ0YmBAZEAKAwNBAgYkhCI3viSnOjZyHKp+e/wnkEq9xWf7d8/Pr36pHt8ASrgp2PPDR/NU+X67vWWs0wYUkALDVY9pkUEE/lbY7aD245s7Bq72M0lRa4EpiVJtGBPYwcgP2DglpF6lUrdcNsohGXBrDe1ni9MyniRJpWHSI9qBVA9HsgPYAcHzKx5YQa0lrbg5ZR5xFtHOxpm1OcBr6L1ErVXk3U+4Ahy/7SnMOnEpXTe13Ij/R3JnIeCrt8/koPRxatpBG5F8gU/q3cx4gXFJPxiAWGfY4niy7vB8hLzgNayh5CQCS13E76GI0ZwJLNFfhf2Fi6gVzPp7p1+u4JLRyrNfCgCceQ==</gui:testcode>
+    <gui:testcode view_name="de_bruijn" language="python">eNpFjjsOg0AMRHtOYW0FEsoBItGlpojSRREyrAErizdaTBJun+WjMJWL55nX+gACLBBQOkoH/FZss3MCMfXEzpbeUsq2kCxJLLUw4JOq1gfiTlLnG3SVRCQHVA1cT0rj/m6MuXgY/UDas3TwYe1Be4KFP/CVtdwoe8Ew5wsSdUinEMX0BHBd76Wi9LLx0RoFaHjpvP7GcufiNTYY7H/kFBVW/HC7G3T8JvOALQXcwrR17pMHm/wA0zldhA==</gui:testcode>
+    <gui:testcode view_name="chord_fingertable" language="python">eNplkEFPhDAQhe/9FRNO7IosejS7BxM8eBAT9WBiDOnSAhNKa0pxs//eacGFZHvptPPN6+srXvOnd4AD3GXs5fGzfM6pvt9ulWnKjrHaWNCAGizXjYyzBCbof4fdDgovsXlgQOs4ohKFETJGcdAbxoSsoeedLElJYqNjZSquSk1IAtw5i8fRyWEej6IoNzCYXroWdQMndC24VoLnFzywAiuHRnN7TjxCFqUbLZl1KcBbqL1EYfTE00+4Btn/uHOYJXGlqBoqbsXlkZQsBHzx9hV12pyGsmqNFdE35fNhR3kFcYW/ktrTWkGz28HR5XoAvdgtLIGkKAKL9YTvIZtiWQnMsd+E85WHSSsY9f1g9gLO+Sw8+wOkjZ3O</gui:testcode>
+  </gui:gui>
+</file>
