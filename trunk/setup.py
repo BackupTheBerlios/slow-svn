@@ -47,23 +47,23 @@ SLOW - The SLOSL Overlay Workbench
 What is SLOW?
 -------------
 
-SLOW is a visual rapid development environment for Internet overlay networks
-and Peer-to-Peer systems.  It is strongly focused on the design of local
-topology decisions based on SLOSL and concepts from the database area.  SLOW
-allows you to visually design and specify topologies and protocols in a
-platform and language neutral way.  You can test them against different
-scenarios from within the workbench before you bet your money on their
-implementation.  At any time, you can write out the specification in OverML
+SLOW is a visual, integrated, rapid development environment for Internet
+overlay networks and Peer-to-Peer systems.  It is strongly focused on the
+design of local topology decisions based on SLOSL and concepts from the
+database area.  SLOW allows you to visually design and specify topologies and
+protocols in a platform and language neutral way.  You can test them against
+different scenarios from within the workbench before you bet your money on
+their implementation.  At any time, you can save the specification in OverML
 and generate a source code implementation from it.
 
 What are SLOSL and OverML?
 --------------------------
 
-SLOW is based on the languages OverML_ and SLOSL_.  The Overlay Modelling
-Language OverML is an XML language for the specification of overlay
-protocols, topologies and node data.  The SQL-Like Overlay Specification
-Language SLOSL is the topology specification language of OverML.  It is
-based on SQL.  There is also some `additional information`_ on the web.
+SLOW is based on the domain specific languages OverML_ and SLOSL_.  The
+Overlay Modelling Language OverML is an XML language for the specification of
+overlay protocols, topologies and node data.  The SQL-Like Overlay
+Specification Language SLOSL is the topology specification language of OverML.
+It is based on SQL.  There is also some `additional information`_ on the web.
 
 .. _`additional information`: http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/
 
