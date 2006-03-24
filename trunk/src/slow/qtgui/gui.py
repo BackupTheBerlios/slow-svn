@@ -395,7 +395,7 @@ class OverlayDesigner_gui(MenuFunctions,
             method()
         #print tab_widget, tab_widget.name()
 
-if __name__ == '__main__':
+def run():
     import sys, optparse
     app = qt.QApplication(sys.argv)
 
@@ -446,3 +446,6 @@ if __name__ == '__main__':
         w.loadFile(args[1])
 
     app.exec_loop()
+
+if __name__ == '__main__':
+    run()
