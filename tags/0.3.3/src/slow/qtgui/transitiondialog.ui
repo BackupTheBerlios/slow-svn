@@ -1,0 +1,312 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>EDSMTransitionDialog</class>
+<comment>Python:from custom_widgets import IterableComboBox as QComboBox
+</comment>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>EDSMTransitionDialog</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>382</width>
+            <height>269</height>
+        </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>1</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="caption">
+        <string>EDSM Transition Dialog</string>
+    </property>
+    <property name="icon">
+        <pixmap>image0</pixmap>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>object_name</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>object_name_textlabel</cstring>
+            </property>
+            <property name="text">
+                <string>Name:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>object_name</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>message_type_textlabel</cstring>
+            </property>
+            <property name="text">
+                <string>Message Type:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>class_combobox</cstring>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget" row="4" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>Layout1</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>buttonHelp</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Help</string>
+                    </property>
+                    <property name="accel">
+                        <string>F1</string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>Horizontal Spacing2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>buttonOk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;OK</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                    <property name="default">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>buttonCancel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QComboBox" row="1" column="1" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>message_type</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>from_queue_textlabel</cstring>
+            </property>
+            <property name="text">
+                <string>Source queue</string>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="2" column="3">
+            <property name="name">
+                <cstring>to_queue</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>1</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="2" column="1">
+            <property name="name">
+                <cstring>from_queue</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>1</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="2">
+            <property name="name">
+                <cstring>to_queue_textlabel</cstring>
+            </property>
+            <property name="text">
+                <string>Dest queue</string>
+            </property>
+        </widget>
+        <widget class="QGroupBox" row="3" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>implementation_groupbox</cstring>
+            </property>
+            <property name="title">
+                <string>Implementation</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QComboBox" row="0" column="1">
+                    <property name="name">
+                        <cstring>class_name</cstring>
+                    </property>
+                    <property name="editable">
+                        <bool>true</bool>
+                    </property>
+                    <property name="insertionPolicy">
+                        <enum>NoInsertion</enum>
+                    </property>
+                    <property name="autoCompletion">
+                        <bool>true</bool>
+                    </property>
+                    <property name="duplicatesEnabled">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="1" column="1">
+                    <item>
+                        <property name="text">
+                            <string>Python</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>language_name</cstring>
+                    </property>
+                </widget>
+                <widget class="QTextEdit" row="2" column="1">
+                    <property name="name">
+                        <cstring>init_code</cstring>
+                    </property>
+                    <property name="font">
+                        <font>
+                            <family>Monospace</family>
+                            <pointsize>8</pointsize>
+                        </font>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>class_name_textlabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Class:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>class_combobox</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>language_name_textlabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Language:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>language_combobox</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>init_code_textlabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Init code:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>init_code</cstring>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+    </grid>
+</widget>
+<images>
+    <image name="image0">
+        <data format="PNG" length="799">89504e470d0a1a0a0000000d49484452000000100000001008060000001ff3ff61000002e649444154388d75924b685c5518c77ff73977666eaed33a4d62ae4c5a4d14146dd048159f295248576245ac88b4221444515404b115178a8a962e6229ba70e1426aa8a9adc49a9ab693aae022d6d0120a13d3843c9c4926f3c864667233f7715ca4135a6d7ef0adcef97ee73bff7324aee18553d5b67943fe445ef19d5cffb72fb56c7be615d7f5477eda1b4fb20e12c09e41a739f0c5ab9e2b8a270de3331282d6f44aae64283729355fb593979efafdc0b613eb0aba4faf1c1b4a68bb9a4b3e9331056bb484395741d614bc9628e6b25f6dc8d67e61c9b9f2e7db8937ff27e83c521b1b36b5363ac01e9c6553b1842405ab1b6499d0468bf18e46d47faa84fbbedb3e7e74dfb9ba40defd63e5c14463cdb0a2016ac167536569bab6f8d77bcec2f08b929a3b14be45cfa966c0d6a90286aea234def3d07577e83abe7c8cf342705e086dc013ed7bfb3e00f4fafa7d1f7e6fef1848ffd19dcc8bee335561f65684fdd1ec44fcb1031680bc3c2fe2fc0d64c1150a72fbdd4f005e5d7061ffae59597776466f8dce6d68d210b130f9786cb3ded8f91c80acca41c69af15146055460beb5f5f1473e4fbd73ed943f776dc9ab51fd0bdd50911c09f3f2546aeed46a0eb219e4debfab3af072fb8652960a14a410634dad1feff826dbf3ecf1a5785da23b4c6633502e43c56ebe23f674ffeeb557e8eac998337a243da63598f50603c1ed61cfbb39228d68bae2155da9e3621ec315800266f2c2afe5afefdfa90204be7872ce364c8a400430c0c9488c163495029dd7a5de02dac2224c5c1a026a3280ef8b413b5d4c59cd0e5ba6a6a72db90a7702e26addb6da888068729650dfd923e5737b7ad604bfbdd552d65313dbedde33ef4ebc9178b8e987917d66a60212a86e8d885384ad026cf0b460b9363ed00bccdfe067afd2f65a6a7343ffa2e04a2036ee4f4dc51e3df87ce4abb4173a3ce3841f38f83ab096957a2381ef050b0d272f7fa90f85ee75cf1e3d541afef484657594ddd1c3f995c9be8b4079ddd3ff43e86aadcbbf59cc31cf1e1760290000000049454e44ae426082</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>buttonOk</sender>
+        <signal>clicked()</signal>
+        <receiver>EDSMTransitionDialog</receiver>
+        <slot>accept()</slot>
+    </connection>
+    <connection>
+        <sender>buttonCancel</sender>
+        <signal>clicked()</signal>
+        <receiver>EDSMTransitionDialog</receiver>
+        <slot>reject()</slot>
+    </connection>
+    <connection>
+        <sender>language_name</sender>
+        <signal>activated(const QString&amp;)</signal>
+        <receiver>EDSMTransitionDialog</receiver>
+        <slot>language_name_activated(const QString&amp;)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>object_name</tabstop>
+    <tabstop>buttonOk</tabstop>
+    <tabstop>buttonCancel</tabstop>
+    <tabstop>buttonHelp</tabstop>
+</tabstops>
+<includes>
+    <include location="local" impldecl="in implementation">transitiondialog.ui.h</include>
+</includes>
+<slots>
+    <slot>language_name_activated( const QString &amp; )</slot>
+    <slot>language_name_activated( const QString &amp; )</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

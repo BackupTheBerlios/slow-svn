@@ -1,0 +1,256 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>PrefDialog</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>PrefDialog</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>403</width>
+            <height>261</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Preferences</string>
+    </property>
+    <property name="sizeGripEnabled">
+        <bool>true</bool>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <property name="resizeMode">
+            <enum>Fixed</enum>
+        </property>
+        <widget class="QTabWidget">
+            <property name="name">
+                <cstring>prefframes</cstring>
+            </property>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>path</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Path</string>
+                </attribute>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>xml</cstring>
+                </property>
+                <attribute name="title">
+                    <string>XML</string>
+                </attribute>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>optimize_xml_size</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>8</x>
+                            <y>8</y>
+                            <width>264</width>
+                            <height>17</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Optimize XML output for size</string>
+                    </property>
+                </widget>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>display</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Display</string>
+                </attribute>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>auto_update_edsm_graph</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>8</x>
+                            <y>8</y>
+                            <width>352</width>
+                            <height>17</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Automatically update EDSM graph</string>
+                    </property>
+                </widget>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>available_protocols</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Protocols</string>
+                </attribute>
+                <hbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QTextEdit">
+                        <property name="name">
+                            <cstring>protocols</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="textFormat">
+                            <enum>PlainText</enum>
+                        </property>
+                        <property name="text">
+                            <string>UDP
+TCP</string>
+                        </property>
+                        <property name="wordWrap">
+                            <enum>NoWrap</enum>
+                        </property>
+                    </widget>
+                </hbox>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>available_languages</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Languages</string>
+                </attribute>
+                <hbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QTextEdit">
+                        <property name="name">
+                            <cstring>languages</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>true</bool>
+                        </property>
+                        <property name="textFormat">
+                            <enum>PlainText</enum>
+                        </property>
+                        <property name="text">
+                            <string>Python
+Java
+C++
+C
+</string>
+                        </property>
+                        <property name="wordWrap">
+                            <enum>NoWrap</enum>
+                        </property>
+                    </widget>
+                </hbox>
+            </widget>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>Layout1</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>buttonHelp</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Help</string>
+                    </property>
+                    <property name="accel">
+                        <string>F1</string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>Horizontal Spacing2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>buttonOk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;OK</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                    <property name="default">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>buttonCancel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>buttonOk</sender>
+        <signal>clicked()</signal>
+        <receiver>PrefDialog</receiver>
+        <slot>accept()</slot>
+    </connection>
+    <connection>
+        <sender>buttonCancel</sender>
+        <signal>clicked()</signal>
+        <receiver>PrefDialog</receiver>
+        <slot>reject()</slot>
+    </connection>
+</connections>
+<pixmapinproject/>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

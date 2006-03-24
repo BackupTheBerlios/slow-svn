@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns:slosl="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <define name="identifier_string">
+    <data type="Name"/>
+  </define>
+  <define name="type_string">
+    <data type="QName"/>
+  </define>
+  <define name="identifier_attribute">
+    <attribute name="access_name">
+      <ref name="identifier_string"/>
+    </attribute>
+  </define>
+  <define name="name_attribute">
+    <attribute name="name">
+      <ref name="identifier_string"/>
+    </attribute>
+  </define>
+  <define name="type_attribute">
+    <attribute name="type_name">
+      <ref name="type_string"/>
+    </attribute>
+  </define>
+  <define name="readable_name_attribute">
+    <attribute name="readable_name"/>
+  </define>
+  <define name="anyOtherElement">
+    <element>
+      <anyName>
+        <except>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl"/>
+        </except>
+      </anyName>
+      <zeroOrMore>
+        <choice>
+          <attribute>
+            <anyName/>
+          </attribute>
+          <text/>
+          <ref name="anyOtherElement"/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="math_expression">
+    <choice>
+      <element name="math:math">
+        <ref name="math_expression_content"/>
+      </element>
+      <ref name="math_expression_content"/>
+    </choice>
+  </define>
+  <define name="math_expression_content">
+    <choice>
+      <ref name="math_apply"/>
+      <ref name="math_number"/>
+      <ref name="math_constant"/>
+    </choice>
+  </define>
+  <define name="math_interval">
+    <choice>
+      <element name="math:math">
+        <ref name="math_interval_content"/>
+      </element>
+      <ref name="math_interval_content"/>
+    </choice>
+  </define>
+  <define name="math_interval_content">
+    <element name="math:interval">
+      <attribute name="closure">
+        <choice>
+          <value>open</value>
+          <value>closed</value>
+          <value>open-closed</value>
+          <value>closed-open</value>
+        </choice>
+      </attribute>
+      <ref name="math_expression_content"/>
+      <ref name="math_expression_content"/>
+    </element>
+  </define>
+  <define name="math_list">
+    <choice>
+      <element name="math:math">
+        <ref name="math_list_content"/>
+      </element>
+      <ref name="math_list_content"/>
+    </choice>
+  </define>
+  <define name="math_list_content">
+    <element name="math:list">
+      <zeroOrMore>
+        <attribute>
+          <anyName/>
+        </attribute>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="math_expression_content"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="math_apply">
+    <element name="math:apply">
+      <ref name="anyMathML"/>
+      <oneOrMore>
+        <ref name="anyMathML"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="math_number">
+    <element name="math:cn">
+      <zeroOrMore>
+        <attribute>
+          <anyName/>
+        </attribute>
+      </zeroOrMore>
+      <text/>
+    </element>
+  </define>
+  <define name="math_constant">
+    <element name="math:ci">
+      <zeroOrMore>
+        <attribute>
+          <anyName/>
+        </attribute>
+      </zeroOrMore>
+      <text/>
+    </element>
+  </define>
+  <define name="anyMathML">
+    <choice>
+      <element>
+        <nsName ns="http://www.w3.org/1998/Math/MathML"/>
+        <empty/>
+      </element>
+      <ref name="math_list"/>
+      <ref name="math_interval"/>
+      <ref name="math_apply"/>
+      <ref name="math_number"/>
+      <ref name="math_constant"/>
+    </choice>
+  </define>
+  <start>
+    <ref name="slosl_statements"/>
+  </start>
+  <define name="slosl_statements">
+    <element name="slosl:statements">
+      <zeroOrMore>
+        <ref name="slosl_statement"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="slosl_statement">
+    <element name="slosl:statement">
+      <ref name="name_attribute"/>
+      <optional>
+        <attribute name="selected">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
+      <interleave>
+        <oneOrMore>
+          <ref name="slosl_select"/>
+        </oneOrMore>
+        <optional>
+          <ref name="slosl_ranked"/>
+        </optional>
+        <oneOrMore>
+          <ref name="slosl_parent"/>
+        </oneOrMore>
+        <zeroOrMore>
+          <ref name="slosl_with"/>
+        </zeroOrMore>
+        <optional>
+          <ref name="slosl_where"/>
+        </optional>
+        <optional>
+          <choice>
+            <ref name="slosl_inherit_buckets"/>
+            <interleave>
+              <optional>
+                <ref name="slosl_having"/>
+              </optional>
+              <ref name="slosl_buckets"/>
+            </interleave>
+          </choice>
+        </optional>
+      </interleave>
+    </element>
+  </define>
+  <define name="slosl_select">
+    <element name="slosl:select">
+      <ref name="name_attribute"/>
+      <optional>
+        <choice>
+          <text/>
+          <ref name="math_expression"/>
+        </choice>
+      </optional>
+    </element>
+  </define>
+  <define name="slosl_parent">
+    <element name="slosl:parent">
+      <ref name="identifier_string"/>
+    </element>
+  </define>
+  <define name="slosl_ranked">
+    <element name="slosl:ranked">
+      <ref name="f_parameter"/>
+      <ref name="f_parameter"/>
+      <choice>
+        <attribute name="function">
+          <choice>
+            <value>lowest</value>
+            <value>highest</value>
+          </choice>
+        </attribute>
+        <group>
+          <attribute name="function">
+            <choice>
+              <value>closest</value>
+              <value>furthest</value>
+            </choice>
+          </attribute>
+          <ref name="f_parameter"/>
+        </group>
+      </choice>
+    </element>
+  </define>
+  <define name="f_parameter">
+    <element name="slosl:parameter">
+      <ref name="math_expression"/>
+    </element>
+  </define>
+  <define name="slosl_with">
+    <element name="slosl:with">
+      <ref name="name_attribute"/>
+      <optional>
+        <ref name="math_expression"/>
+      </optional>
+    </element>
+  </define>
+  <define name="slosl_where">
+    <element name="slosl:where">
+      <ref name="math_expression"/>
+    </element>
+  </define>
+  <define name="slosl_having">
+    <element name="slosl:having">
+      <ref name="math_expression"/>
+    </element>
+  </define>
+  <define name="slosl_inherit_buckets">
+    <element name="slosl:buckets">
+      <attribute name="inherit">
+        <value>true</value>
+      </attribute>
+    </element>
+  </define>
+  <define name="slosl_buckets">
+    <element name="slosl:buckets">
+      <optional>
+        <attribute name="inherit">
+          <value>false</value>
+        </attribute>
+      </optional>
+      <oneOrMore>
+        <element name="slosl:foreach">
+          <ref name="name_attribute"/>
+          <choice>
+            <ref name="math_list"/>
+            <ref name="math_interval"/>
+          </choice>
+        </element>
+      </oneOrMore>
+    </element>
+  </define>
+</grammar>

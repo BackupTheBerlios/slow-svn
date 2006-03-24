@@ -1,0 +1,117 @@
+edsl_graph =
+   element edsl:edsm {
+      edsl_states
+    & edsl_transitions
+   }
+
+edsl_states =
+   element edsl:states {
+      edsl_state*
+    & edsl_subgraph*
+   }
+
+edsl_transitions =
+   element edsl:transitions {
+      edsl_transition*
+   }
+
+edsl_subgraph =
+   element edsl:subgraph {
+      name_attribute
+    & attribute id   { edsl_state_id }
+    & attribute entry_state { edsl_state_id }
+    & attribute exit_state  { edsl_state_id }
+
+    & edsl_readable_name?
+    & edsl_states
+    & edsl_transitions
+   }
+
+edsl_state =
+   element edsl:state {
+      name_attribute
+    & attribute id   { edsl_state_id }
+    & attribute inherit_context { xsd:boolean }
+    & attribute long_running    { xsd:boolean }
+
+    & edsl_readable_name?
+    & edsl_code*
+    & element input  { edsl_queue_name }*
+    & element output { edsl_queue_name }*
+   }
+
+edsl_transition =
+   element edsl:transition {
+      edsl_readable_name?
+    & edsl_code*
+    & (
+       (attribute type { "message" },     edsl_message_transition)
+     | (attribute type { "event" },       edsl_event_transition)
+     | (attribute type { "outputchain" }, edsl_outputchain_transition)
+     | (attribute type { "transition" },  edsl_immediate_transition)
+     | (attribute type { "timer" },       edsl_timer_transition)
+    )
+   }
+
+edsl_message_transition =
+   element edsl:messagetype { text }?
+ & edsl_from_state
+ & edsl_to_queue
+
+edsl_event_transition =
+   element edsl:subscription { text }?
+ & edsl_from_state
+ & edsl_to_queue
+
+edsl_timer_transition =
+   element edsl:timerdelay { xsd:integer }
+ & edsl_from_state
+ & edsl_to_queue
+
+edsl_outputchain_transition =
+   edsl_from_queue
+ & edsl_to_queue
+
+edsl_immediate_transition =
+   edsl_from_state
+ & edsl_to_state
+
+edsl_code =
+   element edsl:code {
+      attribute classname  { identifier_string }?,
+      attribute methodname { identifier_string }?,
+      attribute language   { text }?,
+      (
+         [ doc:documentation [ xml:lang="en" "the text is base64-encoded(zlib-compressed(code))" ] ]
+         text
+      )
+   }
+
+edsl_from_state =
+   element edsl:from_state { edsl_state_ref }
+
+edsl_to_state =
+   element edsl:from_state { edsl_state_ref }
+
+edsl_from_queue =
+   element edsl:from_state { edsl_state_queue_ref }
+
+edsl_to_queue =
+   element edsl:from_state { edsl_state_queue_ref }
+
+
+edsl_queue_name =
+   identifier_string
+
+edsl_state_ref =
+   attribute ref { edsl_state_id }
+
+edsl_state_queue_ref =
+   edsl_state_ref,
+   attribute queue { edsl_queue_name }?
+
+edsl_state_id =
+   text
+
+edsl_readable_name =
+   element edsl:readablename { text }

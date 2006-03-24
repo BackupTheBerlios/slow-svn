@@ -1,0 +1,11 @@
+namespace overml  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML"
+namespace slow    = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow"
+namespace nala    = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala"
+namespace slosl   = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl"
+namespace himdel  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"
+namespace edsl    = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl"
+namespace slowgui = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow-gui"
+namespace doc     = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/annotate"
+
+namespace xsd    = "http://www.w3.org/2001/XMLSchema-datatypes"
+namespace math   = "http://www.w3.org/1998/Math/MathML"

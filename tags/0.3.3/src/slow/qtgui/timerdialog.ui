@@ -1,0 +1,197 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>EDSMTimerDialog</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>EDSMTimerDialog</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>272</width>
+            <height>105</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>EDSM Timer</string>
+    </property>
+    <property name="icon">
+        <pixmap>image0</pixmap>
+    </property>
+    <property name="sizeGripEnabled">
+        <bool>false</bool>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>Layout1</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>buttonHelp</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Help</string>
+                    </property>
+                    <property name="accel">
+                        <string>F1</string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>Horizontal Spacing2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>buttonOk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;OK</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                    <property name="default">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>buttonCancel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>object_name_textlabel</cstring>
+            </property>
+            <property name="text">
+                <string>Name:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>transition_name</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>timer_delay_textlabel</cstring>
+            </property>
+            <property name="text">
+                <string>Delay:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>transition_name</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>object_name</cstring>
+            </property>
+        </widget>
+        <widget class="QSpinBox" row="1" column="1">
+            <property name="name">
+                <cstring>timer_delay</cstring>
+            </property>
+            <property name="maxValue">
+                <number>1000</number>
+            </property>
+            <property name="minValue">
+                <number>1</number>
+            </property>
+            <property name="value">
+                <number>1</number>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="1" column="2">
+            <item>
+                <property name="text">
+                    <string>milliseconds</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>seconds</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>minutes</string>
+                </property>
+            </item>
+            <property name="name">
+                <cstring>timer_delay_unit</cstring>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<images>
+    <image name="image0">
+        <data format="PNG" length="807">89504e470d0a1a0a0000000d49484452000000100000001008060000001ff3ff61000002ee49444154388d6d93cb6f1b5518c57f3376ec8c6da2241e6397473d5153d502356a045201a962d24a2c60c3caa20b44292c58b066c3a265d13f81258bc2229bae408a282acad43c5228a142104595001be7e1471c4f1c7b3ab1efbd332c90078a7a9757f7fc74cef7dda3954a2500ec85dceab1d949bbe70956ee36970087878f7de9156b15e0cfc6c0a9fcda5902888fc51f944fd9bb1d9ff6c1112b779b0057ff0770debc705c0919c6f6fb43bbff40aedefbe360497baf7c2e12d7db9eb3f2538bc51333f6bbafce1104214a05a8003eb959e5fb8dfde50f2f9e3ae6f9caeef6477c7aabeec44732602cfe6eb3cbc7ef2fda7ae12c7afe2ca151e0b0bb4f5a1bf056f607ded8f9f1e2b5e54de7fc42eecb812fce856118c4fc307dfdf33b0d2d16d3ad6bef2cdaf1672f73985ac01371e213099cdb15660b1623a3c8c4b4c5f3b996f5d9d7b5ed1bdfee2cbb0371591fe77bfda5276cdd7a0d37c891c964c864324829a9d56aa452290cc360a03f8ef6d4792e9cc9d9e321eb002f2fe4ae9c2e5968f917504a2184404a8910822008104244779a798693734ff2dcc9992b11e078ceb0c3a9798410a452a948208488804208128904524ac24c91c24cd28ed62803109ac16eb54a3a9d2693c9a094a2d56ad16eb72350afd7a3d7ebf1184982e09fec3a80522123af473e9f7fc8c1dada1ae57239b23f393989699a0cfd436410fe0ba8b71f385efb3eaeebe2ba2e42082a950a854281a9a92946a311524a5cd7e5c075f13a559a5ddf018899a6c976c7ff6b3e3f71a99037494e3f8debba148b45b2d92c52cac8be61180cf736d8f8e5676eaeb7de066a31d334016afe48d9cfccba9666e4188649e2f1385b5b5b188681520adff751fd6df6efdfe2abf55da7d31b7d14390068748faeefec79f67c6adb421d11e849d01268bac6f0b0c9d1ee3a07bf57b8f14dddd9acf797c60589ffb76d8b27a6ed2fee34d0f506f6e97ba820240843c2106effb6474cd379b194b537ebfde82369e33a5b857438974f536d79d49a9ef688365e7dc41bfe063e589a6b02d3254e0000000049454e44ae426082</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>buttonOk</sender>
+        <signal>clicked()</signal>
+        <receiver>EDSMTimerDialog</receiver>
+        <slot>accept()</slot>
+    </connection>
+    <connection>
+        <sender>buttonCancel</sender>
+        <signal>clicked()</signal>
+        <receiver>EDSMTimerDialog</receiver>
+        <slot>reject()</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>object_name</tabstop>
+    <tabstop>timer_delay</tabstop>
+    <tabstop>timer_delay_unit</tabstop>
+    <tabstop>buttonOk</tabstop>
+    <tabstop>buttonCancel</tabstop>
+    <tabstop>buttonHelp</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

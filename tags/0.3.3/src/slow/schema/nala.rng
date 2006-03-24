@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns:nala="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <define name="identifier_string">
+    <data type="Name"/>
+  </define>
+  <define name="type_string">
+    <data type="QName"/>
+  </define>
+  <define name="identifier_attribute">
+    <attribute name="access_name">
+      <ref name="identifier_string"/>
+    </attribute>
+  </define>
+  <define name="name_attribute">
+    <attribute name="name">
+      <ref name="identifier_string"/>
+    </attribute>
+  </define>
+  <define name="type_attribute">
+    <attribute name="type_name">
+      <ref name="type_string"/>
+    </attribute>
+  </define>
+  <define name="readable_name_attribute">
+    <attribute name="readable_name"/>
+  </define>
+  <define name="anyOtherElement">
+    <element>
+      <anyName>
+        <except>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"/>
+          <nsName ns="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl"/>
+        </except>
+      </anyName>
+      <zeroOrMore>
+        <choice>
+          <attribute>
+            <anyName/>
+          </attribute>
+          <text/>
+          <ref name="anyOtherElement"/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="math_expression">
+    <choice>
+      <element name="math:math">
+        <ref name="math_expression_content"/>
+      </element>
+      <ref name="math_expression_content"/>
+    </choice>
+  </define>
+  <define name="math_expression_content">
+    <choice>
+      <ref name="math_apply"/>
+      <ref name="math_number"/>
+      <ref name="math_constant"/>
+    </choice>
+  </define>
+  <define name="math_interval">
+    <choice>
+      <element name="math:math">
+        <ref name="math_interval_content"/>
+      </element>
+      <ref name="math_interval_content"/>
+    </choice>
+  </define>
+  <define name="math_interval_content">
+    <element name="math:interval">
+      <attribute name="closure">
+        <choice>
+          <value>open</value>
+          <value>closed</value>
+          <value>open-closed</value>
+          <value>closed-open</value>
+        </choice>
+      </attribute>
+      <ref name="math_expression_content"/>
+      <ref name="math_expression_content"/>
+    </element>
+  </define>
+  <define name="math_list">
+    <choice>
+      <element name="math:math">
+        <ref name="math_list_content"/>
+      </element>
+      <ref name="math_list_content"/>
+    </choice>
+  </define>
+  <define name="math_list_content">
+    <element name="math:list">
+      <zeroOrMore>
+        <attribute>
+          <anyName/>
+        </attribute>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="math_expression_content"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="math_apply">
+    <element name="math:apply">
+      <ref name="anyMathML"/>
+      <oneOrMore>
+        <ref name="anyMathML"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="math_number">
+    <element name="math:cn">
+      <zeroOrMore>
+        <attribute>
+          <anyName/>
+        </attribute>
+      </zeroOrMore>
+      <text/>
+    </element>
+  </define>
+  <define name="math_constant">
+    <element name="math:ci">
+      <zeroOrMore>
+        <attribute>
+          <anyName/>
+        </attribute>
+      </zeroOrMore>
+      <text/>
+    </element>
+  </define>
+  <define name="anyMathML">
+    <choice>
+      <element>
+        <nsName ns="http://www.w3.org/1998/Math/MathML"/>
+        <empty/>
+      </element>
+      <ref name="math_list"/>
+      <ref name="math_interval"/>
+      <ref name="math_apply"/>
+      <ref name="math_number"/>
+      <ref name="math_constant"/>
+    </choice>
+  </define>
+  <start>
+    <ref name="nala_types"/>
+  </start>
+  <define name="nala_types">
+    <element name="nala:types">
+      <zeroOrMore>
+        <ref name="anyOtherElement"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="nala_attributes">
+    <element name="nala:attributes">
+      <zeroOrMore>
+        <ref name="nala_attribute"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="nala_attribute">
+    <zeroOrMore>
+      <element name="nala:attribute">
+        <attribute name="name">
+          <ref name="identifier_string"/>
+        </attribute>
+        <attribute name="type_name">
+          <ref name="type_string"/>
+        </attribute>
+        <optional>
+          <attribute name="selected">
+            <data type="boolean"/>
+          </attribute>
+        </optional>
+        <interleave>
+          <optional>
+            <element name="nala:static">
+              <empty/>
+            </element>
+          </optional>
+          <optional>
+            <element name="nala:transferable">
+              <empty/>
+            </element>
+          </optional>
+          <optional>
+            <element name="nala:identifier">
+              <empty/>
+            </element>
+          </optional>
+          <optional>
+            <ref name="nala_depends"/>
+          </optional>
+        </interleave>
+      </element>
+    </zeroOrMore>
+  </define>
+  <define name="nala_depends">
+    <element name="nala:depends">
+      <choice>
+        <interleave>
+          <attribute name="type">
+            <value>math</value>
+          </attribute>
+          <ref name="nala_attribute_refs"/>
+          <ref name="math_expression"/>
+        </interleave>
+        <interleave>
+          <attribute name="type">
+            <value>external</value>
+          </attribute>
+          <ref name="nala_attribute_refs"/>
+          <optional>
+            <element name="nala:call">
+              <ref name="identifier_string"/>
+            </element>
+          </optional>
+        </interleave>
+      </choice>
+    </element>
+  </define>
+  <define name="nala_attribute_refs">
+    <ref name="nala_attribute_ref"/>
+    <zeroOrMore>
+      <ref name="nala_attribute_ref"/>
+    </zeroOrMore>
+  </define>
+  <define name="nala_attribute_ref">
+    <element name="attribute-ref">
+      <attribute name="name">
+        <ref name="identifier_string"/>
+      </attribute>
+    </element>
+  </define>
+</grammar>

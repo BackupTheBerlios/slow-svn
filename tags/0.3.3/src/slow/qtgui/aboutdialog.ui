@@ -1,0 +1,157 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>AboutDialog</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>AboutDialog</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>323</width>
+            <height>200</height>
+        </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>300</width>
+            <height>200</height>
+        </size>
+    </property>
+    <property name="caption">
+        <string>About ...</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="resizeMode">
+            <enum>Minimum</enum>
+        </property>
+        <widget class="QFrame">
+            <property name="name">
+                <cstring>frame11</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Raised</enum>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>title_label</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>5</hsizetype>
+                            <vsizetype>4</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>&lt;p align="center"&gt;&lt;font size="+3"&gt;&lt;b&gt;S&lt;font size="+2"&gt;LOSL&lt;/font&gt; Overlay Workbench V[VT]&lt;/b&gt;&lt;/font&gt;
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;b&gt;by Stefan Behnel&lt;/b&gt;
+&lt;br /&gt;
+&lt;br /&gt;
+Designing overlays in no-time!&lt;/p&gt;</string>
+                    </property>
+                    <property name="textFormat">
+                        <enum>RichText</enum>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignVCenter</set>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>text_label</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>running_psyco_textLabel</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>5</hsizetype>
+                            <vsizetype>1</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>- running psyco -</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignCenter</set>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>about_ok_button</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>&amp;OK</string>
+            </property>
+            <property name="accel">
+                <string>Alt+O</string>
+            </property>
+            <property name="default">
+                <bool>true</bool>
+            </property>
+            <property name="iconSet">
+                <iconset>image0</iconset>
+            </property>
+            <property name="flat">
+                <bool>false</bool>
+            </property>
+        </widget>
+    </vbox>
+</widget>
+<images>
+    <image name="image0">
+        <data format="PNG" length="485">89504e470d0a1a0a0000000d49484452000000100000001008060000001ff3ff61000001ac49444154388dc5d33f48550114c7f1cfbdefbee74309854786a939bc41086a10ca6a086c6fb3da424aa42982a09096a0a5cd96961a84a2a51603e135845b42ba54d01fb0a04c305e682fcb7cffaeb7a14093b4c1a1b39cdf19be1cf89ddf099224b19d0ab7452330a253dd47cbf88115d4112183f43a1dfd9e33f29906675329fb22b187eaaea0b0e5aa04ab76e38cbaa16a5d39889c08c338aca5b3e9bb6afa3605ab72b8dcd2d132d1d6d176cd8a5915c7f03c4c9692fbb9bdb95c764ff68eb2c3827570cd2eb173517bf4a4fd78fbf5e6cee6eee24cb1a0e2a4c01c444929995e2c2f56c3feb0c3a27bdeebc72b5503ba0c044782decc818cd2d392e5c2f2032943b24a6b260e6ad5a5e0821e458c7a67c582a30e3a849d18c3b81b1a5db5c3571964091a89ac2a7a6bca6b3dba714a5e28af0d35dc54376544836129f1468b42157c37ed8558110d68c207dcc28461894b7f8321f20db149cf2cd8af551a73185336e3bc26b7b78a5b2446ec8d392f7dd2aa8a715fccbaa8d1e8bfb21aa96115151326f599f7d9acd3228ffe38e9269592478044d9bc5e4b06451e0bac4577634ffdd2419ae0bf7fe34fae038bee04a5cacf0000000049454e44ae426082</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>about_ok_button</sender>
+        <signal>clicked()</signal>
+        <receiver>AboutDialog</receiver>
+        <slot>about_ok_button_clicked()</slot>
+    </connection>
+</connections>
+<slots>
+    <slot>about_ok_button_clicked()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="6"/>
+</UI>

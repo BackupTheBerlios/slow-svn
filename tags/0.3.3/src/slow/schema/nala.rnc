@@ -1,0 +1,40 @@
+nala_types =
+   element nala:types { anyOtherElement* }
+
+nala_attributes =
+   element nala:attributes {
+      nala_attribute*
+   }
+
+nala_attribute =
+   element nala:attribute {
+      attribute name      { identifier_string },
+      attribute type_name { type_string },
+      attribute selected  { xsd:boolean }?,
+      (  element nala:static       { empty }?
+       & element nala:transferable { empty }?
+       & element nala:identifier   { empty }?
+       & nala_depends?
+      )
+   }*
+
+nala_depends =
+   element nala:depends {
+      (  attribute type { "math" }
+       & nala_attribute_refs
+       & math_expression
+      )
+    |
+      (  attribute type { "external" }
+       & nala_attribute_refs
+       & element nala:call { identifier_string }?
+      )
+   }
+
+nala_attribute_refs =
+   nala_attribute_ref, nala_attribute_ref*
+
+nala_attribute_ref =
+   element attribute-ref {
+      attribute name { identifier_string }
+   }

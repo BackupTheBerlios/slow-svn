@@ -1,0 +1,24 @@
+identifier_string =
+   xsd:Name
+
+type_string =
+   xsd:QName
+
+identifier_attribute =
+   attribute access_name { identifier_string }
+
+name_attribute =
+   attribute name        { identifier_string }
+
+type_attribute =
+   attribute type_name   { type_string }
+
+readable_name_attribute =
+   attribute readable_name { text }
+
+anyOtherElement =
+   element * - (slow:* | nala:* | slosl:* | himdel:* | edsl:*) {
+      (attribute * { text }
+       | text
+       | anyOtherElement)*
+   }

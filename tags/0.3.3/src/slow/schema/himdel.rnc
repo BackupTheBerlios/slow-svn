@@ -1,0 +1,55 @@
+message_hierarchy =
+   element himdel:message_hierarchy {
+      toplevel_container*
+    & header*
+    & protocol*
+   }
+
+toplevel_container =
+   element himdel:container {
+      readable_name_attribute?,
+      type_attribute,
+      content_field*
+   }
+
+container =
+   element himdel:container {
+      readable_name_attribute?,
+      type_attribute?,
+      content_field*
+   }
+
+header =
+   element himdel:header {
+      readable_name_attribute?,
+      identifier_attribute?,
+      ( header* & content_field* & message+ )
+   }
+
+message =
+   element himdel:message {
+      readable_name_attribute?,
+      type_attribute,
+      content_field*
+   }
+
+protocol =
+   element himdel:protocol {
+      content_attributes,
+      element himdel:message-ref { type_attribute }*
+   }
+
+content_field =
+   element himdel:attribute     { content_attributes }
+ | element himdel:content       { content_attributes }
+ | container
+ | element himdel:container-ref { content_attributes }
+ | element himdel:viewdata {
+    attribute structured { xsd:boolean },
+    content_attributes
+ }
+
+content_attributes =
+   identifier_attribute,
+   type_attribute,
+   readable_name_attribute?

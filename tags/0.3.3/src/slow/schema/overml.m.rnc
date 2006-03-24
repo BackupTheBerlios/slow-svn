@@ -1,0 +1,103 @@
+namespace overml  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML"
+namespace slow    = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow"
+namespace nala    = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala"
+namespace slosl   = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl"
+namespace himdel  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"
+namespace edsl    = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl"
+namespace slowgui = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow-gui"
+namespace doc     = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/annotate"
+
+namespace xsd    = "http://www.w3.org/2001/XMLSchema-datatypes"
+namespace math   = "http://www.w3.org/1998/Math/MathML"
+
+identifier_string =
+   xsd:Name
+
+type_string =
+   xsd:QName
+
+identifier_attribute =
+   attribute access_name { identifier_string }
+
+name_attribute =
+   attribute name        { identifier_string }
+
+type_attribute =
+   attribute type_name   { type_string }
+
+readable_name_attribute =
+   attribute readable_name { text }
+
+anyOtherElement =
+   element * - (slow:* | nala:* | slosl:* | himdel:* | edsl:*) {
+      (attribute * { text }
+       | text
+       | anyOtherElement)*
+   }
+
+math_expression =
+   element math:math { math_expression_content }
+ | math_expression_content
+
+math_expression_content =
+ math_apply | math_number | math_constant
+
+math_interval =
+   element math:math { math_interval_content }
+ | math_interval_content
+
+math_interval_content =
+   element math:interval {
+      attribute closure { "open" | "closed" | "open-closed" | "closed-open" },
+      math_expression_content, math_expression_content
+   }
+
+math_list =
+   element math:math { math_list_content }
+ | math_list_content
+
+math_list_content =
+   element math:list { attribute * { text }*, math_expression_content* }
+
+
+math_apply =
+   element math:apply {
+      anyMathML, anyMathML+
+   }
+
+math_number =
+   element math:cn { attribute * { text }*, text }
+
+math_constant =
+   element math:ci { attribute * { text }*, text }
+
+anyMathML =
+   element math:* { empty }
+ | math_list
+ | math_interval
+ | math_apply
+ | math_number
+ | math_constant
+
+[ doc:documentation [ xml:lang="en" "OverML Schema 0.1 - SUBJECT TO CHANGES!" ] ]
+start = slow_file
+
+slow_file =
+   element slow:file {
+      nala_types?
+    & (nala_attribute* | nala_attributes)
+    & (slosl_statement* | slosl_statements)
+    & message_hierarchy
+    & edsl_graph
+    & slow_gui
+   }
+
+slow_gui =
+   element slowgui:gui { anyGuiElement* }
+
+anyGuiElement =
+   element slowgui:* {
+      (attribute * { text }
+       | text
+       | anyGuiElement)*
+   }

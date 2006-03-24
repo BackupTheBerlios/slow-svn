@@ -1,0 +1,22 @@
+[ doc:documentation [ xml:lang="en" "OverML Schema 0.1 - SUBJECT TO CHANGES!" ] ]
+start = slow_file
+
+slow_file =
+   element slow:file {
+      nala_types?
+    & (nala_attribute* | nala_attributes)
+    & (slosl_statement* | slosl_statements)
+    & message_hierarchy
+    & edsl_graph
+    & slow_gui
+   }
+
+slow_gui =
+   element slowgui:gui { anyGuiElement* }
+
+anyGuiElement =
+   element slowgui:* {
+      (attribute * { text }
+       | text
+       | anyGuiElement)*
+   }
