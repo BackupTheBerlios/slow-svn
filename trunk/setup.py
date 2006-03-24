@@ -108,12 +108,14 @@ requires libxml2_ and libxslt_ to be installed.
 .. _libxml2: http://xmlsoft.org/
 .. _libxslt: http://xmlsoft.org/XSLT/
 
-Running Slow:
+Running SLOW:
 -------------
 
 To run it, install the egg distribution with easy_install_. This should
 generate a runnable script for your platform.  On Linux, this is commonly
-/usr/bin/slow or ~/bin/slow or something similar.
+/usr/bin/slow or ~/bin/slow or something similar.  On all supported systems,
+the installation should generate the right type of script and tell you where
+it was put.
 
 .. _easy_install: http://peak.telecommunity.com/DevCenter/EasyInstall
 
