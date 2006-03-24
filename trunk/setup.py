@@ -4,12 +4,15 @@ setup_args = {}
 try:
     from setuptools import setup
     setup_args['install_requires'] = [ 'mathdom>=0.7', 'lxml>=0.9' ]
+    setup_args['entry_points'] = {
+        'gui_scripts' : ['slow = slow.qtgui.gui:run']
+        }
 except ImportError:
     from distutils.core import setup
 
 import sys, os
 
-VERSION  = '0.3.2'
+VERSION  = '0.3.3'
 PACKAGE_NAME = 'slow'
 PACKAGES = ['slow', 'slow.model', 'slow.qtgui', 'slow.vis',
             'slow.xslt', 'slow.schema',
@@ -90,18 +93,30 @@ Requirements:
 -------------
 
 The workbench is written in Python 2.4.  It requires PyQt3_, lxml_ and
-MathDOM_.
+MathDOM_.  Note that PyQt cannot be automatically installed by easy_install_.
+If it is not yet available on your platform, you must install it manually
+before installing slow.
 
 .. _Python:  http://www.python.org/
 .. _PyQt3:   http://www.riverbankcomputing.co.uk/pyqt/
 .. _lxml:    http://codespeak.net/lxml/
 .. _MathDOM: http://mathdom.sourceforge.net/
 
-SLOW 0.3.2 requires lxml 0.9 and MathDOM 0.7.  Note that lxml requires
-libxml2_ and libxslt_ to be installed.
+SLOW 0.3.2 and later require lxml 0.9 and MathDOM 0.7. Note that lxml
+requires libxml2_ and libxslt_ to be installed.
 
 .. _libxml2: http://xmlsoft.org/
 .. _libxslt: http://xmlsoft.org/XSLT/
+
+Running Slow:
+-------------
+
+To run it, install the egg distribution with easy_install_. This should
+generate a runnable script for your platform.  On Linux, this is commonly
+/usr/bin/slow or ~/bin/slow or something similar.
+
+.. _easy_install: http://peak.telecommunity.com/DevCenter/EasyInstall
+
 """,
 
     author       = 'Stefan Behnel',
