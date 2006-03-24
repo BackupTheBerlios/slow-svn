@@ -1,0 +1,10 @@
+recursive-include contrib *.tar.gz
+recursive-include src/slow *.py
+include src/slow/xslt/*.xsl
+include src/slow/schema/*.rng
+include src/slow/qtgui/ts/*.pro src/slow/qtgui/ts/*.ts
+recursive-exclude src      test*
+recursive-exclude tests    *
+recursive-exclude examples *
+exclude *.py
+include run_slow.sh setup.py optimize.py
