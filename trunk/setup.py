@@ -12,7 +12,7 @@ except ImportError:
 
 import sys, os
 
-VERSION  = '0.3.3'
+VERSION  = '0.4b'
 PACKAGE_NAME = 'slow'
 PACKAGES = ['slow', 'slow.model', 'slow.qtgui', 'slow.vis',
             'slow.xslt', 'slow.schema',
