@@ -1,14 +1,15 @@
-[ doc:documentation [ xml:lang="en" "OverML Schema 0.1 - SUBJECT TO CHANGES!" ] ]
+[ doc:documentation [ xml:lang="en" "OverML Schema 0.2 - SUBJECT TO CHANGES!" ] ]
 start = slow_file
 
 slow_file =
    element slow:file {
       nala_types?
-    & (nala_attribute* | nala_attributes)
-    & (slosl_statement* | slosl_statements)
-    & message_hierarchy
-    & edsl_graph
-    & slow_gui
+    & (nala_attribute* | nala_attributes)?
+    & (slosl_statement* | slosl_statements)?
+    & edgar_statements?
+    & message_hierarchy?
+    & edsl_graph?
+    & slow_gui?
    }
 
 slow_gui =

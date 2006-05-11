@@ -2,6 +2,7 @@ namespace overml  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML"
 namespace slow    = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow"
 namespace nala    = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala"
 namespace slosl   = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl"
+namespace edgar   = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edgar"
 namespace himdel  = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel"
 namespace edsl    = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl"
 namespace slowgui = "http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow-gui"
@@ -79,17 +80,18 @@ anyMathML =
  | math_number
  | math_constant
 
-[ doc:documentation [ xml:lang="en" "OverML Schema 0.1 - SUBJECT TO CHANGES!" ] ]
+[ doc:documentation [ xml:lang="en" "OverML Schema 0.2 - SUBJECT TO CHANGES!" ] ]
 start = slow_file
 
 slow_file =
    element slow:file {
       nala_types?
-    & (nala_attribute* | nala_attributes)
-    & (slosl_statement* | slosl_statements)
-    & message_hierarchy
-    & edsl_graph
-    & slow_gui
+    & (nala_attribute* | nala_attributes)?
+    & (slosl_statement* | slosl_statements)?
+    & edgar_statements?
+    & message_hierarchy?
+    & edsl_graph?
+    & slow_gui?
    }
 
 slow_gui =

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<grammar xmlns:doc="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/annotate" xmlns:edsl="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl" xmlns:xsd="http://www.w3.org/2001/XMLSchema-datatypes" xmlns:himdel="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel" xmlns:slosl="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl" xmlns:slowgui="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow-gui" xmlns:slow="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow" xmlns:nala="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala" xmlns:overml="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+<grammar xmlns:doc="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/annotate" xmlns:edsl="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl" xmlns:edgar="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edgar" xmlns:xsd="http://www.w3.org/2001/XMLSchema-datatypes" xmlns:himdel="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel" xmlns:slosl="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl" xmlns:slowgui="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow-gui" xmlns:slow="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow" xmlns:nala="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala" xmlns:overml="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <define name="identifier_string">
     <data type="Name"/>
   </define>
@@ -145,7 +145,7 @@
     </choice>
   </define>
   <start>
-    <doc:documentation xml:lang="en">OverML Schema 0.1 - SUBJECT TO CHANGES!</doc:documentation>
+    <doc:documentation xml:lang="en">OverML Schema 0.2 - SUBJECT TO CHANGES!</doc:documentation>
     <ref name="slow_file"/>
   </start>
   <define name="slow_file">
@@ -154,21 +154,34 @@
         <optional>
           <ref name="nala_types"/>
         </optional>
-        <choice>
-          <zeroOrMore>
-            <ref name="nala_attribute"/>
-          </zeroOrMore>
-          <ref name="nala_attributes"/>
-        </choice>
-        <choice>
-          <zeroOrMore>
-            <ref name="slosl_statement"/>
-          </zeroOrMore>
-          <ref name="slosl_statements"/>
-        </choice>
-        <ref name="message_hierarchy"/>
-        <ref name="edsl_graph"/>
-        <ref name="slow_gui"/>
+        <optional>
+          <choice>
+            <zeroOrMore>
+              <ref name="nala_attribute"/>
+            </zeroOrMore>
+            <ref name="nala_attributes"/>
+          </choice>
+        </optional>
+        <optional>
+          <choice>
+            <zeroOrMore>
+              <ref name="slosl_statement"/>
+            </zeroOrMore>
+            <ref name="slosl_statements"/>
+          </choice>
+        </optional>
+        <optional>
+          <ref name="edgar_statements"/>
+        </optional>
+        <optional>
+          <ref name="message_hierarchy"/>
+        </optional>
+        <optional>
+          <ref name="edsl_graph"/>
+        </optional>
+        <optional>
+          <ref name="slow_gui"/>
+        </optional>
       </interleave>
     </element>
   </define>
@@ -519,6 +532,68 @@
           </choice>
         </element>
       </oneOrMore>
+    </element>
+  </define>
+  <define name="edgar_statements">
+    <element name="edgar:statements">
+      <zeroOrMore>
+        <ref name="slosl_start"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="edgar_start">
+    <element name="edgar:start">
+      <ref name="name_attribute"/>
+      <optional>
+        <attribute name="selected">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
+      <ref name="edgar_content"/>
+    </element>
+  </define>
+  <define name="edgar_content">
+    <choice>
+      <ref name="edgar_firstmatch"/>
+      <ref name="edgar_fork"/>
+      <ref name="edgar_tag"/>
+      <ref name="edgar_predicate"/>
+      <ref name="edgar_exit"/>
+    </choice>
+  </define>
+  <define name="edgar_firstmatch">
+    <element name="edgar:firstmatch">
+      <oneOrMore>
+        <ref name="edgar_content"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="edgar_fork">
+    <element name="edgar:fork">
+      <oneOrMore>
+        <ref name="edgar_content"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="edgar_tag">
+    <element name="edgar:tag">
+      <attribute name="type">
+        <ref name="type_string"/>
+      </attribute>
+      <ref name="edgar_content"/>
+    </element>
+  </define>
+  <define name="edgar_predicate">
+    <element name="edgar:predicate">
+      <ref name="name_attribute"/>
+      <ref name="edgar_content"/>
+    </element>
+  </define>
+  <define name="edgar_exit">
+    <element name="edgar:exit">
+      <attribute name="target">
+        <ref name="type_string"/>
+      </attribute>
     </element>
   </define>
   <define name="edsl_graph">

@@ -2,7 +2,7 @@ TRANG=trang
 RNGVAL=rng-val
 
 RNC_COMMON_IMPORTS=namespaces common mathml
-RNC_OVERML_IMPORTS=nala himdel slosl edsl
+RNC_OVERML_IMPORTS=nala himdel slosl edgar edsl
 
 NO_INPUT=datatypes.rnc
 
