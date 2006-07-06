@@ -14,19 +14,6 @@ class OverlayDesigner_aboutdialog(AboutDialog):
         print "OverlayDesigner_aboutdialog.about_ok_button_clicked(): Not implemented yet"
 
 
-from genedsmdialog import EDSMDialog
-
-
-class OverlayDesigner_edsmdialog(EDSMDialog):
-
-    def __init__(self,parent = None,name = None,modal = 0,fl = 0):
-        EDSMDialog.__init__(self,parent,name,modal,fl)
-
-
-    def language_name_activated(self,a0):
-        print "OverlayDesigner_edsmdialog.language_name_activated( const QString & ): Not implemented yet"
-
-
 from gengui import OverlayDesignerMainWindow
 
 
@@ -216,16 +203,16 @@ class OverlayDesigner_gui(OverlayDesignerMainWindow):
         print "OverlayDesigner_gui.exportFlat(): Not implemented yet"
 
 
-    def test_view_select_activated(self,a0):
-        print "OverlayDesigner_gui.test_view_select_activated( const QString & ): Not implemented yet"
-
-
     def test_run_button_clicked(self):
         print "OverlayDesigner_gui.test_run_button_clicked(): Not implemented yet"
 
 
     def test_profile_button_clicked(self):
         print "OverlayDesigner_gui.test_profile_button_clicked(): Not implemented yet"
+
+
+    def test_view_select_activated(self,a0):
+        print "OverlayDesigner_gui.test_view_select_activated( const QString & ): Not implemented yet"
 
 
 from genprefdialog import PrefDialog

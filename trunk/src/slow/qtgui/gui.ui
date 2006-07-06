@@ -1847,7 +1847,7 @@ Python:    }
                     <cstring>test_tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>&amp;4 Test</string>
+                    <string>&amp;4 Test SLOSL</string>
                 </attribute>
                 <hbox>
                     <property name="name">
@@ -2966,13 +2966,13 @@ Functions to reimplement:
     <slot>editPreferences()</slot>
     <slot>message_listview_dropped( QDropEvent * )</slot>
     <slot>exportFlat()</slot>
-    <slot>test_view_select_activated( const QString &amp; )</slot>
     <slot>test_run_button_clicked()</slot>
     <slot>test_profile_button_clicked()</slot>
+    <slot>test_view_select_activated( const QString &amp; )</slot>
 </slots>
 <layoutdefaults spacing="4" margin="4"/>
 <includehints>
-    <includehint>dotgraphwidget.h</includehint>
-    <includehint>dotgraphwidget.h</includehint>
+    <includehint>1</includehint>
+    <includehint>1</includehint>
 </includehints>
 </UI>

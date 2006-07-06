@@ -535,14 +535,14 @@
     </element>
   </define>
   <define name="edgar_statements">
-    <element name="edgar:statements">
+    <element name="edgar:routers">
       <zeroOrMore>
-        <ref name="slosl_start"/>
+        <ref name="slosl_router"/>
       </zeroOrMore>
     </element>
   </define>
   <define name="edgar_start">
-    <element name="edgar:start">
+    <element name="edgar:router">
       <ref name="name_attribute"/>
       <optional>
         <attribute name="selected">

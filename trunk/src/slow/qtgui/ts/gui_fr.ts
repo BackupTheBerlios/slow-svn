@@ -923,7 +923,7 @@ Available Functions:&lt;br&gt;
     </message>
     <message>
         <source>&amp;4 Test</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>Run test</source>
@@ -1113,6 +1113,10 @@ Functions to reimplement:
     </message>
     <message>
         <source>Attribute</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;4 Test SLOSL</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
