@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<grammar xmlns:slosl="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+<grammar xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:slosl="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <define name="identifier_string">
     <data type="Name"/>
   </define>

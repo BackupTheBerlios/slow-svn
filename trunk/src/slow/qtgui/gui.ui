@@ -22,7 +22,7 @@ Python:    }
             <x>0</x>
             <y>0</y>
             <width>747</width>
-            <height>610</height>
+            <height>650</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -1876,32 +1876,16 @@ Python:    }
                                 </property>
                                 <widget class="QLabel" row="1" column="0">
                                     <property name="name">
-                                        <cstring>textLabel2_2</cstring>
+                                        <cstring>textLabel2_2_2</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>GraphViz program:</string>
+                                        <string>View:</string>
                                     </property>
                                     <property name="buddy" stdset="0">
                                         <cstring>test_graphviz_program_comboBox</cstring>
                                     </property>
                                 </widget>
-                                <widget class="QPushButton" row="0" column="3" rowspan="1" colspan="2">
-                                    <property name="name">
-                                        <cstring>test_run_button</cstring>
-                                    </property>
-                                    <property name="sizePolicy">
-                                        <sizepolicy>
-                                            <hsizetype>1</hsizetype>
-                                            <vsizetype>0</vsizetype>
-                                            <horstretch>1</horstretch>
-                                            <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                    </property>
-                                    <property name="text">
-                                        <string>Run test</string>
-                                    </property>
-                                </widget>
-                                <widget class="QPushButton" row="0" column="5">
+                                <widget class="QPushButton" row="1" column="5">
                                     <property name="name">
                                         <cstring>test_profile_button</cstring>
                                     </property>
@@ -1917,24 +1901,29 @@ Python:    }
                                         <string>Profile</string>
                                     </property>
                                 </widget>
-                                <spacer row="1" column="1">
+                                <widget class="QComboBox" row="0" column="0" rowspan="1" colspan="6">
                                     <property name="name">
-                                        <cstring>spacer2</cstring>
+                                        <cstring>test_select_combobox</cstring>
                                     </property>
-                                    <property name="orientation">
-                                        <enum>Horizontal</enum>
+                                    <property name="editable">
+                                        <bool>true</bool>
                                     </property>
-                                    <property name="sizeType">
-                                        <enum>Expanding</enum>
+                                    <property name="duplicatesEnabled">
+                                        <bool>false</bool>
                                     </property>
-                                    <property name="sizeHint">
-                                        <size>
-                                            <width>30</width>
-                                            <height>20</height>
-                                        </size>
+                                </widget>
+                                <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
+                                    <property name="name">
+                                        <cstring>textLabel2_2</cstring>
                                     </property>
-                                </spacer>
-                                <widget class="QComboBox" row="1" column="2" rowspan="1" colspan="2">
+                                    <property name="text">
+                                        <string>GraphViz program:</string>
+                                    </property>
+                                    <property name="buddy" stdset="0">
+                                        <cstring>test_graphviz_program_comboBox</cstring>
+                                    </property>
+                                </widget>
+                                <widget class="QComboBox" row="2" column="2">
                                     <item>
                                         <property name="text">
                                             <string>circo</string>
@@ -1972,7 +1961,48 @@ Python:    }
                                         </sizepolicy>
                                     </property>
                                 </widget>
-                                <widget class="QComboBox" row="0" column="0" rowspan="1" colspan="3">
+                                <spacer row="2" column="3">
+                                    <property name="name">
+                                        <cstring>spacer4</cstring>
+                                    </property>
+                                    <property name="orientation">
+                                        <enum>Horizontal</enum>
+                                    </property>
+                                    <property name="sizeType">
+                                        <enum>Expanding</enum>
+                                    </property>
+                                    <property name="sizeHint">
+                                        <size>
+                                            <width>30</width>
+                                            <height>20</height>
+                                        </size>
+                                    </property>
+                                </spacer>
+                                <widget class="QCheckBox" row="2" column="4" rowspan="1" colspan="2">
+                                    <property name="name">
+                                        <cstring>test_splines_checkbox</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>use splines</string>
+                                    </property>
+                                </widget>
+                                <widget class="QPushButton" row="1" column="3" rowspan="1" colspan="2">
+                                    <property name="name">
+                                        <cstring>test_run_button</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>1</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>1</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="text">
+                                        <string>Run test</string>
+                                    </property>
+                                </widget>
+                                <widget class="QComboBox" row="1" column="1" rowspan="1" colspan="2">
                                     <property name="name">
                                         <cstring>test_view_select_combobox</cstring>
                                     </property>
@@ -1985,32 +2015,7 @@ Python:    }
                                         </sizepolicy>
                                     </property>
                                 </widget>
-                                <widget class="QCheckBox" row="1" column="5">
-                                    <property name="name">
-                                        <cstring>test_splines_checkbox</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>use splines</string>
-                                    </property>
-                                </widget>
-                                <spacer row="1" column="4">
-                                    <property name="name">
-                                        <cstring>spacer4</cstring>
-                                    </property>
-                                    <property name="orientation">
-                                        <enum>Horizontal</enum>
-                                    </property>
-                                    <property name="sizeType">
-                                        <enum>Expanding</enum>
-                                    </property>
-                                    <property name="sizeHint">
-                                        <size>
-                                            <width>48</width>
-                                            <height>20</height>
-                                        </size>
-                                    </property>
-                                </spacer>
-                                <widget class="QGroupBox" row="2" column="0" rowspan="1" colspan="6">
+                                <widget class="QGroupBox" row="3" column="0" rowspan="1" colspan="6">
                                     <property name="name">
                                         <cstring>groupBox3_2</cstring>
                                     </property>
@@ -2561,12 +2566,6 @@ Functions to reimplement:
         <slot>type_name_field_textChanged(const QString&amp;)</slot>
     </connection>
     <connection>
-        <sender>test_view_select_combobox</sender>
-        <signal>activated(const QString&amp;)</signal>
-        <receiver>OverlayDesignerMainWindow</receiver>
-        <slot>test_view_select_activated(const QString&amp;)</slot>
-    </connection>
-    <connection>
         <sender>test_run_button</sender>
         <signal>clicked()</signal>
         <receiver>OverlayDesignerMainWindow</receiver>
@@ -2896,6 +2895,12 @@ Functions to reimplement:
         <receiver>OverlayDesignerMainWindow</receiver>
         <slot>exportFlat()</slot>
     </connection>
+    <connection>
+        <sender>test_select_combobox</sender>
+        <signal>activated(const QString&amp;)</signal>
+        <receiver>OverlayDesignerMainWindow</receiver>
+        <slot>test_select_activated(const QString&amp;)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>overlay_tab</tabstop>
@@ -2968,7 +2973,7 @@ Functions to reimplement:
     <slot>exportFlat()</slot>
     <slot>test_run_button_clicked()</slot>
     <slot>test_profile_button_clicked()</slot>
-    <slot>test_view_select_activated( const QString &amp; )</slot>
+    <slot>test_select_activated( const QString &amp; )</slot>
 </slots>
 <layoutdefaults spacing="4" margin="4"/>
 <includehints>

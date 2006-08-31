@@ -1,5 +1,5 @@
 from lxml import etree
-from lxml.etree import Element, SubElement, XML
+from lxml.etree import SubElement, XML
 from copy import deepcopy
 from StringIO import StringIO
 from itertools import imap
@@ -69,8 +69,8 @@ EMPTY_MODEL = u'''\
 </edsm>
 ''' % EDSM_NAMESPACE_URI
 
-def buildEmptyModel():
-    return XML(EMPTY_MODEL)
+def buildEmptyModel(parser):
+    return etree.parse(StringIO(EMPTY_MODEL), parser).getroot()
 
 class EDSMClass(XPathModel):
     DEFAULT_NAMESPACE = EDSM_NAMESPACE_URI

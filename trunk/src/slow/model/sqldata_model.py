@@ -1,4 +1,4 @@
-from lxml.etree import SubElement, Element, ElementBase, Namespace
+from lxml.etree import SubElement, ElementBase, Namespace
 
 SQL_NAMESPACE_URI = u"http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/sql"
 

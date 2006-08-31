@@ -15,29 +15,26 @@ SLOSL_NAMESPACE_DICT = {u'slosl' : SLOSL_NAMESPACE_URI}
 
 from StringIO        import StringIO
 from lxml            import etree
-from lxml.etree      import ElementTree, Element, SubElement
+from lxml.etree      import ElementTree, SubElement
 from xpathmodel      import XPathModel, XPathModelHelper, result_filter, autoconstruct, get_first
 from mathml.lmathdom import MathDOM
 
 from slow.schema import SCHEMAS
+SLOSL_RNG_SCHEMA = SCHEMAS['slosl']
+
 
 __statements_tag = u"{%s}statements" % SLOSL_NAMESPACE_URI
-def buildStatements():
-    return Element(__statements_tag)
+def buildStatements(parser):
+    return parser.makeelement(__statements_tag)
 
 __statement_tag = u"{%s}statement"  % SLOSL_NAMESPACE_URI
-def buildStatement(statements=None):
+def buildStatement(parser, statements=None):
     if statements:
         element = SubElement(statements, __statement_tag)
     else:
-        element = Element(__statement_tag)
+        element = parser.makeelement(__statement_tag)
     SubElement(element, u"{%s}buckets"  % SLOSL_NAMESPACE_URI)
     return element
-
-
-EMPTY_MODEL = Element(__statements_tag)
-
-SLOSL_RNG_SCHEMA = SCHEMAS['slosl']
 
 
 def _build_named_attribute(name, *args):

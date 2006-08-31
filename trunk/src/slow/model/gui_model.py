@@ -11,11 +11,6 @@ class GuiDataModel(XPathModel):
         u"./{%(DEFAULT_NAMESPACE)s}pos"
         return dict( (el.ref, el.pos) for el in _xpath_result )
 
-    def _get_testcode_dict(self, _xpath_result):
-        u"./{%(DEFAULT_NAMESPACE)s}testcode"
-        return dict( (el.view_name, el.code) for el in _xpath_result )
-
-
     def _get_pos(self, ref):
         u"./{%(DEFAULT_NAMESPACE)s}pos[ @ref = $ref ]"
 
@@ -27,19 +22,37 @@ class GuiDataModel(XPathModel):
             tag = u"{%s}pos" % GUI_NAMESPACE_URI
             etree.SubElement(self, tag, ref=ref, x=str(x), y=str(y))
 
-    @get_first
-    def _get_testCode(self, view_name):
-        u"./{%(DEFAULT_NAMESPACE)s}testcode[ @view_name = $view_name]"
+    def _get_test_list(self):
+        u"./{%(DEFAULT_NAMESPACE)s}testcode"
 
-    def _set_testCode(self, _xpath_result, view_name, code):
-        u"./{%(DEFAULT_NAMESPACE)s}testcode[ @view_name = $view_name]"
+    def _get_testCode(self, _xpath_result, name):
+        u"./{%(DEFAULT_NAMESPACE)s}testcode[ @name = $name ]"
         if _xpath_result:
-            code_tag = _xpath_result[0]
+            return _xpath_result[0].code
+        else:
+            return ''
+
+    def _set_testCode(self, _xpath_result, name, code):
+        u"./{%(DEFAULT_NAMESPACE)s}testcode[ @name = $name ]"
+        if _xpath_result:
+            if code:
+                _xpath_result[0].code = code
+            else:
+                self.remove(_xpath_result[0])
+        else:
+            self.buildTestCode(name, code)
+
+    _compiled_xpath_testcode = u"./{%(DEFAULT_NAMESPACE)s}testcode[ @name = $name ]"
+    def buildTestCode(self, name, code=None):
+        test_case = self._compiled_xpath_testcode(self, name=name)
+        if test_case:
+            test_case = test_case[0]
         else:
             tag = u"{%s}testcode" % GUI_NAMESPACE_URI
-            code_tag = etree.SubElement(self, tag, view_name=view_name)
-        code_tag.language = 'python'
-        code_tag.code = code
+            test_case = etree.SubElement(self, tag, name = name)
+        if code is not None:
+            test_case.code = code
+        return test_case
 
 
 class IconPositionModel(XPathModel):
@@ -55,10 +68,10 @@ class IconPositionModel(XPathModel):
 
 class TestCodeContainer(CodeContainer):
     DEFAULT_NAMESPACE = GUI_NAMESPACE_URI
-    _attr_view_name = "./@view_name"
+    _attr_name = u"./@name"
 
 
 ns = etree.Namespace(GUI_NAMESPACE_URI)
-ns[u'gui']      = GuiDataModel
-ns[u'pos']      = IconPositionModel
-ns[u'testcode'] = TestCodeContainer
+ns[u'gui']       = GuiDataModel
+ns[u'pos']       = IconPositionModel
+ns[u'testcode']  = TestCodeContainer

@@ -12,8 +12,8 @@ from slosl_model              import SLOSL_NAMESPACE_URI
 from edsm_model               import EDSM_NAMESPACE_URI
 from gui_model                import GUI_NAMESPACE_URI
 
-def buildFile():
-    return Element(u"{%s}file" % SLOW_FILE_NAMESPACE_URI)
+def buildFile(parser):
+    return parser.makeelement(u"{%s}file" % SLOW_FILE_NAMESPACE_URI)
 
 class FileModel(XPathModel):
     DEFAULT_NAMESPACE = SLOW_FILE_NAMESPACE_URI

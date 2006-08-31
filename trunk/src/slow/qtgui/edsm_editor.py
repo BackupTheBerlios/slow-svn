@@ -629,7 +629,7 @@ class EDSMEditor(EDSMEditorItem):
             self.connect(self, self.__GRAPH_CHANGED_SIGNAL, self.edsm_dot_graph.rebuild_graph)
 
     def __init_model(self):
-        self.__edsm_model = buildEmptyModel()
+        self.__edsm_model = buildEmptyModel(self._xml_parser)
         self.clear_iconviews()
         self.__reset_iconview(self._iconview, self.__edsm_model, self.STATIC_STATES)
 

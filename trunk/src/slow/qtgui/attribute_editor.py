@@ -60,8 +60,8 @@ class AttributeEditor(object):
             self.__tr = dummy
 
     def __init_models(self):
-        self.__custom_data_types = buildTypes()
-        self._attribute_descriptions = buildAttributes()
+        self.__custom_data_types = buildTypes(self._xml_parser)
+        self._attribute_descriptions = buildAttributes(self._xml_parser)
 
     def __init_type_selectors(self):
         length_attrs = self.__LENGTH_ATTRIBUTES = dict(chain(

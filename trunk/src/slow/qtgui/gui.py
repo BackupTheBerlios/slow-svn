@@ -106,7 +106,7 @@ class MenuFunctions(object):
 
     def setCurrentFile(self, filename, tree=None):
         if tree is None:
-            tree = etree.ElementTree( buildFile() )
+            tree = etree.ElementTree( buildFile(self._xml_parser) )
         self.current_tree = tree
         self.current_file = filename
         self.fileSaveAction.setEnabled( bool(filename) )
@@ -127,19 +127,19 @@ class MenuFunctions(object):
         icon_positions = root.guidata.pos_dict
         statements     = root.statements
         edsm           = root.edsm
-        test_code      = root.guidata.testcode_dict
+        gui_data       = root.guidata
 
         self.reset_datatype_descriptions(datatype_descr)
         self.reset_attribute_descriptions(attr_descr)
         self.reset_message_descriptions(msg_descr)
         self.reset_edsm(edsm, icon_positions)
         self.reset_statements(statements)
-        self.reset_tests(test_code)
+        self.reset_tests(gui_data)
 
     def loadFile(self, filename):
         self.setStatus(self.tr("Loading file '%1'").arg(filename))
         try:
-            tree = etree.ElementTree(file=filename)
+            tree = self.parseXML(filename)
         except Exception, e:
             self.setStatus(self.tr('Loading file failed:'), e)
             return
@@ -305,15 +305,15 @@ class MenuFunctions(object):
         pref_tree = etree.ElementTree(model)
         pref_tree.write(out_file)
 
-    def loadPreferences(self):
+    def loadPreferences(self, parser):
         try:
             in_file = open(self.PREF_FILENAME, 'r')
         except (IOError, OSError):
-            self.preferences = buildPreferences()
+            self.preferences = buildPreferences(parser)
             return
 
         try:
-            self.preferences = etree.parse(in_file).getroot()
+            self.preferences = self.parseXML(in_file).getroot()
         finally:
             in_file.close()
 
@@ -335,12 +335,13 @@ class OverlayDesigner_gui(MenuFunctions,
         self.__class__.tr = OverlayDesignerMainWindow._OverlayDesignerMainWindow__tr
 
         self.logger = logging.getLogger('gui')
+        self.__setupXMLParser()
 
         OverlayDesignerMainWindow.__init__(self, parent, name, fl)
 
         self.delete_icon = qt.QIconSet( self.slosl_foreach_remove_button.pixmap() )
 
-        self.loadPreferences()
+        self.loadPreferences(self._xml_parser)
         self.pref_dialog  = PreferenceDialog(self, self.storePreferences,
                                              self.preferences)
         self.about_dialog = OverlayDesigner_aboutdialog(modal=True)
@@ -355,6 +356,25 @@ class OverlayDesigner_gui(MenuFunctions,
             supertype.__init__(self)
 
         self.setupModelFromTree(self.current_tree)
+
+    def __setupXMLParser(self):
+        try:
+            lookup = etree.ElementNamespaceClassLookup()
+        except AttributeError:
+            class Parser(etree.XMLParser):
+                def makeelement(*args, **kwargs):
+                    return etree.Element(*args, **kwargs)
+                
+            self._xml_parser = Parser(remove_blank_text=True)
+            return
+
+        # set up parser for lxml 1.1+
+        parser = etree.XMLParser(remove_blank_text=True)
+        parser.setElementClassLookup(lookup)
+        self._xml_parser = parser
+
+    def parseXML(self, f):
+        return etree.parse(f, self._xml_parser)
 
     def polish(self):
         OverlayDesignerMainWindow.polish(self)

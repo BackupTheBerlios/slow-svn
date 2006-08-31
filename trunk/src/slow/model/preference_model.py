@@ -3,8 +3,8 @@ PREF_NAMESPACE_URI = u"http://www.dvs1.informatik.tu-darmstadt.de/research/OverM
 from lxml import etree
 from xpathmodel import XPathModel, autoconstruct
 
-def buildPreferences():
-    prefs = etree.Element(u"{%s}prefs" % PREF_NAMESPACE_URI)
+def buildPreferences(parser):
+    prefs = parser.makeelement(u"{%s}prefs" % PREF_NAMESPACE_URI)
     prefs.optimize_xml_size = True
     prefs.auto_update_edsm_graph = True
     return prefs

@@ -1,5 +1,5 @@
 from lxml       import etree
-from lxml.etree import SubElement, Element
+from lxml.etree import SubElement
 
 from xpathmodel import XPathModel, get_first
 from model import NamedObject
@@ -7,11 +7,11 @@ from model import NamedObject
 DB_NAMESPACE_URI = u"http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala"
 
 
-def buildTypes():
-    return Element(u"{%s}types" % DB_NAMESPACE_URI)
+def buildTypes(parser):
+    return parser.makeelement(u"{%s}types" % DB_NAMESPACE_URI)
 
-def buildAttributes():
-    return Element(u"{%s}attributes" % DB_NAMESPACE_URI)
+def buildAttributes(parser):
+    return parser.makeelement(u"{%s}attributes" % DB_NAMESPACE_URI)
 
 def buildAttribute(attributes, attr_name, type_name, attribute_dict={}):
     return SubElement(attributes, u"{%s}attribute" % DB_NAMESPACE_URI,

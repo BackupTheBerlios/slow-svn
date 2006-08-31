@@ -1119,6 +1119,10 @@ Functions to reimplement:
         <source>&amp;4 Test SLOSL</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>View:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PrefDialog</name>

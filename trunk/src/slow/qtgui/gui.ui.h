@@ -315,3 +315,12 @@ void OverlayDesignerMainWindow::test_profile_button_clicked()
 }
 
 
+
+
+
+
+
+void OverlayDesignerMainWindow::test_select_activated( const QString & )
+{
+
+}

@@ -80,7 +80,7 @@ class SLOSLEditor(object):
         self.slosl_from.setValidator(self.identifier_list_validator)
 
     def __new_model(self):
-        self.__model = slosl_model.buildStatement(self.__slosl_models)
+        self.__model = slosl_model.buildStatement(self._xml_parser, self.__slosl_models)
         self.__current_foreach_entry = None
 
     def slosl_model(self):
@@ -96,7 +96,7 @@ class SLOSLEditor(object):
         self.slosl_view_list.clear()
 
         if statements is None:
-            statements = slosl_model.buildStatements()
+            statements = slosl_model.buildStatements(self._xml_parser)
 
         self.__slosl_models = statements
         for model in statements:
