@@ -372,7 +372,6 @@ class NodeView(ReflectiveObservable):
         _bool = bool
         where_expr = spec.where
         eval_globals = globals()
-        eval_globals['local'] = self.local_node
         def where(node):
             eval_globals['node'] = node
             return _bool(_eval(where_expr, eval_globals, static_value_dict))
@@ -529,10 +528,11 @@ class ViewFunctions(object):
     def _hash_distinct(self, iterator):
         seen_set  = set()
         have_seen = seen_set.add
+        _len = len
         count = 0
         for item in iterator:
             have_seen(item)
-            if count < len(seen_set):
+            if count < _len(seen_set):
                 count += 1
                 yield item
 
