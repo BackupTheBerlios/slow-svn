@@ -1,5 +1,7 @@
 import os, re
 from os import path
+from StringIO import StringIO
+
 from lxml.etree import tostring, parse, XMLSchema, RelaxNG, XSLT, ElementTree, XML
 
 __all__ = ['SCHEMAS']
