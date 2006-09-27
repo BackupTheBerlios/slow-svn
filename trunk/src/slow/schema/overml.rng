@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<grammar xmlns:overml="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML" xmlns:slosl="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl" xmlns:himdel="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel" xmlns:nala="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala" xmlns:slowgui="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow-gui" xmlns:slow="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow" xmlns:edsl="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl" xmlns:xsd="http://www.w3.org/2001/XMLSchema-datatypes" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:edgar="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edgar" xmlns:doc="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/annotate" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+<grammar xmlns:doc="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/annotate" xmlns:edsl="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edsl" xmlns:edgar="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/edgar" xmlns:xsd="http://www.w3.org/2001/XMLSchema-datatypes" xmlns:himdel="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/himdel" xmlns:slosl="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slosl" xmlns:slowgui="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow-gui" xmlns:slow="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/slow" xmlns:nala="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML/nala" xmlns:overml="http://www.dvs1.informatik.tu-darmstadt.de/research/OverML" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <define name="identifier_string">
     <data type="Name"/>
   </define>
@@ -450,6 +450,7 @@
   <define name="slosl_select">
     <element name="slosl:select">
       <ref name="name_attribute"/>
+      <ref name="type_attribute"/>
       <optional>
         <choice>
           <text/>

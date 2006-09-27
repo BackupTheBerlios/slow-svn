@@ -20,6 +20,7 @@ slosl_statement =
 slosl_select =
    element slosl:select {
       name_attribute,
+      type_attribute,
       ( text | math_expression )?
    }
 
