@@ -4,7 +4,7 @@ RNGVAL=rng-val
 RNC_COMMON_IMPORTS=namespaces common mathml
 RNC_OVERML_IMPORTS=nala himdel slosl edgar edsl
 
-NO_INPUT=datatypes.rnc
+NO_INPUT=datatypes.rnc all.rnc
 
 ############
 
@@ -36,9 +36,13 @@ test: $(addsuffix .rng,$(basename $(TESTS)))
 clean:
 	rm -f $(RNG) $(RNG_MODULES) $(RNC_MODULES) *~
 
-overml.rng: overml.m.rnc $(OVERML_IMPORTS)
+overml.rng: all.rnc
 	@echo "Building overml.rng ..."
-	@cat $^ | $(TRANG) -I rnc -O rng /dev/fd/0 "$@"
+	$(TRANG) -I rnc -O rng all.rnc "$@"
+
+all.rnc: overml.m.rnc $(OVERML_IMPORTS)
+	@echo "Building all.rnc ..."
+	cat $^ > $@
 
 %.m.rnc: %.rnc $(COMMON_IMPORTS)
 	@echo "Merging components of $< ..."

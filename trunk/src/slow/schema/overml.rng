@@ -538,7 +538,7 @@
   <define name="edgar_statements">
     <element name="edgar:routers">
       <zeroOrMore>
-        <ref name="slosl_router"/>
+        <ref name="edgar_start"/>
       </zeroOrMore>
     </element>
   </define>
@@ -790,7 +790,7 @@
     </element>
   </define>
   <define name="edsl_to_state">
-    <element name="edsl:from_state">
+    <element name="edsl:to_state">
       <ref name="edsl_state_ref"/>
     </element>
   </define>
@@ -800,7 +800,7 @@
     </element>
   </define>
   <define name="edsl_to_queue">
-    <element name="edsl:from_state">
+    <element name="edsl:to_state">
       <ref name="edsl_state_queue_ref"/>
     </element>
   </define>

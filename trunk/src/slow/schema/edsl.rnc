@@ -31,13 +31,13 @@ edsl_state =
    element edsl:state {
       name_attribute
     & attribute id   { edsl_state_id }
-    & attribute inherit_context { xsd:boolean }
-    & attribute long_running    { xsd:boolean }
+    & attribute inherit_context { xsd:boolean }?
+    & attribute long_running    { xsd:boolean }?
 
     & edsl_readable_name?
     & edsl_code*
-    & element input  { edsl_queue_name }*
-    & element output { edsl_queue_name }*
+    & element edsl:input  { edsl_queue_name }*
+    & element edsl:output { edsl_queue_name }*
    }
 
 edsl_transition =
@@ -91,13 +91,13 @@ edsl_from_state =
    element edsl:from_state { edsl_state_ref }
 
 edsl_to_state =
-   element edsl:from_state { edsl_state_ref }
+   element edsl:to_state { edsl_state_ref }
 
 edsl_from_queue =
    element edsl:from_state { edsl_state_queue_ref }
 
 edsl_to_queue =
-   element edsl:from_state { edsl_state_queue_ref }
+   element edsl:to_state { edsl_state_queue_ref }
 
 
 edsl_queue_name =
