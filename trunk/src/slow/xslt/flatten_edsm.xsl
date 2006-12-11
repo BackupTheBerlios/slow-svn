@@ -43,4 +43,11 @@
       <xsl:apply-templates select="edsl:*|text()" mode="edsm"/>
     </xsl:copy>
   </xsl:template>
+
+  <xsl:template match="*">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="*"/>
+    </xsl:copy>
+  </xsl:template>
 </xsl:stylesheet>

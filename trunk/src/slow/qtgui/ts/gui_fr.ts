@@ -409,6 +409,14 @@ Designing overlays in no-time!&lt;/p&gt;</source>
         <source>Writing to file failed:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Stylesheet &apos;flatten_edsm&apos; not installed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylesheet &apos;edsl_move_transitions&apos; not installed.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessageEditor</name>

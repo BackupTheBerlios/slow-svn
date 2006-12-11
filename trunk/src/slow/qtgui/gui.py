@@ -236,9 +236,20 @@ class MenuFunctions(object):
 
     def exportFlat(self):
         try:
-            xslt = STYLESHEETS['flat_export']
+            flatten_himdel = STYLESHEETS['flat_export']
         except KeyError:
             self.setStatus(self.tr("Stylesheet 'flat_export' not installed."))
+            return
+        try:
+            flatten_edsl = STYLESHEETS['flatten_edsm']
+        except KeyError:
+            self.setStatus(self.tr("Stylesheet 'flatten_edsm' not installed."))
+            return
+        try:
+            merge_edsl = STYLESHEETS['edsl_move_transitions']
+        except KeyError:
+            self.setStatus(self.tr("Stylesheet 'edsl_move_transitions' not installed."))
+            return
 
         filename = qt.QFileDialog.getSaveFileName(
             None, self.FLAT_FILE_FILTER, self,
@@ -249,11 +260,11 @@ class MenuFunctions(object):
         if not filename.endswith(self.FLAT_FILE_EXTENSION):
             filename += self.FLAT_FILE_EXTENSION
 
-        result = xslt.apply(self.current_tree)
+        result = merge_edsl(flatten_edsl(flatten_himdel(self.current_tree)))
         if not self.preferences.optimize_xml_size:
             indent = STYLESHEETS.get('indent')
             if indent:
-                result = indent.apply(result)
+                result = indent(result)
                 xslt = indent
 
         xml_string = xslt.tostring(result)
